@@ -6,7 +6,8 @@
         "jest/globals": true
     },
     "extends": [
-        "standard"
+        "standard",
+        "plugin:json/recommended"
     ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
@@ -18,5 +19,7 @@
         "jest"
     ],
     "rules": {
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": "error"
     }
 }

@@ -3,15 +3,17 @@
   "private": true,
   "scripts": {
     "test": "npx jest packages/*/test",
-    "test:watch": "npx jest packages/*/test --watchAll",
+    "test:watch": "npx jest packages/*/test --watchAll --coverage",
     "test:coverage": "npx jest packages/*/test --coverage",
-    "build": "lerna exec --parallel -- babel --root-mode upward src -d lib --ignore **/*.spec.js",
-    "lint": "lerna exec --parallel -- npx eslint src/**/* test/**/*",
-    "lint:fix": "lerna exec --parallel -- npx eslint src/**/* test/**/* --fix"
+    "build": "lerna exec --parallel -- babel --root-mode upward src -d lib --extensions \".ts\"",
+    "lint": "npx eslint packages/*/src/**/* packages/*/test/**/* --ext .json,.js",
+    "lint:fix": "npx eslint packages/*/src/**/* packages/*/test/**/* --ext .json,.js --fix",
+    "bootstrap": "lerna bootstrap"
   },
   "devDependencies": {
     "@babel/cli": "^7.10.3",
     "@babel/core": "^7.10.3",
+    "@babel/preset-env": "^7.10.3",
     "@babel/preset-typescript": "^7.10.1",
     "@types/jest": "^26.0.0",
     "@typescript-eslint/eslint-plugin": "^3.3.0",
@@ -20,9 +22,11 @@
     "eslint-config-standard": "^14.1.1",
     "eslint-plugin-import": "^2.21.2",
     "eslint-plugin-jest": "^23.15.0",
+    "eslint-plugin-json": "^2.1.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
+    "jest": "^26.1.0",
     "lerna": "^3.22.1",
     "ts-jest": "^26.1.0",
     "typescript": "^3.9.5"
