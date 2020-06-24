@@ -14,18 +14,18 @@ jobs:
             - run: npm run bootstrap
             - run:
                 name: Test
-                command: npm run test:coverage
+                command: npm run test:ci
                 environment:
-                  JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
-            - store_test_results:
-                path: ./reports/junit/
-            - store_artifacts:
-                path: ./coverage/
+                  JEST_JUNIT_OUTPUT_DIR: ./reports/test/junit/
             - run:
                 name: Lint
-                command: npm run lint
+                command: npm run lint:ci
+            - store_test_results:
+                path: ./reports/test/junit/
+            - store_artifacts:
+                path: ./reports
 
 workflows:
     build-test-lint:
       jobs:
-        - build-and-test
+        - build-test-lint
