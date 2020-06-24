@@ -3,7 +3,6 @@
   "private": true,
   "scripts": {
     "test": "npx jest packages/*/test",
-    "test:ci": "npx jest --ci --testResultsProcessor=\"jest-junit\" --coverage",
     "test:watch": "npx jest packages/*/test --watchAll --coverage",
     "test:coverage": "npx jest packages/*/test --coverage",
     "build": "lerna exec --parallel -- babel --root-mode upward src -d lib --extensions \".ts\"",

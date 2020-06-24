@@ -2,7 +2,7 @@ version: 2.1
 orbs:
   node: circleci/node@1.1.6
 jobs:
-  build:
+  build-and-test:
     working_directory: ~/tmp
     executor:
       name: node/default
@@ -12,40 +12,20 @@ jobs:
           steps:
             - run: npm install
             - run: npm run bootstrap
-  test:
-    working_directory: ~/tmp
-    executor:
-      name: node/default
-    steps:
-      - checkout
-      - node/with-cache:
-          steps:
             - run:
                 name: Test
-                command: npm run test:ci
+                command: npm run test:coverage
                 environment:
                   JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
             - store_test_results:
                 path: ./reports/junit/
+            - store_artifacts:
                 path: ./coverage/
-  lint:
-    working_directory: ~/tmp
-    executor:
-      name: node/default
-    steps:
-      - checkout
-      - node/with-cache:
-          steps:
-            - run: npm run lint
+            - run:
+                name: Lint
+                command: npm run lint
 
 workflows:
-  version: 2
-  node:
-    jobs:
-      - build
-      - test:
-          requires:
-            - build
-      - lint:
-          requires:
-            - build
+    build-and-test:
+      jobs:
+        - build-and-test
