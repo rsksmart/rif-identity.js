@@ -40,8 +40,13 @@ jobs:
             - run: npm run lint
 
 workflows:
-    node:
-      jobs:
-        - build
-        - test
-        - lint
+  version: 2
+  node:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - lint:
+          requires:
+            - build
