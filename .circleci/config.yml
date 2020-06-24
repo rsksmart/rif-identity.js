@@ -12,7 +12,14 @@ jobs:
           steps:
             - run: npm install
             - run: npm run bootstrap
-            - run: npm test
+            - name: Test
+                command: npm run test:coverage
+                environment:
+                  JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
+            - store_test_results:
+                path: ./reports/junit/
+                path: ./coverage/
+
 workflows:
     build-and-test:
       jobs:
