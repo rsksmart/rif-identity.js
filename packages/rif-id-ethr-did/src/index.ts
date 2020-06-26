@@ -1,0 +1,1 @@
+export { rskDIDFromPrivateKey } from './rskDID'
