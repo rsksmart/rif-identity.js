@@ -1,0 +1,31 @@
+{
+  "name": "@rsksmart/rif-id-ethr-did",
+  "version": "0.0.0",
+  "description": "RIF Identity - Ethereum DID",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rsksamrt/rif-identity.js.git"
+  },
+  "keywords": [
+    "rsk",
+    "rif",
+    "identity"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rsksamrt/rif-identity.js/issues"
+  },
+  "homepage": "https://github.com/rsksamrt/rif-identity.js#readme",
+  "dependencies": {
+    "@types/elliptic": "^6.4.12",
+    "@types/keccak": "^3.0.1",
+    "@types/lodash": "^4.14.157",
+    "elliptic": "^6.5.3",
+    "ethr-did": "^1.1.0",
+    "keccak": "^3.0.0",
+    "lodash": "^4.17.15",
+    "rskjs-util": "^1.0.3"
+  }
+}
