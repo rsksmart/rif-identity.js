@@ -1,0 +1,24 @@
+{
+  "name": "@rsksmart/rif-id-core-reducer",
+  "version": "0.0.0",
+  "description": "RIF Identity - Core reducer",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rsksamrt/rif-identity.js.git"
+  },
+  "keywords": [
+    "rsk",
+    "rif",
+    "identity"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rsksamrt/rif-identity.js/issues"
+  },
+  "homepage": "https://github.com/rsksamrt/rif-identity.js#readme",
+  "dependencies": {
+    "@reduxjs/toolkit": "^1.4.0"
+  }
+}
