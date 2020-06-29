@@ -86,7 +86,7 @@ export const getProviderByName = (state: IdentityProvidersState, name: string) =
 type AddMnemonicProvider = (dispatch: Dispatch) => (name: string, mnemonic: string) => void
 type AddMnemonicProviderDefault = (dispatch: Dispatch) => (mnemonic: string) => void
 
-export const addMnemonicProvider: AddMnemonicProvider = (dispatch) => function (name, mnemonic) {
+export const addMnemonicProvider: AddMnemonicProvider = (dispatch) => (name, mnemonic) => {
 dispatch(addProvider({
     name,
     provider: {
@@ -98,7 +98,7 @@ dispatch(addProvider({
   }))
 }
 
-export const addMnemonicProviderDefault: AddMnemonicProviderDefault = (dispatch) => function (mnemonic) {
+export const addMnemonicProviderDefault: AddMnemonicProviderDefault = (dispatch) => (mnemonic) => {
   addMnemonicProvider(dispatch)('default', mnemonic)
 }
 
