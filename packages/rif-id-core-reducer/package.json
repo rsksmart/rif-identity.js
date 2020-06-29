@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "description": "RIF Identity - Core reducer",
   "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rsksamrt/rif-identity.js.git"
