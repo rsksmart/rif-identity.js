@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction, Dispatch } from '@reduxjs/toolkit'
 
 interface MnemonicIdentity {
   mnemonic: string
@@ -81,6 +81,26 @@ export const hasProviders = (state: IdentityProvidersState) => !!state.defaultPr
 export const hasProviderByName = (state: IdentityProvidersState, name: string) => name in state.providers
 export const getDefaultProvider = (state: IdentityProvidersState) => state.providers[state.defaultProvider!]
 export const getProviderByName = (state: IdentityProvidersState, name: string) => state.providers[name]
+
+// dispatchers
+type AddMnemonicProvider = (dispatch: Dispatch) => (name: string, mnemonic: string) => void
+type AddMnemonicProviderDefault = (dispatch: Dispatch) => (mnemonic: string) => void
+
+export const addMnemonicProvider: AddMnemonicProvider = (dispatch) => function (name, mnemonic) {
+dispatch(addProvider({
+    name,
+    provider: {
+      type: 'mnemonic',
+      args: {
+        mnemonic
+      }
+    }
+  }))
+}
+
+export const addMnemonicProviderDefault: AddMnemonicProviderDefault = (dispatch) => function (mnemonic) {
+  addMnemonicProvider(dispatch)('default', mnemonic)
+}
 
 // reducer
 export default signatureProviderSlice.reducer

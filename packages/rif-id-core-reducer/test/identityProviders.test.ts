@@ -10,8 +10,11 @@ import signatureProvider, {
   getProviderNames,
   getDefaultProvider,
   getProviderByName,
-  hasProviderByName
+  hasProviderByName,
+  addMnemonicProvider,
+  addMnemonicProviderDefault
 } from '../src/identityProviders'
+import { createStore } from '@reduxjs/toolkit'
 
 const mnemonic1 = 'arctic element road type cotton window uncover vicious goat puppy dune dragon'
 const mnemonic2 = 'drip reopen mesh throw correct current smile gossip child display come stove rice camera globe'
@@ -361,6 +364,36 @@ describe('signature provider', () => {
         }
       })
       expect(getProviderByName(twoProvidersState, 'mnemonic3')).toBeUndefined()
+    })
+  })
+})
+
+describe('dispatchers', () => {
+  test('add mnemonic provider', () => {
+    const store = createStore(signatureProvider)
+
+    addMnemonicProvider(store.dispatch)('mnemonic1', mnemonic1)
+
+    const state = store.getState()
+
+    expect(state).toEqual(oneProviderState)
+  })
+
+  test('add mnemonic provider default', () => {
+    const store = createStore(signatureProvider)
+
+    addMnemonicProviderDefault(store.dispatch)(mnemonic1)
+
+    const state = store.getState()
+
+    expect(state).toEqual({
+      providers: {
+        default: {
+          type: 'mnemonic',
+          args: { mnemonic: mnemonic1 }
+        }
+      },
+      defaultProvider: 'default'
     })
   })
 })
