@@ -87,7 +87,7 @@ type AddMnemonicProvider = (dispatch: Dispatch) => (name: string, mnemonic: stri
 type AddMnemonicProviderDefault = (dispatch: Dispatch) => (mnemonic: string) => void
 
 export const addMnemonicProvider: AddMnemonicProvider = (dispatch) => (name, mnemonic) => {
-dispatch(addProvider({
+  dispatch(addProvider({
     name,
     provider: {
       type: 'mnemonic',
