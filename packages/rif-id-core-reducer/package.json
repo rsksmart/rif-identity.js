@@ -1,7 +1,7 @@
 {
-  "name": "@rsksmart/rif-id-mnemonic",
+  "name": "@rsksmart/rif-id-core-reducer",
   "version": "0.0.0",
-  "description": "RIF Identity - mnemonic",
+  "description": "RIF Identity - Core reducer",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "repository": {
@@ -20,11 +20,6 @@
   },
   "homepage": "https://github.com/rsksamrt/rif-identity.js#readme",
   "dependencies": {
-    "@types/lodash": "^4.14.155",
-    "@types/randombytes": "^2.0.0",
-    "bip32": "^2.0.5",
-    "bip39": "^3.0.2",
-    "lodash": "^4.17.15",
-    "randombytes": "^2.1.0"
+    "@reduxjs/toolkit": "^1.4.0"
   }
 }
