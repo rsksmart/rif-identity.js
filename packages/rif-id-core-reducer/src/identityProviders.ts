@@ -7,7 +7,7 @@ interface MnemonicIdentity {
 type IdentityProviderType = 'mnemonic' // | 'other-provider'
 type IdentityProviderArgs = MnemonicIdentity // | OtherProvider
 
-interface IdentityProviderState {
+export interface IdentityProviderState {
   type: IdentityProviderType
   args?: IdentityProviderArgs
 }
