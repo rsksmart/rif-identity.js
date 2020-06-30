@@ -1,4 +1,4 @@
-import RIFIdentity from '../src/core'
+import RIFIdentity, { RIFIdentityInterface } from '../src/core'
 import { hasProviders } from '@rsksmart/rif-id-core-reducer/lib/identityProviders'
 
 const mnemonic = 'egg quote away castle human cluster penalty blood word sweet fall swing'
@@ -11,7 +11,7 @@ describe('mnemonic management', () => {
   })
 
   test('create empty identity and add mnemonic', () => {
-    const identity = new RIFIdentity()
+    const identity: RIFIdentityInterface = new RIFIdentity()
 
     identity.addMnemonicProvider('default', mnemonic)
 

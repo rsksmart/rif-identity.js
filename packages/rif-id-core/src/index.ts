@@ -1,1 +1,2 @@
-export { default as RIFIdentity } from './core'
+import RIFIdentity from './core'
+export default RIFIdentity
