@@ -1,0 +1,6 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "emitDeclarationOnly": true               /* Only emit '.d.ts' declaration files. */
+  }
+}
