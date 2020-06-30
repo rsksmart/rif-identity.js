@@ -6,5 +6,10 @@
   },
   "include": [
     "src"
+  ],
+  "references": [
+    { "path": "../rif-id-core-reducer" },
+    { "path": "../rif-id-ethr-did" },
+    { "path": "../rif-id-mnemonic" }
   ]
 }

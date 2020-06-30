@@ -2,6 +2,7 @@
   "name": "root",
   "private": true,
   "scripts": {
+    "setup": "npm run link && npm run bootstrap",
     "test": "npx jest packages/*/test",
     "test:watch": "npx jest packages/*/test --watchAll --coverage",
     "test:coverage": "npx jest packages/*/test --coverage",
@@ -12,6 +13,7 @@
     "lint": "npx eslint packages/*/src/**/* packages/*/test/**/* --ext .json,.js,.ts",
     "lint:fix": "npx eslint packages/*/src/**/* packages/*/test/**/* --ext .json,.js,.ts --fix",
     "lint:ci": "npx eslint packages/*/src/**/* packages/*/test/**/* --ext .json,.js,.ts --format junit --output-file ./reports/eslint.xml",
+    "link": "npx lerna link",
     "bootstrap": "lerna bootstrap"
   },
   "devDependencies": {
