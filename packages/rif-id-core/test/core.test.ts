@@ -40,4 +40,13 @@ describe('mnemonic management', () => {
     expect(mnemonicProvider.type).toEqual('mnemonic')
     expect(mnemonicProvider.args!.mnemonic.split(' ').length).toEqual(length)
   })
+
+  test('create an identity with a new mnemonic - default size', () => {
+    const identity = RIFIdentity.createWithMnemonic()
+
+    const mnemonicProvider = identity.getDefaultProvider()
+
+    expect(mnemonicProvider.type).toEqual('mnemonic')
+    expect(mnemonicProvider.args!.mnemonic.split(' ').length).toEqual(12)
+  })
 })

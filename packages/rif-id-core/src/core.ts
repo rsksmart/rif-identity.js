@@ -19,7 +19,7 @@ export interface RIFIdentityStateInterface {
 
 export interface RIFIdentityFactory {
   fromMnemonic: (mnemonic: string) => RIFIdentityInterface
-  createWithMnemonic: (sentenceLength: number) => RIFIdentityInterface
+  createWithMnemonic: (sentenceLength?: number) => RIFIdentityInterface
 
 }
 export interface RIFIdentityInterface {
@@ -53,7 +53,7 @@ RIFIdentity.fromMnemonic = function (mnemonic: string) {
   return identity
 }
 
-RIFIdentity.createWithMnemonic = function (sentenceLength: number) {
+RIFIdentity.createWithMnemonic = function (sentenceLength: number = 12) {
   return pipe(
     generateMnemonic,
     RIFIdentity.fromMnemonic
