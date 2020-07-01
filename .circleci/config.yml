@@ -12,7 +12,6 @@ jobs:
           steps:
             - run: npm install
             - run: npm run setup
-            - run: npm run build # TODO: remove this, types should be auto-detected
             - run:
                 name: Test
                 command: npm run test:ci
