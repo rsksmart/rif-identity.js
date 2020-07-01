@@ -1,5 +1,5 @@
 import RIFIdentity from '../src/core'
-import { hasProviders } from '@rsksmart/rif-id-core-reducer/lib/identityProviders'
+import { hasProviders } from '@rsksmart/rif-id-core-reducer/src/identityProviders'
 
 const mnemonic = 'egg quote away castle human cluster penalty blood word sweet fall swing'
 
