@@ -26,7 +26,7 @@ This is the RIF Identity core module. It allows to handle different identities i
 Create a mnemonic identity:
 
 ```javascript
-import RIFIdentityCore from '@rsksmart/rif-id-core'
+import RIFIdentity from '@rsksmart/rif-id-core'
 
 const identity = RIFIdentity.createWithMnemonic()
 
