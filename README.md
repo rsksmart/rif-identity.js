@@ -19,7 +19,18 @@ npm i @rsksmart/rif-id
 
 TBD
 
-## Test
+## Development
+
+Setup:
+
+```
+npm install
+npm run setup
+```
+
+First installs global dependencies, then links inner packages, finally installs inner packages dependencies.
+
+### Test
 
 Run all packages tests using [Jest](https://jestjs.io/)
 
@@ -41,7 +52,7 @@ Variants:
   npm run test:coverage
   ```
 
-## Build
+### Build
 
 Builds `src/` folder into `lib/` folder of each package in `packages/` folder using [Babel](https://babeljs.io/)
 
@@ -49,7 +60,7 @@ Builds `src/` folder into `lib/` folder of each package in `packages/` folder us
 npm run build
 ```
 
-## Lint
+### Lint
 
 Enforced code syntax using [ESLint](eslint.org) using [standard config](https://github.com/standard/eslint-config-standard)
 
