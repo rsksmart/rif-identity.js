@@ -20,6 +20,7 @@
   "homepage": "https://github.com/rsksamrt/rif-identity.js#readme",
   "dependencies": {
     "daf-core": "^6.1.1",
-    "did-jwt-vc": "^1.0.3"
+    "did-jwt-vc": "^1.0.3",
+    "typeorm": "^0.2.25"
   }
 }
