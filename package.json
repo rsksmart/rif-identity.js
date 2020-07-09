@@ -17,6 +17,8 @@
   "devDependencies": {
     "@babel/cli": "^7.10.3",
     "@babel/core": "^7.10.3",
+    "@babel/plugin-proposal-class-properties": "^7.10.4",
+    "@babel/plugin-proposal-decorators": "^7.10.4",
     "@babel/preset-env": "^7.10.3",
     "@babel/preset-typescript": "^7.10.1",
     "@types/deep-freeze": "^0.1.2",
@@ -39,5 +41,8 @@
     "ts-jest": "^26.1.0",
     "typescript": "^3.9.5",
     "web3": "^1.2.9"
+  },
+  "dependencies": {
+    "typeorm": "^0.2.25"
   }
 }
