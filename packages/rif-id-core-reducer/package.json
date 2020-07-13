@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/rsksamrt/rif-identity.js#readme",
   "dependencies": {
-    "@reduxjs/toolkit": "^1.4.0"
+    "@reduxjs/toolkit": "^1.4.0",
+    "daf-core": "^6.1.1"
   }
 }
