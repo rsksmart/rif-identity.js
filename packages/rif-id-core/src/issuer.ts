@@ -9,7 +9,7 @@ import { IssuedCredentialsState, addCredentialBySubject, SubjectCredentialsState
 export interface VerifiableCredentialIssuanceData {
   expirationDate: Date
   claims: JwtCredentialSubject
-  subjectDid: string // TODO: type did?
+  subjectDid: string
   issuanceDate?: Date
 }
 
@@ -39,7 +39,7 @@ RIFIdIssuer.prototype.createVerifiableCredentialJwt = async function (data: Veri
     }
   }
 
-  const issuer: Issuer = rskDIDFromPrivateKey()('cdb2327689182b196629c48d00f98891645b2ff0596073cfe6d7852db6f5146d') // TODO: Get from default provider
+  const issuer: Issuer = rskDIDFromPrivateKey()('cdb2327689182b196629c48d00f98891645b2ff0596073cfe6d7852db6f5146d') // TODO: Get signer from new identityProvider
 
   const jwt = await createVerifiableCredentialJwt(vcPayload, issuer)
 
