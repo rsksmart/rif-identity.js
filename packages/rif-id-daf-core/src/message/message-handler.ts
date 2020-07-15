@@ -9,13 +9,30 @@ export class RIFIdMessageHandler extends AbstractMessageHandler {
       if (message.credentials) {
         const credential = message.credentials[0]
 
-        message.licenseNumber = credential.claims.find(claim => claim.type === 'licenseNumber')?.value
-        message.lastName = credential.claims.find(claim => claim.type === 'lastName')?.value
-        message.firstName = credential.claims.find(claim => claim.type === 'firstName')?.value
-        message.address = credential.claims.find(claim => claim.type === 'address')?.value
-        message.licenseType = credential.claims.find(claim => claim.type === 'licenseType')?.value
-        message.bloodType = credential.claims.find(claim => claim.type === 'bloodType')?.value
+        for (let i = 0; i < credential.claims.length; i++) {
+          const claim = credential.claims[i]
 
+          switch (claim.type) {
+            case 'licenseNumber':
+              message.licenseNumber = claim.value
+              break
+            case 'lastName':
+              message.lastName = claim.value
+              break
+            case 'firstName':
+              message.firstName = claim.value
+              break
+            case 'address':
+              message.address = claim.value
+              break
+            case 'licenseType':
+              message.licenseType = claim.value
+              break
+            case 'bloodType':
+              message.bloodType = claim.value
+              break
+          }
+        }
         return message
       }
     }
