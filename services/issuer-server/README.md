@@ -13,13 +13,17 @@ npm i
 Run server with:
 
 ```
-node index.js
+node index.js PORT
 ```
+
+- `PORT` optional server port
 
 ## Develop
 
 Run for development:
 
 ```
-npx nodemon index.js
+npx nodemon index.js PORT
 ```
+
+- `PORT` optional server port

@@ -4,7 +4,7 @@ const EthrDID = require('ethr-did')
 const { createVerifiableCredentialJwt } = require('did-jwt-vc')
 
 var app = express()
-const port = 3000
+const port = process.argv.length > 2 ? process.argv[2] : 3000
 
 var jsonParser = bodyParser.json()
 
