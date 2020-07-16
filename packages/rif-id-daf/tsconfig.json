@@ -11,5 +11,6 @@
   ],
   "references": [
     { "path": "../rif-id-mnemonic" },
+    { "path": "../rif-id-ethr-did" },
   ]
 }

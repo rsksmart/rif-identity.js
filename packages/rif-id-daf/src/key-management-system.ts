@@ -28,8 +28,9 @@ export class RIFIdKeyManagementSystem extends AbstractKeyManagementSystem {
     const seed = await this.seedStore.get()
 
     const hdKey = await seedToRSKHDKey(Buffer.from(seed.seedHex, 'hex'))
-    const privateKeyHex = hdKey.derive(seed.derivationCount).privateKey?.toString('hex')
-    const publicKeyHex = hdKey.derive(seed.derivationCount).publicKey.toString('hex')
+    const derivedKey = hdKey.derive(seed.derivationCount)
+    const privateKeyHex = derivedKey.privateKey?.toString('hex')
+    const publicKeyHex = derivedKey.publicKey.toString('hex')
 
     const serializedKey = {
       type,
