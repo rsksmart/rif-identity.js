@@ -21,7 +21,7 @@ export class SeedStore extends AbstractSeedStore {
       identitySeed.seedHex = await this.secretBox.encrypt(identitySeed.seedHex)
     }
     debug('Saving seed')
-    const resultIdentitySeed = await (await this.dbConnection).getRepository(IdentitySeed).save(identitySeed)
+    await (await this.dbConnection).getRepository(IdentitySeed).save(identitySeed)
     return true
   }
 
@@ -32,6 +32,14 @@ export class SeedStore extends AbstractSeedStore {
       identitySeed.seedHex = await this.secretBox.encrypt(identitySeed.seedHex)
     }
     debug('Saving seed')
+    await (await this.dbConnection).getRepository(IdentitySeed).save(identitySeed)
+    return true
+  }
+
+  async increment(id: number) {
+    const identitySeed = await (await this.dbConnection).getRepository(IdentitySeed).findOne(id)
+    identitySeed.derivationCount = identitySeed.derivationCount + 1
+    debug('Incrementing seed count')
     await (await this.dbConnection).getRepository(IdentitySeed).save(identitySeed)
     return true
   }
@@ -51,5 +59,10 @@ export class SeedStore extends AbstractSeedStore {
     debug('Deleting seed')
     await (await this.dbConnection).getRepository(IdentitySeed).remove(identitySeed)
     return true
+  }
+
+  async exist() {
+    const count = await (await this.dbConnection).getRepository(IdentitySeed).count()
+    return count > 0
   }
 }

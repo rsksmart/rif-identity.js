@@ -1,23 +1,17 @@
-import { createConnection, Connection } from 'typeorm'
-import { Entities as DAFEntities, Identity } from 'daf-core'
-import { Entities, IdentitySeed } from '../src/entities'
+import { Connection } from 'typeorm'
+import { Identity } from 'daf-core'
+import { IdentitySeed } from '../src/entities'
+import { createSqliteConnection } from './util'
 
 describe('entities', () => {
   let connection: Connection;
 
   beforeEach(async () => {
-    connection = await createConnection({
-      type: 'sqlite',
-      database: './rif-id-daf.entities.test.sqlite',
-      entities: [...Entities, ...DAFEntities],
-      logging: false,
-      dropSchema: true, // Isolate each test case
-      synchronize: true
-    });
-  });
+    connection = await createSqliteConnection('./rif-id-daf.entities.test.sqlite')
+  })
 
   afterEach(async () => {
-      await connection.close();
+    await connection.close();
   });
 
   test('save identity to DB', async () => {

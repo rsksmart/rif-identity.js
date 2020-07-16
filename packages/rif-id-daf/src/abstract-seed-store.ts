@@ -5,4 +5,5 @@ export abstract class AbstractSeedStore {
   abstract set(id: number, seed: string): Promise<boolean>
   abstract get(): Promise<IdentitySeed>
   abstract delete(): Promise<boolean>
+  abstract exist(): Promise<boolean>
 }

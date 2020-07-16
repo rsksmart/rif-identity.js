@@ -1,21 +1,13 @@
-import { createConnection, Connection } from 'typeorm'
-import { Entities as DAFEntities } from 'daf-core'
+import { Connection } from 'typeorm'
 import { SecretBox } from 'daf-libsodium'
-import { Entities } from '../src/entities'
+import { createSqliteConnection } from './util'
 import { SeedStore } from '../src/seed-store';
 
-describe('entities', () => {
+describe('seed store', () => {
   let connection: Promise<Connection>;
 
   beforeEach(async () => {
-    connection = createConnection({
-      type: 'sqlite',
-      database: './rif-id-daf.entities.test.sqlite',
-      entities: [...Entities, ...DAFEntities],
-      logging: false,
-      dropSchema: true, // Isolate each test case
-      synchronize: true
-    });
+    connection = createSqliteConnection('./rif-id-daf.seed-store.test.sqlite')
   });
 
   afterEach(async () => {
@@ -47,7 +39,6 @@ describe('entities', () => {
 
     expect(seedStore.get()).rejects.toThrow()
   })
-
 
   test('without secret box', async () => {
     const seedStore = new SeedStore(connection)

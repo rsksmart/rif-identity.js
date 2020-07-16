@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/rsksamrt/rif-identity.js#readme",
   "dependencies": {
+    "@rsksmart/rif-id-mnemonic": "0.0.0",
     "daf-core": "^6.1.1",
     "typeorm": "^0.2.25"
   }

@@ -3,9 +3,13 @@
   "compilerOptions": {
     "outDir": "lib",
     "rootDir": "src",
-    "declarationDir": "lib"
+    "declarationDir": "lib",
+    "skipLibCheck": true
   },
   "include": [
     "src"
+  ],
+  "references": [
+    { "path": "../rif-id-mnemonic" },
   ]
 }
