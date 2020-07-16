@@ -10,3 +10,4 @@ lib
 # jest
 coverage
 junit.xml
+rif-id-daf.entities.test.sqlite

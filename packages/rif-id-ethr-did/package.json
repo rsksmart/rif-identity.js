@@ -4,6 +4,9 @@
   "description": "RIF Identity - Ethereum DID",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rsksamrt/rif-identity.js.git"
