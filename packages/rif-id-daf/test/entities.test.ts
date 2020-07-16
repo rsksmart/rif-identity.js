@@ -26,15 +26,16 @@ describe('entities', () => {
     identity.did = did
     await identity.save()
 
-    const identitySeed = new IdentitySeed(did, '0123abcd')
+    const seedHex = '0123abcd'
+    const identitySeed = new IdentitySeed(seedHex)
     await identitySeed.save()
 
     const identityFromDb = await Identity.findOne(identity.did)
     if (!identityFromDb) throw 'Error'
     expect(identityFromDb.did).toEqual(did)
 
-    const identitySeedFromDb = await IdentitySeed.findOne(identitySeed.did)
+    const identitySeedFromDb = await IdentitySeed.findOne(0)
     if (!identitySeedFromDb) throw 'Error'
-    expect(identitySeedFromDb.did).toEqual(did)
+    expect(identitySeedFromDb.seedHex).toEqual(seedHex)
   })
 })

@@ -2,19 +2,20 @@ import {
   Entity,
   Column,
   BaseEntity,
-  PrimaryColumn
+  PrimaryColumn,
+  Generated
 } from 'typeorm'
 
 @Entity()
 export class IdentitySeed extends BaseEntity {
-  constructor(did: string, seedHex: string) {
+  constructor(seedHex: string) {
     super()
-    this.did = did
     this.seedHex = seedHex
   }
 
   @PrimaryColumn()
-  did: string
+  @Generated('increment')
+  id: string
 
   @Column()
   seedHex: string
