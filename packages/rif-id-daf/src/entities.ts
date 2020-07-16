@@ -15,7 +15,7 @@ export class IdentitySeed extends BaseEntity {
 
   @PrimaryColumn()
   @Generated('increment')
-  id: string
+  id: number
 
   @Column()
   seedHex: string

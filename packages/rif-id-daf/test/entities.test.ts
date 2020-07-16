@@ -6,14 +6,14 @@ describe('entities', () => {
   let connection: Connection;
 
   beforeEach(async () => {
-      connection = await createConnection({
-          type: 'sqlite',
-          database: './rif-id-daf.entities.test.sqlite',
-          entities: [...Entities, ...DAFEntities],
-          logging: false,
-          dropSchema: true, // Isolate each test case
-          synchronize: true
-      });
+    connection = await createConnection({
+      type: 'sqlite',
+      database: './rif-id-daf.entities.test.sqlite',
+      entities: [...Entities, ...DAFEntities],
+      logging: false,
+      dropSchema: true, // Isolate each test case
+      synchronize: true
+    });
   });
 
   afterEach(async () => {
@@ -34,7 +34,7 @@ describe('entities', () => {
     if (!identityFromDb) throw 'Error'
     expect(identityFromDb.did).toEqual(did)
 
-    const identitySeedFromDb = await IdentitySeed.findOne(0)
+    const identitySeedFromDb = await IdentitySeed.findOne()
     if (!identitySeedFromDb) throw 'Error'
     expect(identitySeedFromDb.seedHex).toEqual(seedHex)
   })
