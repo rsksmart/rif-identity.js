@@ -30,10 +30,10 @@ The model uses a wallet account like derivation for identity keys:
 For a better developer experience the extension also provides BIP-44 support. Use mnemonic phrase instead of hex keys.
 
 To use this interface we provide:
-1. Extension for `daf` `Entities` ORM type, adding two fields to de `Identity` type: seed and last derivation - inheritance used here.
-2. Extension for `daf` `Key Store` enabling to store a seed - inheritance used here
-3. Extension for `daf-libsodium` and `daf-react-native-libsodium` `Key Management System` enabling to create identities with a stored seed - wrapper used here
-4. Extension for `daf-ethr-did` `IdentityProvider` that is responsible for correct derivation and flag las derivation performed done - class override used here.
+1. New ORM Entity: `Seed`. Now used to store one single mnemonic.
+2. `SeedStore` class - interface to store a seed
+3. `RIFIdKeyManagementSystem` class - wrapper for a `daf` `AbstractKeyManagementSystem` - responsible for creating private keys derived from the mnemonic's seed.
+4. `RIFIdentityProvider` class - Extension for `daf` `IdentityProvider` enabling to import a mnemonic
 
 All this modules can be plugged to uPort agent as explained in [usage](#usage) to provide uPort agent of this capabilities.
 
@@ -41,22 +41,64 @@ All this modules can be plugged to uPort agent as explained in [usage](#usage) t
 
 ## Usage
 
-```typescript
-import { IdentityProvider, }
+To setup a DAF agent using RIF identity provider implementation:
 
-const identityProvider = new IdentityProvider({
-  kms: new KeyManagementSystem(new KeyStore('./store')),
-  identityStore: new IdentityStore('rsk', dbConnection),
-  network: 'rsk',
-  rpcUrl: 'http://localhost:8545'
+```typescript
+import { createConnection } from 'typeorm'
+import { Entities as DAFEntities, KeyStore, IdentityStore, Agent } from 'daf-core'
+import { SecretBox, KeyManagementSystem } from 'daf-libsodium'
+export { Entities, IdentitySeed, RIFIdentityProvider, RIFIdKeyManagementSystem, SeedStore } from '@rsksmart/rif-id-daf'
+import { generateMnemonic } from '@rsksmart/rif-id-mnemonic'
+
+const connection = createConnection({
+  type: 'sqlite',
+  database: 'sample.sqlite,
+  entities: [...Entities, ...DAFEntities],
+  logging: false,
+  dropSchema: true, // Isolate each test case
+  synchronize: true
 })
+
+// daf secret box
+const secretKey = '29739248cad1bd1a0fc4d9b75cd4d2990de535baf5caadfdf8d8f86664aa830c'
+const secretBox = new SecretBox(secretKey)
+
+// daf key management system
+const keyManagementSystem = new KeyManagementSystem(new KeyStore(connection, secretBox))
+// rif seed store
+const seedStore = new SeedStore(connection, secretBox)
+// rif key management system
+const rifIdKeyManagementSystem = new RIFIdKeyManagementSystem(keyManagementSystem, seedStore)
+
+// rif identity provider
+const identityProvider = new RIFIdentityProvider({
+    kms: rifIdKeyManagementSystem,
+    identityStore: new IdentityStore('rsk-testnet-ethr', connection),
+    network: 'rsk',
+    rpcUrl: 'http://localhost:8545'
+})
+
+const agent = new Agent({
+    dbConnection: connection,
+    identityProviders: [identityProvider],
+    didResolver: null,
+    /* your options */
+})
+
+const mnemonic = generateMnemonic(12)
+
+await identityProvider.importMnemonic(mnemonic)
+
+const identity = await agent.identityManager.createIdentity()
 ```
 
 ## Todo
 
-- Change copy-pasted code in `identity-provider.ts`. PR into uPort DAF to be done.
+- Fix test for address digest.
 
 ## Extend
+
+- Enable multiple mnemonics
 
 ## Test
 
