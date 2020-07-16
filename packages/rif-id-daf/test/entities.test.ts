@@ -4,15 +4,15 @@ import { IdentitySeed } from '../src/entities'
 import { createSqliteConnection } from './util'
 
 describe('entities', () => {
-  let connection: Connection;
+  let connection: Connection
 
   beforeEach(async () => {
     connection = await createSqliteConnection('./rif-id-daf.entities.test.sqlite')
   })
 
   afterEach(async () => {
-    await connection.close();
-  });
+    await connection.close()
+  })
 
   test('save identity to DB', async () => {
     const did = 'did:test:123'
@@ -25,11 +25,11 @@ describe('entities', () => {
     await identitySeed.save()
 
     const identityFromDb = await Identity.findOne(identity.did)
-    if (!identityFromDb) throw 'Error'
+    if (!identityFromDb) throw new Error('Error')
     expect(identityFromDb.did).toEqual(did)
 
     const identitySeedFromDb = await IdentitySeed.findOne()
-    if (!identitySeedFromDb) throw 'Error'
+    if (!identitySeedFromDb) throw new Error('Error')
     expect(identitySeedFromDb.seedHex).toEqual(seedHex)
   })
 })

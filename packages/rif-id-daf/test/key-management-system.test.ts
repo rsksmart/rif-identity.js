@@ -3,20 +3,20 @@ import { KeyStore } from 'daf-core'
 import { SecretBox, KeyManagementSystem } from 'daf-libsodium'
 import { generateMnemonic, mnemonicToSeed, seedToRSKHDKey } from '@rsksmart/rif-id-mnemonic'
 import { createSqliteConnection } from './util'
-import { SeedStore } from '../src/seed-store';
-import { RIFIdKeyManagementSystem } from '../src/key-management-system';
+import { SeedStore } from '../src/seed-store'
+import { RIFIdKeyManagementSystem } from '../src/key-management-system'
 import { Key } from 'daf-libsodium/build/key-management-system'
 
 describe('key management system', () => {
-  let connection: Promise<Connection>;
+  let connection: Promise<Connection>
 
   beforeEach(async () => {
     connection = createSqliteConnection('./rif-id-daf.kms.test.sqlite')
-  });
+  })
 
   afterEach(async () => {
-      await (await connection).close();
-  });
+    await (await connection).close()
+  })
 
   test('import mnemonic', async () => {
     const secretKey = '29739248cad1bd1a0fc4d9b75cd4d2990de535baf5caadfdf8d8f86664aa830c'

@@ -8,7 +8,7 @@ import {
 
 @Entity()
 export class IdentitySeed extends BaseEntity {
-  constructor(seedHex: string) {
+  constructor (seedHex: string) {
     super()
     this.seedHex = seedHex
   }

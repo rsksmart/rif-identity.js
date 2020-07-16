@@ -1,4 +1,4 @@
-import { IdentitySeed } from "./entities";
+import { IdentitySeed } from './entities'
 
 export abstract class AbstractSeedStore {
   abstract create(seed: string): Promise<boolean>

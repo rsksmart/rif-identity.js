@@ -3,19 +3,18 @@ import { AbstractSecretBox } from 'daf-core'
 import { IdentitySeed } from './entities'
 import { AbstractSeedStore } from './abstract-seed-store'
 
-
 import Debug from 'debug'
 const debug = Debug('daf:key-store')
 
 export class SeedStore extends AbstractSeedStore {
-  constructor(private dbConnection: Promise<Connection>, private secretBox?: AbstractSecretBox) {
+  constructor (private dbConnection: Promise<Connection>, private secretBox?: AbstractSecretBox) {
     super()
     if (!secretBox) {
       console.warn('Please provide SecretBox to the KeyStore')
     }
   }
 
-  async create(seed: string) {
+  async create (seed: string) {
     const identitySeed = new IdentitySeed(seed)
     if (this.secretBox) {
       identitySeed.seedHex = await this.secretBox.encrypt(identitySeed.seedHex)
@@ -25,7 +24,7 @@ export class SeedStore extends AbstractSeedStore {
     return true
   }
 
-  async set(id: number, seed: string) {
+  async set (id: number, seed: string) {
     const identitySeed = new IdentitySeed(seed)
     identitySeed.id = id
     if (this.secretBox) {
@@ -36,7 +35,7 @@ export class SeedStore extends AbstractSeedStore {
     return true
   }
 
-  async increment(id: number) {
+  async increment (id: number) {
     const identitySeed = await (await this.dbConnection).getRepository(IdentitySeed).findOne(id)
     identitySeed.derivationCount = identitySeed.derivationCount + 1
     debug('Incrementing seed count')
@@ -44,7 +43,7 @@ export class SeedStore extends AbstractSeedStore {
     return true
   }
 
-  async get() {
+  async get () {
     const identitySeed = await (await this.dbConnection).getRepository(IdentitySeed).findOne()
     if (!identitySeed) throw Error('Key not found')
     if (this.secretBox && identitySeed) {
@@ -53,7 +52,7 @@ export class SeedStore extends AbstractSeedStore {
     return identitySeed
   }
 
-  async delete() {
+  async delete () {
     const identitySeed = await (await this.dbConnection).getRepository(IdentitySeed).findOne()
     if (!identitySeed) throw Error('Key not found')
     debug('Deleting seed')
@@ -61,7 +60,7 @@ export class SeedStore extends AbstractSeedStore {
     return true
   }
 
-  async exist() {
+  async exist () {
     const count = await (await this.dbConnection).getRepository(IdentitySeed).count()
     return count > 0
   }

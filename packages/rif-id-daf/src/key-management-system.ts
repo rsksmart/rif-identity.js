@@ -1,15 +1,15 @@
 import { AbstractKeyManagementSystem, KeyType } from 'daf-core'
-import { RNG, mnemonicToSeed, seedToRSKHDKey } from '@rsksmart/rif-id-mnemonic'
+import { mnemonicToSeed, seedToRSKHDKey } from '@rsksmart/rif-id-mnemonic'
 import { SeedStore } from './seed-store'
 import Debug from 'debug'
 const debug = Debug('daf:sodium:kms')
 
 export class RIFIdKeyManagementSystem extends AbstractKeyManagementSystem {
-  constructor(private baseSystem: AbstractKeyManagementSystem, private seedStore: SeedStore) {
+  constructor (private baseSystem: AbstractKeyManagementSystem, private seedStore: SeedStore) {
     super()
   }
 
-  async importMnemonic(mnemonic: string) {
+  async importMnemonic (mnemonic: string) {
     const existSeed = await this.seedStore.exist()
     if (existSeed) throw new Error('Seed already exists')
 
@@ -19,7 +19,7 @@ export class RIFIdKeyManagementSystem extends AbstractKeyManagementSystem {
     return true
   }
 
-  async createKey(type: KeyType) {
+  async createKey (type: KeyType) {
     if (!(type === 'Secp256k1')) return this.baseSystem.createKey(type)
 
     const existSeed = await this.seedStore.exist()
@@ -35,7 +35,7 @@ export class RIFIdKeyManagementSystem extends AbstractKeyManagementSystem {
       type,
       kid: publicKeyHex,
       publicKeyHex,
-      privateKeyHex,
+      privateKeyHex
     }
 
     const key = await this.baseSystem.importKey(serializedKey)
@@ -46,11 +46,11 @@ export class RIFIdKeyManagementSystem extends AbstractKeyManagementSystem {
     return key
   }
 
-  async getKey(kid: string) {
+  async getKey (kid: string) {
     return this.baseSystem.getKey(kid)
   }
 
-  async deleteKey(kid: string) {
+  async deleteKey (kid: string) {
     return this.baseSystem.deleteKey(kid)
   }
 }

@@ -9,4 +9,4 @@ export const createSqliteConnection = (database: string) => createConnection({
   logging: false,
   dropSchema: true, // Isolate each test case
   synchronize: true
-});
+})
