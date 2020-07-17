@@ -55,5 +55,18 @@ describe('agent', () => {
 
     expect(identity.did.slice(0, 15)).toEqual('did:ethr:rsk:0x')
     expect(identity.did.slice(15)).toHaveLength(40)
+
+    const identity2 = await agent.identityManager.createIdentity()
+
+    // const seed = await mnemonicToSeed(mnemonic)
+    // const hdKey = await seedToRSKHDKey(seed)
+    // const privateKey = hdKey.derive(1).privateKey.toString('hex')
+    // const rskAddress = rskAddressFromPrivateKey(privateKey)
+
+    // expect(identity.did).toEqual(`did:ethr:rsk:${rskAddress.toLowerCase()}`)
+    // TBD: DAF Digest is different than our implementation
+
+    expect(identity2.did.slice(0, 15)).toEqual('did:ethr:rsk:0x')
+    expect(identity2.did.slice(15)).toHaveLength(40)
   })
 })
