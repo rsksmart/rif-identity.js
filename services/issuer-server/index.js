@@ -3,6 +3,7 @@ var bodyParser = require('body-parser')
 const EthrDID = require('ethr-did')
 const { createVerifiableCredentialJwt } = require('did-jwt-vc')
 const { randomBytes } = require('crypto')
+const keccak256 = require('keccak256')
 
 var app = express()
 const port = process.argv.length > 2 ? process.argv[2] : 3000
@@ -26,9 +27,9 @@ app.post('/request', jsonParser, function (req, res) {
   }
 
   const token = randomBytes(32).toString('hex')
+  const hash = keccak256(did + token).toString('hex')
 
-  issuing[did] = true
-  challenge[did] = token
+  issuing[hash] = true
 
   createVerifiableCredentialJwt({
     sub: did,
@@ -41,19 +42,18 @@ app.post('/request', jsonParser, function (req, res) {
       }
     }
   }, issuer).then(jwt => {
-    issuing[did] = false
-    issued[did] = jwt
+    issuing[hash] = false
+    issued[hash] = jwt
   })
 
-  res.send({ did, token })
+  res.send({ token })
 })
 
 app.get('/', jsonParser, function (req, res) {
-  const { did, token } = req.body
+  const { hash } = req.body
 
-  if(challenge[did] !== token) res.status(500).send('Invalid request')
-  else if (issuing[did]) res.send({})
-  else if (issued[did]) res.send(issued[did])
+  if (issuing[hash]) res.send({})
+  else if (issued[hash]) res.send(issued[hash])
   else res.status(500).send('Credential not requested')
 })
 
