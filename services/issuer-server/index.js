@@ -2,6 +2,7 @@ var express = require('express')
 var bodyParser = require('body-parser')
 const EthrDID = require('ethr-did')
 const { createVerifiableCredentialJwt } = require('did-jwt-vc')
+const { randomBytes } = require('crypto')
 
 var app = express()
 const port = process.argv.length > 2 ? process.argv[2] : 3000
@@ -15,15 +16,19 @@ const issuer = new EthrDID({
 
 const issuing = {}
 const issued = {}
+const challenge = {}
 
 app.post('/request', jsonParser, function (req, res) {
-  const { did } = req.body
+  const { did, ...payload } = req.body
 
   if(!did) {
     return res.status(500).send('Invalid credential request')
   }
 
+  const token = randomBytes(32).toString('hex')
+
   issuing[did] = true
+  challenge[did] = token
 
   createVerifiableCredentialJwt({
     sub: did,
@@ -32,10 +37,7 @@ app.post('/request', jsonParser, function (req, res) {
       '@context': ['https://www.w3.org/2018/credentials/v1'],
       type: ['VerifiableCredential'],
       credentialSubject: {
-        degree: {
-          type: 'BachelorDegree',
-          name: 'Baccalauréat en musiques numériques'
-        }
+        ...payload
       }
     }
   }, issuer).then(jwt => {
@@ -43,13 +45,14 @@ app.post('/request', jsonParser, function (req, res) {
     issued[did] = jwt
   })
 
-  res.send('Issuing')
+  res.send({ did, token })
 })
 
 app.get('/', jsonParser, function (req, res) {
-  const { did } = req.body
+  const { did, token } = req.body
 
-  if (issuing[did]) res.send({})
+  if(challenge[did] !== token) res.status(500).send('Invalid request')
+  else if (issuing[did]) res.send({})
   else if (issued[did]) res.send(issued[did])
   else res.status(500).send('Credential not requested')
 })
