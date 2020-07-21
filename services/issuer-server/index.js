@@ -50,7 +50,7 @@ app.post('/request', jsonParser, function (req, res) {
 })
 
 app.get('/', jsonParser, function (req, res) {
-  const { hash } = req.body
+  const { hash } = req.query
 
   if (issuing[hash]) res.send({})
   else if (issued[hash]) res.send(issued[hash])
