@@ -68,7 +68,7 @@ describe('agent', () => {
 
     expect(identity2.did.slice(0, 15)).toEqual('did:ethr:rsk:0x')
     expect(identity2.did.slice(15)).toHaveLength(40)
-    
+
     expect(identity.did).not.toEqual(identity2.did)
   })
 })
