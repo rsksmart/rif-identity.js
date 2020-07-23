@@ -14,13 +14,13 @@ jobs:
             - run: npm run setup
             - run: npm run build # TODO: remove this, types should be auto-detected
             - run:
+                name: Lint
+                command: npm run lint:ci
+            - run:
                 name: Test
                 command: npm run test:ci
                 environment:
                   JEST_JUNIT_OUTPUT_DIR: ./reports/
-            - run:
-                name: Lint
-                command: npm run lint:ci
             - store_test_results:
                 path: ./reports/
             - store_artifacts:
