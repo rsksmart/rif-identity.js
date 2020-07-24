@@ -4,6 +4,9 @@
   "description": "RIF Identity - Ethereum DID",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rsksamrt/rif-identity.js.git"
@@ -23,6 +26,7 @@
     "@types/elliptic": "^6.4.12",
     "@types/keccak": "^3.0.1",
     "@types/lodash": "^4.14.157",
+    "@types/node": "^14.0.23",
     "elliptic": "^6.5.3",
     "ethr-did": "^1.1.0",
     "keccak": "^3.0.0",
