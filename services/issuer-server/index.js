@@ -4,16 +4,25 @@ const EthrDID = require('ethr-did')
 const { createVerifiableCredentialJwt } = require('did-jwt-vc')
 const { randomBytes } = require('crypto')
 const keccak256 = require('keccak256')
+require('dotenv').config()
+
+const PORT = process.env.PORT || 3000
 
 var app = express()
-const port = process.argv.length > 2 ? process.argv[2] : 3000
+// const port = process.argv.length > 2 ? process.argv[2] : 3000
 
 var jsonParser = bodyParser.json()
-
+const publicKey = process.env.PUBLIC_KEY
 const issuer = new EthrDID({
-  address: '0xf1232f840f3ad7d23fcdaa84d6c66dac24efb198',
-  privateKey: 'd8b595680851765f38ea5405129244ba3cbad84467d190859f4c8b20c1ff6c75'
+  address: process.env.ADDRESS,
+  privateKey: process.env.PRIVATE_KEY
 })
+
+const logger = (type, data) => {
+  const date = new Date()
+  const dateString = `${date.getHours()}:${(date.getMinutes() < 10 ? '0' : '') + date.getMinutes()}`
+  console.log(`[${dateString}] ${type.toUpperCase()} ${data}`)
+}
 
 const issuing = {}
 const issued = {}
@@ -22,7 +31,7 @@ const challenge = {}
 app.post('/request', jsonParser, function (req, res) {
   const { did, ...payload } = req.body
 
-  if(!did) {
+  if (!did) {
     return res.status(500).send('Invalid credential request')
   }
 
@@ -37,8 +46,14 @@ app.post('/request', jsonParser, function (req, res) {
     vc: {
       '@context': ['https://www.w3.org/2018/credentials/v1'],
       type: ['VerifiableCredential'],
+      exp: +new Date() + 31536000,
       credentialSubject: {
-        ...payload
+        ...payload,
+        'Issuance Office': 'North Office',
+        'License Number': 1234567890,
+        'License Type': 'A2',
+        'Vehicle Type': ['Car', 'Semi-truck'],
+        international: false
       }
     }
   }, issuer).then(jwt => {
@@ -46,15 +61,22 @@ app.post('/request', jsonParser, function (req, res) {
     issued[hash] = jwt
   })
 
+  logger('token issued:', token)
   res.send({ token })
 })
 
 app.get('/', jsonParser, function (req, res) {
   const { hash } = req.query
 
+  logger('requesting', hash)
+
   if (issuing[hash]) res.send({})
   else if (issued[hash]) res.send(issued[hash])
   else res.status(500).send('Credential not requested')
 })
 
-app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`))
+app.get('/info', jsonParser, function (req, res) {
+  res.send({ name: 'Government of Fun', public_key: publicKey })
+})
+
+app.listen(PORT, () => logger('start', `Issuer Server listening at http://localhost:${PORT}`))
