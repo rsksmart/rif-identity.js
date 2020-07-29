@@ -1,0 +1,29 @@
+{
+  "name": "@rsksmart/rif-id-comms",
+  "version": "0.0.0",
+  "description": "RIF Identity - Communications",
+  "main": "lib/index.js",
+  "types": "lib/index.d.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rsksamrt/rif-identity.js.git"
+  },
+  "keywords": [
+    "rsk",
+    "rif",
+    "identity"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rsksamrt/rif-identity.js/issues"
+  },
+  "homepage": "https://github.com/rsksamrt/rif-identity.js#readme",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "keccak256": "^1.0.0"
+  }
+}

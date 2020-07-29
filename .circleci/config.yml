@@ -17,6 +17,9 @@ jobs:
                 name: Lint
                 command: npm run lint:ci
             - run:
+                name: Start issuer server
+                command: cd services/issuer-server && npm i && node index.js
+            - run:
                 name: Test
                 command: npm run test:ci
                 environment:

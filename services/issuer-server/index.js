@@ -4,6 +4,7 @@ const EthrDID = require('ethr-did')
 const { createVerifiableCredentialJwt } = require('did-jwt-vc')
 const { randomBytes } = require('crypto')
 const keccak256 = require('keccak256')
+const { hashCredentialRequest } = require('../../packages/rif-id-comms/lib/requestCredential')
 
 var app = express()
 const port = process.argv.length > 2 ? process.argv[2] : 3000
@@ -19,15 +20,16 @@ const issuing = {}
 const issued = {}
 const challenge = {}
 
-app.post('/request', jsonParser, function (req, res) {
-  const { did, ...payload } = req.body
+app.post('/requestCredential', jsonParser, function (req, res) {
+  const { payload } = req.body
+  const { did, metadata } = payload
 
   if(!did) {
     return res.status(500).send('Invalid credential request')
   }
 
   const token = randomBytes(32).toString('hex')
-  const hash = keccak256(did + token).toString('hex')
+  const hash = hashCredentialRequest(payload, token)
 
   issuing[hash] = true
 
@@ -38,7 +40,7 @@ app.post('/request', jsonParser, function (req, res) {
       '@context': ['https://www.w3.org/2018/credentials/v1'],
       type: ['VerifiableCredential'],
       credentialSubject: {
-        ...payload
+        ...metadata
       }
     }
   }, issuer).then(jwt => {
@@ -50,7 +52,7 @@ app.post('/request', jsonParser, function (req, res) {
 })
 
 app.get('/', jsonParser, function (req, res) {
-  const { hash } = req.query
+  const hash = req.query.request
 
   if (issuing[hash]) res.send({})
   else if (issued[hash]) res.send(issued[hash])
