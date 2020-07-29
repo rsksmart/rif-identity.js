@@ -32,6 +32,14 @@ First installs global dependencies, then links inner packages, finally installs 
 
 ### Test
 
+Start the issuer server
+
+```
+cd services/issuer-server && npm start
+```
+
+> Install server dependencies before running for first time
+
 Run all packages tests using [Jest](https://jestjs.io/)
 
 ```

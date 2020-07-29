@@ -3,7 +3,6 @@ var bodyParser = require('body-parser')
 const EthrDID = require('ethr-did')
 const { createVerifiableCredentialJwt } = require('did-jwt-vc')
 const { randomBytes } = require('crypto')
-const keccak256 = require('keccak256')
 const { hashCredentialRequest } = require('../../packages/rif-id-comms/lib/requestCredential')
 
 var app = express()
@@ -18,7 +17,6 @@ const issuer = new EthrDID({
 
 const issuing = {}
 const issued = {}
-const challenge = {}
 
 app.post('/requestCredential', jsonParser, function (req, res) {
   const { payload } = req.body
