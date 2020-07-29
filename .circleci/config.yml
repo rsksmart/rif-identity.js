@@ -19,6 +19,7 @@ jobs:
             - run:
                 name: Start issuer server
                 command: cd services/issuer-server && npm i && node index.js
+                background: true
             - run:
                 name: Test
                 command: npm run test:ci
