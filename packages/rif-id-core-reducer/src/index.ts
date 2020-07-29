@@ -1,15 +1,5 @@
-import { combineReducers } from '@reduxjs/toolkit'
-import identityProviders, { IdentityProvidersState } from './identityProviders'
+import identityReducer from './identityReducer'
 
-export interface IdentityState {
-  identityProviders: IdentityProvidersState
+export default {
+  identity: identityReducer
 }
-
-const reducer = combineReducers({
-  identityProviders
-})
-
-// selectors
-export const getIdentityProviders = (state: IdentityState) => state.identityProviders
-
-export default reducer

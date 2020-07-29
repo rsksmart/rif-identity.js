@@ -1,5 +1,5 @@
 import { createStore, Store } from 'redux'
-import coreReducer from '@rsksmart/rif-id-core-reducer'
+import coreReducer from '@rsksmart/rif-id-core-reducer/lib/index2'
 import {
   addMnemonicProvider,
   addMnemonicProviderDefault,

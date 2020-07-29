@@ -41,7 +41,7 @@ describe('agent', () => {
 
     const mnemonic = generateMnemonic(12)
 
-    await identityProvider.importMnemonic(mnemonic)
+    await (agent.identityManager.getIdentityProviders()[0] as RIFIdentityProvider).importMnemonic(mnemonic)
 
     const identity = await agent.identityManager.createIdentity()
 
