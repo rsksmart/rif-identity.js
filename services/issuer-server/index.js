@@ -3,7 +3,12 @@ var bodyParser = require('body-parser')
 const EthrDID = require('ethr-did')
 const { createVerifiableCredentialJwt } = require('did-jwt-vc')
 const { randomBytes } = require('crypto')
-const { hashCredentialRequest } = require('../../packages/rif-id-comms/lib/requestCredential')
+const {
+  REQUEST_POST_PATH,
+  RESPONSE_GET_PATH,
+  hashCredentialRequest,
+  requestParser,
+  responseQueryParser } = require('../../packages/rif-id-comms/lib/requestCredential')
 
 var app = express()
 const port = process.argv.length > 2 ? process.argv[2] : 3000
@@ -18,8 +23,8 @@ const issuer = new EthrDID({
 const issuing = {}
 const issued = {}
 
-app.post('/requestCredential', jsonParser, function (req, res) {
-  const { payload } = req.body
+app.post(REQUEST_POST_PATH, jsonParser, function (req, res) {
+  const payload = requestParser(req.body)
   const { did, metadata } = payload
 
   if(!did) {
@@ -49,8 +54,8 @@ app.post('/requestCredential', jsonParser, function (req, res) {
   res.send({ token })
 })
 
-app.get('/', jsonParser, function (req, res) {
-  const hash = req.query.request
+app.get(RESPONSE_GET_PATH, jsonParser, function (req, res) {
+  const hash = responseQueryParser(req.query)
 
   if (issuing[hash]) res.send({})
   else if (issued[hash]) res.send(issued[hash])

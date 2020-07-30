@@ -23,7 +23,9 @@
   },
   "homepage": "https://github.com/rsksamrt/rif-identity.js#readme",
   "dependencies": {
-    "axios": "^0.19.2",
     "keccak256": "^1.0.0"
+  },
+  "devDependencies": {
+    "axios": "^0.19.2"
   }
 }
