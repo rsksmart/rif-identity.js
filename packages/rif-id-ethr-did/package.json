@@ -1,7 +1,7 @@
 {
   "name": "@rsksmart/rif-id-ethr-did",
-  "version": "0.0.0",
-  "description": "RIF Identity - Ethereum DID",
+  "version": "0.0.1",
+  "description": "RIF Identity - Ethr DID",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
