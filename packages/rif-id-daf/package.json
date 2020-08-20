@@ -1,7 +1,7 @@
 {
-  "name": "@rsksmart/rif-id-mnemonic",
-  "version": "0.0.1",
-  "description": "RIF Identity - mnemonic",
+  "name": "@rsksmart/rif-id-daf",
+  "version": "0.0.0",
+  "description": "RIF Identity - DAF",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
@@ -23,11 +23,9 @@
   },
   "homepage": "https://github.com/rsksamrt/rif-identity.js#readme",
   "dependencies": {
-    "@types/lodash": "^4.14.155",
-    "@types/randombytes": "^2.0.0",
-    "bip32": "^2.0.5",
-    "bip39": "^3.0.2",
-    "lodash": "^4.17.15",
-    "randombytes": "^2.1.0"
+    "@rsksmart/rif-id-mnemonic": "0.0.1",
+    "@rsksmart/rif-id-ethr-did": "0.0.1",
+    "daf-core": "^6.1.1",
+    "typeorm": "^0.2.25"
   }
 }

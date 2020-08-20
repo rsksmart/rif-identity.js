@@ -1,3 +1,13 @@
+# npm
 node_modules
+
+# ts
+tsconfig.tsbuildinfo
+
+# babel
 lib
+
+# jest
 coverage
+junit.xml
+*.sqlite

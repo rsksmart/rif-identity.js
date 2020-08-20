@@ -1,0 +1,52 @@
+version: 2.1
+orbs:
+  node: circleci/node@1.1.6
+jobs:
+  build-test-lint:
+    working_directory: ~/tmp
+    executor:
+      name: node/default
+    steps:
+      - checkout
+      - node/with-cache:
+          steps:
+            - run: npm install
+            - run: npm run setup
+            - run: npm run build # TODO: remove this, types should be auto-detected
+            - run:
+                name: Lint
+                command: npm run lint:ci
+            - run:
+                name: Test
+                command: npm run test:ci
+                environment:
+                  JEST_JUNIT_OUTPUT_DIR: ./reports/
+            - store_test_results:
+                path: ./reports/
+            - store_artifacts:
+                path: ./reports/
+  reproduce-build:
+    working_directory: ~/tmp2
+    executor:
+      name: node/default
+    steps:
+      - checkout
+      - node/with-cache:
+          steps:
+            - run: npm install
+            - run: npm run setup
+            - run:
+                name: Build
+                command: npm run build
+            - run: mkdir builds
+            - run: cp -r packages/rif-id-mnemonic/lib builds/rif-id-mnemonic
+            - run: cp -r packages/rif-id-ethr-did/lib builds/rif-id-ethr-did
+            - run: cp -r packages/rif-id-core-reducer/lib builds/rif-core-reducer
+            - store_artifacts:
+                path: ./builds/
+
+workflows:
+    build-test-lint:
+      jobs:
+        - build-test-lint
+        - reproduce-build
