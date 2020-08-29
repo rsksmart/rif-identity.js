@@ -1,7 +1,8 @@
 import { Connection } from 'typeorm'
 import { KeyStore, IdentityStore, Agent } from 'daf-core'
 import { SecretBox, KeyManagementSystem } from 'daf-libsodium'
-import { generateMnemonic } from '@rsksmart/rif-id-mnemonic'
+import { generateMnemonic, mnemonicToSeed, seedToRSKHDKey } from '@rsksmart/rif-id-mnemonic'
+import { rskAddressFromPrivateKey } from '@rsksmart/rif-id-ethr-did'
 import { createSqliteConnection } from './util'
 import { SeedStore } from '../src/seed-store'
 import { RIFIdKeyManagementSystem } from '../src/key-management-system'
@@ -45,26 +46,23 @@ describe('agent', () => {
 
     const identity = await agent.identityManager.createIdentity()
 
-    // const seed = await mnemonicToSeed(mnemonic)
-    // const hdKey = await seedToRSKHDKey(seed)
-    // const privateKey = hdKey.derive(0).privateKey.toString('hex')
-    // const rskAddress = rskAddressFromPrivateKey(privateKey)
+    const seed = await mnemonicToSeed(mnemonic)
+    const hdKey = await seedToRSKHDKey(seed)
 
-    // expect(identity.did).toEqual(`did:ethr:rsk:${rskAddress.toLowerCase()}`)
-    // TBD: DAF Digest is different than our implementation
+    const privateKey = hdKey.derive(0).privateKey.toString('hex')
+    const rskAddress = rskAddressFromPrivateKey(privateKey)
+
+    expect(identity.did).toEqual(`did:ethr:rsk:${rskAddress.toLowerCase()}`)
 
     expect(identity.did.slice(0, 15)).toEqual('did:ethr:rsk:0x')
     expect(identity.did.slice(15)).toHaveLength(40)
 
     const identity2 = await agent.identityManager.createIdentity()
 
-    // const seed = await mnemonicToSeed(mnemonic)
-    // const hdKey = await seedToRSKHDKey(seed)
-    // const privateKey = hdKey.derive(1).privateKey.toString('hex')
-    // const rskAddress = rskAddressFromPrivateKey(privateKey)
+    const privateKey2 = hdKey.derive(1).privateKey.toString('hex')
+    const rskAddress2 = rskAddressFromPrivateKey(privateKey2)
 
-    // expect(identity.did).toEqual(`did:ethr:rsk:${rskAddress.toLowerCase()}`)
-    // TBD: DAF Digest is different than our implementation
+    expect(identity2.did).toEqual(`did:ethr:rsk:${rskAddress2.toLowerCase()}`)
 
     expect(identity2.did.slice(0, 15)).toEqual('did:ethr:rsk:0x')
     expect(identity2.did.slice(15)).toHaveLength(40)
