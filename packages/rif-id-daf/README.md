@@ -6,8 +6,8 @@
     RIF Identity - DAF
 </p>
 <p align="middle">
-    <a href="https://badge.fury.io/js/%40rsksmart%2Frif-id-ethr-did">
-        <img src="https://badge.fury.io/js/%40rsksmart%2Frif-id-ethr-did.svg" alt="npm" />
+    <a href="https://badge.fury.io/js/%40rsksmart%2Frif-id-daf">
+        <img src="https://badge.fury.io/js/%40rsksmart%2Frif-id-daf.svg" alt="npm" />
     </a>
 </p>
 
@@ -91,10 +91,6 @@ await identityProvider.importMnemonic(mnemonic)
 
 const identity = await agent.identityManager.createIdentity()
 ```
-
-## Todo
-
-- Fix test for address digest.
 
 ## Extend
 
