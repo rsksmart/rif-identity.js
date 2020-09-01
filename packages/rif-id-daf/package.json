@@ -1,6 +1,6 @@
 {
   "name": "@rsksmart/rif-id-daf",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "RIF Identity - DAF",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -26,6 +26,6 @@
     "@rsksmart/rif-id-mnemonic": "0.0.1",
     "@rsksmart/rif-id-ethr-did": "0.0.1",
     "daf-core": "^6.1.1",
-    "typeorm": "^0.2.25"
+    "typeorm": "0.2.24"
   }
 }
