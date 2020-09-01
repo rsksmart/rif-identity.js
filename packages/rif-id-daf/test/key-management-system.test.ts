@@ -2,6 +2,7 @@ import { Connection } from 'typeorm'
 import { KeyStore } from 'daf-core'
 import { SecretBox, KeyManagementSystem } from 'daf-libsodium'
 import { generateMnemonic, mnemonicToSeed, seedToRSKHDKey } from '@rsksmart/rif-id-mnemonic'
+import { ecKeyFromPrivate, publicFromEcKey } from '@rsksmart/rif-id-ethr-did/lib/rskAddress'
 import { createSqliteConnection } from './util'
 import { SeedStore } from '../src/seed-store'
 import { RIFIdKeyManagementSystem } from '../src/key-management-system'
@@ -53,13 +54,21 @@ describe('key management system', () => {
 
     const key1 = await rifIdKeyManagementSystem.createKey('Secp256k1')
 
-    expect(key1.serialized.privateKeyHex).toEqual(hdKey.derive(0).privateKey.toString('hex'))
-    expect(key1.serialized.publicKeyHex).toEqual(hdKey.derive(0).publicKey.toString('hex'))
+    const privateKey1 = hdKey.derive(0).privateKey.toString('hex')
+
+    expect(key1.serialized.privateKeyHex).toEqual(privateKey1)
+    expect(key1.serialized.publicKeyHex).toEqual(
+      '0x' + publicFromEcKey(ecKeyFromPrivate(privateKey1)).toString('hex')
+    )
 
     const key2 = await rifIdKeyManagementSystem.createKey('Secp256k1')
 
-    expect(key2.serialized.privateKeyHex).toEqual(hdKey.derive(1).privateKey.toString('hex'))
-    expect(key2.serialized.publicKeyHex).toEqual(hdKey.derive(1).publicKey.toString('hex'))
+    const privateKey2 = hdKey.derive(1).privateKey.toString('hex')
+
+    expect(key2.serialized.privateKeyHex).toEqual(privateKey2)
+    expect(key2.serialized.publicKeyHex).toEqual(
+      '0x' + publicFromEcKey(ecKeyFromPrivate(privateKey2)).toString('hex')
+    )
   })
 
   test('get keys', async () => {

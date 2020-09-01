@@ -1,5 +1,6 @@
 import { AbstractKeyManagementSystem, KeyType } from 'daf-core'
 import { mnemonicToSeed, seedToRSKHDKey } from '@rsksmart/rif-id-mnemonic'
+import { ecKeyFromPrivate, publicFromEcKey } from '@rsksmart/rif-id-ethr-did/lib/rskAddress'
 import { SeedStore } from './seed-store'
 import Debug from 'debug'
 const debug = Debug('daf:sodium:kms')
@@ -30,7 +31,8 @@ export class RIFIdKeyManagementSystem extends AbstractKeyManagementSystem {
     const hdKey = await seedToRSKHDKey(Buffer.from(seed.seedHex, 'hex'))
     const derivedKey = hdKey.derive(seed.derivationCount)
     const privateKeyHex = derivedKey.privateKey?.toString('hex')
-    const publicKeyHex = derivedKey.publicKey.toString('hex')
+    const ecKey = ecKeyFromPrivate(privateKeyHex)
+    const publicKeyHex = '0x' + publicFromEcKey(ecKey).toString('hex')
 
     const serializedKey = {
       type,

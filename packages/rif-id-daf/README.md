@@ -92,10 +92,6 @@ await identityProvider.importMnemonic(mnemonic)
 const identity = await agent.identityManager.createIdentity()
 ```
 
-## Todo
-
-- Fix test for address digest.
-
 ## Extend
 
 - Enable multiple mnemonics

@@ -1,6 +1,6 @@
-import { createStore, Store } from 'redux'
-import coreReducer from '@rsksmart/rif-id-core-reducer'
-import {
+import { Store } from 'redux'
+import { configureStore } from '@reduxjs/toolkit'
+import identityProviders, {
   addMnemonicProvider,
   addMnemonicProviderDefault,
   getDefaultProvider,
@@ -30,7 +30,11 @@ export interface RIFIdentityInterface {
 }
 
 const RIFIdentity = function (this: RIFIdentityInterface) {
-  this.store = createStore(coreReducer)
+  this.store = configureStore({
+    reducer: {
+      identityProviders
+    }
+  })
 } as any as ({ new (): RIFIdentityInterface;} & RIFIdentityFactory)
 
 RIFIdentity.prototype.addMnemonicProviderDefault = function (mnemonic: string) {
