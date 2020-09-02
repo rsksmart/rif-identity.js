@@ -1,4 +1,4 @@
-import { AbstractKeyManagementSystem, KeyType } from 'daf-core'
+import { AbstractKeyManagementSystem, KeyType, KeyStore } from 'daf-core'
 import { mnemonicToSeed, seedToRSKHDKey } from '@rsksmart/rif-id-mnemonic'
 import { ecKeyFromPrivate, publicFromEcKey } from '@rsksmart/rif-id-ethr-did/lib/rskAddress'
 import { SeedStore } from './seed-store'
@@ -6,7 +6,7 @@ import Debug from 'debug'
 const debug = Debug('daf:sodium:kms')
 
 export class RIFIdKeyManagementSystem extends AbstractKeyManagementSystem {
-  constructor (private baseSystem: AbstractKeyManagementSystem, private seedStore: SeedStore) {
+  constructor (private baseSystem: AbstractKeyManagementSystem, private keyStore: KeyStore, private seedStore: SeedStore) {
     super()
   }
 
@@ -41,12 +41,12 @@ export class RIFIdKeyManagementSystem extends AbstractKeyManagementSystem {
       privateKeyHex
     }
 
-    const key = await this.baseSystem.importKey(serializedKey)
+    await this.keyStore.set(serializedKey.kid, serializedKey)
 
     debug('Created key', type, serializedKey.publicKeyHex)
 
     await this.seedStore.increment(seed.id)
-    return key
+    return this.baseSystem.getKey(serializedKey.kid)
   }
 
   async getKey (kid: string) {
