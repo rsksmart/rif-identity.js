@@ -1,0 +1,16 @@
+{
+  "extends": "../tsconfig.settings.json",
+  "compilerOptions": {
+    "outDir": "lib",
+    "rootDir": "src",
+    "declarationDir": "lib",
+    "skipLibCheck": true
+  },
+  "include": [
+    "src"
+  ],
+  "references": [
+    { "path": "../rif-id-daf" },
+    { "path": "../rif-id-daf" },
+  ]
+}
