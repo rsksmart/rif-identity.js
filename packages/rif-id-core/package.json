@@ -25,11 +25,11 @@
   "dependencies": {
     "@reduxjs/toolkit": "^1.4.0",
     "@rsksmart/rif-id-daf": "0.0.2",
-    "daf-core": "^6.1.1"
+    "daf-core": "^6.1.2"
   },
   "devDependencies": {
     "@rsksmart/rif-id-mnemonic": "0.0.1",
-    "daf-libsodium": "^6.1.1",
+    "daf-libsodium": "^6.1.2",
     "daf-resolver": "^6.0.0",
     "typeorm": "0.2.24"
   }
