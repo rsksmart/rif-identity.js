@@ -2,7 +2,7 @@
   "name": "root",
   "private": true,
   "scripts": {
-    "setup": "npm run link && npm run bootstrap",
+    "setup": "npm run bootstrap && npm run link",
     "build": "npx lerna run build",
     "test": "npx jest packages/*/test",
     "test:watch": "npx jest packages/*/test --watchAll --coverage",
