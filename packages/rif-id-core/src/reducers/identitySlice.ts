@@ -16,7 +16,7 @@ const identitySlice = createSlice({
   name: 'identity',
   initialState,
   reducers: {
-    addIdentity(state: IdentityState, { payload: { did } }: PayloadAction<AddIdentityPayload>) {
+    addIdentity (state: IdentityState, { payload: { did } }: PayloadAction<AddIdentityPayload>) {
       state.identities.push(did)
     }
   }

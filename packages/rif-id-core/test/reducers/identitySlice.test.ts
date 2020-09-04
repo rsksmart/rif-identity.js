@@ -25,7 +25,7 @@ describe('identity slice', () => {
         identities: [did]
       }
 
-      expect(selectIdentities(state)).toEqual([ did ])
+      expect(selectIdentities(state)).toEqual([did])
     })
 
     test('two identities', () => {
@@ -33,7 +33,7 @@ describe('identity slice', () => {
         identities: [did, did2]
       }
 
-      expect(selectIdentities(state)).toEqual([ did, did2 ])
+      expect(selectIdentities(state)).toEqual([did, did2])
     })
   })
 

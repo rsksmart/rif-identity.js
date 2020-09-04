@@ -1,4 +1,4 @@
-import { combineReducers, configureStore, getDefaultMiddleware, Reducer, ReducersMapObject, ConfigureStoreOptions } from '@reduxjs/toolkit'
+import { combineReducers, configureStore, Reducer, ReducersMapObject, ConfigureStoreOptions } from '@reduxjs/toolkit'
 import identityReducer from '../reducers/identitySlice'
 
 const combineIdentityReducer = (reducers: Reducer | ReducersMapObject) => combineReducers({
@@ -8,5 +8,5 @@ const combineIdentityReducer = (reducers: Reducer | ReducersMapObject) => combin
 
 export const configureIdentityStore = (options: ConfigureStoreOptions) => configureStore({
   ...options,
-  reducer: combineIdentityReducer(options.reducer),
+  reducer: combineIdentityReducer(options.reducer)
 })

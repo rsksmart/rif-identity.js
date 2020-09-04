@@ -1,8 +1,6 @@
-import { Connection } from 'typeorm'
 import { Agent } from 'daf-core'
 import { configureStore, Store, AnyAction } from '@reduxjs/toolkit'
 import { generateMnemonic } from '@rsksmart/rif-id-mnemonic'
-import thunk from 'redux-thunk'
 import { createAgent, expectIsIdentity } from '../util'
 import identitySlice, { selectIdentities, IdentityState } from '../../src/reducers/identitySlice'
 import { initIdentityFactory, createIdentityFactory } from '../../src/operations/identity'
@@ -28,7 +26,7 @@ describe('identity operations', () => {
   })
 
   afterEach(async () => {
-    if(!preventClone) await (await agent.dbConnection).close()
+    if (!preventClone) await (await agent.dbConnection).close()
   })
 
   test('initially has no identities', async () => {
