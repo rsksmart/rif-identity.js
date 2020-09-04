@@ -41,7 +41,8 @@ jobs:
             - run: mkdir builds
             - run: cp -r packages/rif-id-mnemonic/lib builds/rif-id-mnemonic
             - run: cp -r packages/rif-id-ethr-did/lib builds/rif-id-ethr-did
-            - run: cp -r packages/rif-id-core-reducer/lib builds/rif-core-reducer
+            - run: cp -r packages/rif-id-daf/lib builds/rif-id-daf
+            - run: cp -r packages/rif-id-core/lib builds/rif-id-core
             - store_artifacts:
                 path: ./builds/
 

@@ -11,7 +11,7 @@
     "lint": "npx eslint packages/*/src/**/* packages/*/test/**/* --ext .json,.js,.ts",
     "lint:fix": "npx eslint packages/*/src/**/* packages/*/test/**/* --ext .json,.js,.ts --fix",
     "lint:ci": "npx eslint packages/*/src/**/* packages/*/test/**/* --ext .json,.js,.ts --format junit --output-file ./reports/eslint.xml",
-    "link": "npx lerna link",	
+    "link": "npx lerna link",
     "bootstrap": "lerna bootstrap"
   },
   "devDependencies": {
