@@ -22,10 +22,11 @@ describe('identity provider', () => {
   test('import mnemonic', async () => {
     const secretKey = '29739248cad1bd1a0fc4d9b75cd4d2990de535baf5caadfdf8d8f86664aa830c'
     const secretBox = new SecretBox(secretKey)
-    const keyManagementSystem = new KeyManagementSystem(new KeyStore(connection, secretBox))
+    const keyStore = new KeyStore(connection, secretBox)
+    const keyManagementSystem = new KeyManagementSystem(keyStore)
 
     const seedStore = new SeedStore(connection, secretBox)
-    const rifIdKeyManagementSystem = new RIFIdKeyManagementSystem(keyManagementSystem, seedStore)
+    const rifIdKeyManagementSystem = new RIFIdKeyManagementSystem(keyManagementSystem, keyStore, seedStore)
 
     const identityProvider = new RIFIdentityProvider({
       kms: rifIdKeyManagementSystem,
