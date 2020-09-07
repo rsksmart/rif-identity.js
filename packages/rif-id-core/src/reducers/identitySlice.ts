@@ -18,11 +18,17 @@ const identitySlice = createSlice({
   reducers: {
     addIdentity (state: IdentityState, { payload: { did } }: PayloadAction<AddIdentityPayload>) {
       state.identities.push(did)
+    },
+    deleteIdentity (state: IdentityState, { payload: { did } }: PayloadAction<AddIdentityPayload>) {
+      state.identities = state.identities.filter(id => id !== did)
+    },
+    deleteAllIdentities: (state: IdentityState) => {
+      state.identities = []
     }
   }
 })
 
-export const { addIdentity } = identitySlice.actions
+export const { addIdentity, deleteIdentity, deleteAllIdentities } = identitySlice.actions
 
 export const selectIdentities = (state: IdentityState) => state.identities
 

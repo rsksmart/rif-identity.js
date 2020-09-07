@@ -1,5 +1,5 @@
 import { configureStore, Store, AnyAction } from '@reduxjs/toolkit'
-import identitySlice, { addIdentity, selectIdentities, IdentityState } from '../../src/reducers/identitySlice'
+import identitySlice, { addIdentity, deleteIdentity, selectIdentities, IdentityState, deleteAllIdentities } from '../../src/reducers/identitySlice'
 
 const did = 'did:ethr:rsk:0xf3beac30c498d9e26865f34fcaa57dbb935b0d74'
 const did2 = 'did:ethr:rsk:0xdcbe93e98e0dcebe677c39a84f5f212b85ba7ef0'
@@ -65,6 +65,26 @@ describe('identity slice', () => {
       const identities = selectIdentities(store.getState())
 
       expect(identities).toEqual([did, did2])
+    })
+
+    test('delete an identity', () => {
+      store.dispatch(addIdentity({ did }))
+      store.dispatch(addIdentity({ did: did2 }))
+
+      store.dispatch(deleteIdentity({ did }))
+
+      const identities = selectIdentities(store.getState())
+      expect(identities).toEqual([did2])
+    })
+
+    test('delete all identities', () => {
+      store.dispatch(addIdentity({ did }))
+      store.dispatch(addIdentity({ did: did2 }))
+
+      store.dispatch(deleteAllIdentities())
+
+      const identities = selectIdentities(store.getState())
+      expect(identities).toEqual([])
     })
   })
 })
