@@ -4,28 +4,20 @@ import { addIdentity } from '../reducers/identitySlice'
 
 type Callback<T> = (res?: T, err?: Error) => void
 
-export const initIdentityFactory = (agent: Agent) => (cb?: Callback<AbstractIdentity[]>) => (dispatch: Dispatch) => {
-  let _initIdentityFactory = () => agent.identityManager.getIdentities()
-    .then(identities => {
-      identities.forEach(({ did }) => dispatch(addIdentity({ did })))
-      if(cb) cb(identities, undefined)
-      else return identities
-    })
+const callbackify = (promise, cb) => !!cb ? promise().then(res => cb(res, undefined)).catch(err => cb(undefined, err)) : promise()
 
-  return !!cb ? _initIdentityFactory().catch(error => {
-    cb(undefined, error)
-  }) : _initIdentityFactory()
-}
+export const initIdentityFactory = (agent: Agent) => (cb?: Callback<AbstractIdentity[]>) => (dispatch: Dispatch) => callbackify(
+  () => agent.identityManager.getIdentities()
+  .then(identities => {
+    identities.forEach(({ did }) => dispatch(addIdentity({ did })))
+    return identities
+  }), cb
+)
 
-export const createIdentityFactory = (agent: Agent) => (cb?: Callback<AbstractIdentity>) => (dispatch: Dispatch) => {
-  const _createIdentityFactory = () => agent.identityManager.createIdentity()
-    .then(identity => {
-      dispatch(addIdentity({ did: identity.did }))
-      if(cb) cb(identity, undefined)
-      return identity
-    })
-  
-  return !!cb ? _createIdentityFactory().catch(error => {
-    cb(undefined, error)
-  }) : _createIdentityFactory()
-}
+export const createIdentityFactory = (agent: Agent) => (cb?: Callback<AbstractIdentity>) => (dispatch: Dispatch) => callbackify(
+  () => agent.identityManager.createIdentity()
+  .then(identity => {
+    dispatch(addIdentity({ did: identity.did }))
+    return identity
+  }), cb
+)
