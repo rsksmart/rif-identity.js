@@ -15,62 +15,36 @@
 npm i @rsksmart/rif-id-core
 ```
 
+This module includes basic functionality for managing decentralized identities (Ethr DIDs), operating with W3C credentials, interacting with a user-centric Data Vault and operate with RIF communication protocols.
+
 ## Features
 
-This is the RIF Identity core module. It allows to handle different identities in a secure and private manner.
-
-- Hanlde core reducer's mnemonic provider
+- Decentralized identities:
+    - Create identity
+    - Get create identities
 
 ## Usage
 
-Create a mnemonic identity:
+First of all you need to pick a DB engine ([`typeorm`](https://github.com/typeorm/typeorm)) and setup the [uPort DAF agent](https://github.com/uport-project/daf). The uPort Agent will be responsible for all Identity, W3C and JWT compatible operations. It will also use the database to store information.
 
-```javascript
-import RIFIdentity from '@rsksmart/rif-id-core'
+- [Setup Database](./docs/setup_database.md)
+- [Setup uPort DAF agent](./docs/setup_agent.md)
 
-const identity = RIFIdentity.createWithMnemonic()
+On top of uPort DAF agent, RIF Identity implements [Redux.js](https://github.com/reduxjs/redux) reducers to seamlessly perform identity and credential operations. The reducers are implemented in _slices_, they can be optionally _plugged_ into an existent Redux.js reducer integrating whole RIF implementations.
 
-const provider = identity.getDefaultProvider()
+- [Integrating Identity reducer](./docs/reducers/identity.md) (mandatory)
 
-provider.mnemonic.args
-// wise grit jazz liar promote zebra galaxy method upset ill art session
-```
-
-Or with more words:
-
-```javascript
-const identity = RIFIdentity.createWithMnemonic(15)
-```
-
-Use with an existent mnemonic:
-
-```javascript
-const identity = RIFIdentity.fromMnemonic('wise grit jazz liar promote zebra galaxy method upset ill art session')
-```
-
-Use RIF Identity Core with different providers:
-
-```javascript
-const identity = new RIFIdentity()
-
-identity.addMnemonicProvider('primary', 'wise grit jazz liar promote zebra galaxy method upset ill art session')
-identity.addMnemonicProvider('secondary', 'offer lyrics aerobic stone excuse nephew village real monster kick knee truly')
-```
-
-In most of the cases using to mnemonics is not necessary. The same results can be achieved using a single one, so a simple way:
-
-
-```javascript
-const identity = new RIFIdentity()
-
-identity.addMnemonicProviderDefault('wise grit jazz liar promote zebra galaxy method upset ill art session')
-```
+## Todo
 
 ## Extend
 
-- Accessors to handle more than one mnemonic provider
-- Derive identities from a single mnemonic
+- Identity
 
 ## Test
 
 From base repo directory run `npm test` or any of the described [test script variants](../../README#test).
+
+## References
+
+- DID v1.0: https://w3c.github.io/did-core/
+- uPort DID: https://github.com/uport-project/ethr-did
