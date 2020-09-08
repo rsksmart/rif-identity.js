@@ -1,6 +1,7 @@
 import { Agent } from 'daf-core'
 import { configureStore, Store, AnyAction } from '@reduxjs/toolkit'
 import { generateMnemonic } from '@rsksmart/rif-id-mnemonic'
+import fs from 'fs'
 import { createAgent, expectIsIdentity } from '../util'
 import identitySlice, { selectIdentities, IdentityState } from '../../src/reducers/identitySlice'
 import { initIdentityFactory, createIdentityFactory } from '../../src/operations/identity'
@@ -27,6 +28,7 @@ describe('identity operations', () => {
 
   afterEach(async () => {
     if (!preventClone) await (await agent.dbConnection).close()
+    fs.unlinkSync(database)
   })
 
   test('initially has no identities', async () => {
@@ -77,5 +79,7 @@ describe('identity operations', () => {
 
     expectIsIdentity(identities[0])
     expectIsIdentity(identities[1])
+
+    await (await agent2.dbConnection).close()
   })
 })
