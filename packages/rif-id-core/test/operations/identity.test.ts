@@ -6,6 +6,11 @@ import { createAgent, expectIsIdentity } from '../util'
 import identitySlice, { selectIdentities, IdentityState } from '../../src/reducers/identitySlice'
 import { initIdentityFactory, createIdentityFactory } from '../../src/operations/identity'
 
+const mockCallbackFactory = () => jest.fn((res, err) => {
+  if (err) return err
+  else return res
+})
+
 describe('identity operations', () => {
   let database: string
   let agent: Agent
@@ -16,14 +21,7 @@ describe('identity operations', () => {
   let preventClone = false
 
   beforeEach(async () => {
-    mnemonic = generateMnemonic(12)
     database = `./rif-id-core-${Date.now()}.ops.identity.test.sqlite`
-    agent = await createAgent(database, mnemonic)
-    store = configureStore({ reducer: identitySlice })
-    initIdentity = initIdentityFactory(agent)
-    createIdentity = createIdentityFactory(agent)
-
-    await initIdentity()(store.dispatch)
   })
 
   afterEach(async () => {
@@ -31,55 +29,108 @@ describe('identity operations', () => {
     fs.unlinkSync(database)
   })
 
-  test('initially has no identities', async () => {
-    const identities = selectIdentities(store.getState())
+  describe('init with callback', () => {
+    let mockCallback
 
-    expect(identities).toEqual([])
+    beforeEach(() => {
+      mockCallback = mockCallbackFactory()
+    })
+
+    test('success', async () => {
+      mnemonic = generateMnemonic(12)
+      agent = await createAgent(database, mnemonic)
+      store = configureStore({ reducer: identitySlice })
+      initIdentity = initIdentityFactory(agent)
+      createIdentity = createIdentityFactory(agent)
+
+      await initIdentity(mockCallback)(store.dispatch)
+
+      expect(mockCallback.mock.calls.length).toBe(1)
+      expect(mockCallback.mock.calls[0][0]).toEqual([])
+      expect(mockCallback.mock.calls[0][1]).toBeUndefined()
+      expect(mockCallback.mock.results[0].value).toEqual([])
+    })
+
+    test('error', async () => {
+      agent = await createAgent(database)
+      store = configureStore({ reducer: identitySlice })
+      initIdentity = initIdentityFactory(agent)
+      createIdentity = createIdentityFactory(agent)
+
+      // trigger an error in the promise
+      await (await agent.dbConnection).dropDatabase()
+
+      await initIdentity(mockCallback)(store.dispatch)
+
+      expect(mockCallback.mock.calls.length).toBe(1)
+      expect(mockCallback.mock.calls[0][0]).toBeUndefined()
+      expect(mockCallback.mock.calls[0][1]).toBeInstanceOf(Error)
+      expect(mockCallback.mock.results[0].value).toBeInstanceOf(Error)
+    })
   })
 
-  test('create identity', async () => {
-    await createIdentity()(store.dispatch)
+  describe('after init', () => {
+    beforeEach(async () => {
+      mnemonic = generateMnemonic(12)
+      database = `./rif-id-core-${Date.now()}.ops.identity.test.sqlite`
+      agent = await createAgent(database, mnemonic)
+      store = configureStore({ reducer: identitySlice })
+      initIdentity = initIdentityFactory(agent)
+      createIdentity = createIdentityFactory(agent)
 
-    const identities = selectIdentities(store.getState())
+      await initIdentity()(store.dispatch)
+    })
 
-    expect(identities).toHaveLength(1)
+    test('initially has no identities', async () => {
+      const identities = selectIdentities(store.getState())
 
-    expectIsIdentity(identities[0])
-  })
+      expect(identities).toEqual([])
+    })
 
-  test('create two identities', async () => {
-    await createIdentity()(store.dispatch)
-    await createIdentity()(store.dispatch)
+    test('create identity', async () => {
+      await createIdentity()(store.dispatch)
 
-    const identities = selectIdentities(store.getState())
+      const identities = selectIdentities(store.getState())
 
-    expect(identities).toHaveLength(2)
+      expect(identities).toHaveLength(1)
 
-    expectIsIdentity(identities[0])
-    expectIsIdentity(identities[1])
-  })
+      expectIsIdentity(identities[0])
+    })
 
-  test('restores identities', async () => {
-    preventClone = true
+    test('create two identities', async () => {
+      await createIdentity()(store.dispatch)
+      await createIdentity()(store.dispatch)
 
-    await createIdentity()(store.dispatch)
-    await createIdentity()(store.dispatch)
+      const identities = selectIdentities(store.getState())
 
-    await (await agent.dbConnection).close()
+      expect(identities).toHaveLength(2)
 
-    const agent2 = await createAgent(database) // same database
-    const store2 = configureStore({ reducer: identitySlice })
-    const initIdentity2 = initIdentityFactory(agent2)
+      expectIsIdentity(identities[0])
+      expectIsIdentity(identities[1])
+    })
 
-    await initIdentity2()(store2.dispatch)
+    test('restores identities', async () => {
+      preventClone = true
 
-    const identities = selectIdentities(store2.getState())
+      await createIdentity()(store.dispatch)
+      await createIdentity()(store.dispatch)
 
-    expect(identities).toHaveLength(2)
+      await (await agent.dbConnection).close()
 
-    expectIsIdentity(identities[0])
-    expectIsIdentity(identities[1])
+      const agent2 = await createAgent(database) // same database
+      const store2 = configureStore({ reducer: identitySlice })
+      const initIdentity2 = initIdentityFactory(agent2)
 
-    await (await agent2.dbConnection).close()
+      await initIdentity2()(store2.dispatch)
+
+      const identities = selectIdentities(store2.getState())
+
+      expect(identities).toHaveLength(2)
+
+      expectIsIdentity(identities[0])
+      expectIsIdentity(identities[1])
+
+      await (await agent2.dbConnection).close()
+    })
   })
 })
