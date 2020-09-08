@@ -17,8 +17,15 @@ export const initIdentityFactory = (agent: Agent) => (cb?: Callback<AbstractIden
   }) : _initIdentityFactory()
 }
 
-export const createIdentityFactory = (agent: Agent) => () => (dispatch: Dispatch) => agent.identityManager.createIdentity()
-  .then(identity => {
-    dispatch(addIdentity({ did: identity.did }))
-    return identity
-  })
+export const createIdentityFactory = (agent: Agent) => (cb?: Callback<AbstractIdentity>) => (dispatch: Dispatch) => {
+  const _createIdentityFactory = () => agent.identityManager.createIdentity()
+    .then(identity => {
+      dispatch(addIdentity({ did: identity.did }))
+      if(cb) cb(identity, undefined)
+      return identity
+    })
+  
+  return !!cb ? _createIdentityFactory().catch(error => {
+    cb(undefined, error)
+  }) : _createIdentityFactory()
+}

@@ -10,6 +10,7 @@ const rpcUrl = 'https://did.testnet.rsk.co:4444'
 export const createAgent = async (database: string, mnemonic?: string) => {
   /* setup db */
   const dbConnection = createConnection({
+    name: database,
     type: 'sqlite',
     database,
     entities: [...Entities, ...Daf.Entities],

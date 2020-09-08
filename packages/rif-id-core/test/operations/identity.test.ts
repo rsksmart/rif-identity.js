@@ -26,7 +26,7 @@ describe('identity operations', () => {
 
   afterEach(async () => {
     if (!preventClone) await (await agent.dbConnection).close()
-    fs.unlinkSync(database)
+    if (fs.existsSync(database)) fs.unlinkSync(database)
   })
 
   describe('init with callback', () => {
@@ -131,6 +131,58 @@ describe('identity operations', () => {
       expectIsIdentity(identities[1])
 
       await (await agent2.dbConnection).close()
+    })
+  })
+
+  describe('crate identity callback', () => {
+    let mockCallback
+  
+    beforeEach(() => {
+      mockCallback = mockCallbackFactory()
+    })
+
+    test('success', async () => {
+      mnemonic = generateMnemonic(12)
+      agent = await createAgent(database, mnemonic)
+      store = configureStore({ reducer: identitySlice })
+      initIdentity = initIdentityFactory(agent)
+      createIdentity = createIdentityFactory(agent)
+
+      await initIdentity()(store.dispatch)
+
+      await createIdentity(mockCallback)(store.dispatch)
+
+      expect(mockCallback.mock.calls.length).toBe(1)
+      expectIsIdentity(mockCallback.mock.calls[0][0].did)
+      expect(mockCallback.mock.calls[0][1]).toBeUndefined()
+      expectIsIdentity(mockCallback.mock.results[0].value.did)
+
+      const identities = selectIdentities(store.getState())
+
+      expect(identities).toHaveLength(1)
+
+      expectIsIdentity(identities[0])
+    })
+
+    test('error', async () => {
+      agent = await createAgent(database)
+      
+      store = configureStore({ reducer: identitySlice })
+      initIdentity = initIdentityFactory(agent)
+      createIdentity = createIdentityFactory(agent)
+
+      await initIdentity()(store.dispatch)
+
+      await createIdentity(mockCallback)(store.dispatch)
+
+      expect(mockCallback.mock.calls.length).toBe(1)
+      expect(mockCallback.mock.calls[0][0]).toBeUndefined()
+      expect(mockCallback.mock.calls[0][1]).toBeInstanceOf(Error)
+      expect(mockCallback.mock.results[0].value).toBeInstanceOf(Error)
+
+      const identities = selectIdentities(store.getState())
+
+      expect(identities).toHaveLength(0)
     })
   })
 })
