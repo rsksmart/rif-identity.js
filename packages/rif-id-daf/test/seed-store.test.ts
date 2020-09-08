@@ -1,22 +1,24 @@
 import { Connection } from 'typeorm'
 import { SecretBox } from 'daf-libsodium'
-import { createSqliteConnection } from './util'
+import { createSqliteConnection, deleteDatabase } from './util'
 import { SeedStore } from '../src/seed-store'
 
+const database = './rif-id-daf.seed-store.test.sqlite'
+
 describe('seed store', () => {
-  let connection: Promise<Connection>
+  let dbConnection: Promise<Connection>
 
   beforeEach(async () => {
-    connection = createSqliteConnection('./rif-id-daf.seed-store.test.sqlite')
+    dbConnection = createSqliteConnection(database)
   })
 
   afterEach(async () => {
-    await (await connection).close()
+    await deleteDatabase(await dbConnection, database)
   })
 
   test('with secret box', async () => {
     const secretKey = '29739248cad1bd1a0fc4d9b75cd4d2990de535baf5caadfdf8d8f86664aa830c'
-    const seedStore = new SeedStore(connection, new SecretBox(secretKey))
+    const seedStore = new SeedStore(dbConnection, new SecretBox(secretKey))
 
     const seedHex = '0123abcd'
     await seedStore.create(seedHex)
@@ -41,7 +43,7 @@ describe('seed store', () => {
   })
 
   test('without secret box', async () => {
-    const seedStore = new SeedStore(connection)
+    const seedStore = new SeedStore(dbConnection)
 
     const seedHex = '0123abcd'
     await seedStore.create(seedHex)
