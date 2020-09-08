@@ -185,4 +185,23 @@ describe('identity operations', () => {
       expect(identities).toHaveLength(0)
     })
   })
+
+  describe.each([[false], [true]])('delete identity - callback %s', (withCallback) => {
+    beforeEach(async () => {
+      mnemonic = generateMnemonic(12)
+      database = `./rif-id-core-${Date.now()}.ops.identity.test.sqlite`
+      agent = await createAgent(database, mnemonic)
+      store = configureStore({ reducer: identitySlice })
+      initIdentity = initIdentityFactory(agent)
+      createIdentity = createIdentityFactory(agent)
+
+      await initIdentity()(store.dispatch)
+    })
+    
+    test('should not allow to delete non existent identity', async () => {})
+
+    test('should allow to delete an identity', async () => {
+
+    })
+  })
 })
