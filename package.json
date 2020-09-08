@@ -4,8 +4,8 @@
   "scripts": {
     "setup": "npm run bootstrap && npm run link",
     "build": "npx lerna run build",
-    "test": "npx jest packages/*/test --verbose --coverage",
-    "test:package": "npx jest packages/$npm_config_package/test --verbose --coverage",
+    "test": "npx jest packages/*/test --verbose --coverage --collectCoverageFrom=packages/*/src/**/*",
+    "test:package": "npx jest packages/$npm_config_package/test --verbose --coverage --collectCoverageFrom=packages/*/src/**/*",
     "test:watch": "npx jest packages/*/test --watchAll",
     "test:coverage": "npx jest packages/*/test --verbose --coverage --collectCoverageFrom=packages/*/src/**/*",
     "test:ci": "npx jest packages/*/test --verbose --coverage --collectCoverageFrom=packages/*/src/**/* --coverageDirectory reports",
