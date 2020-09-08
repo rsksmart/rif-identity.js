@@ -1,21 +1,21 @@
 import { AbstractKeyManagementSystem, KeyType, KeyStore } from 'daf-core'
 import { mnemonicToSeed, seedToRSKHDKey } from '@rsksmart/rif-id-mnemonic'
 import { ecKeyFromPrivate, publicFromEcKey } from '@rsksmart/rif-id-ethr-did/lib/rskAddress'
-import { SeedStore } from './seed-store'
+import { MnemonicStore } from './mnemonic-store'
 import Debug from 'debug'
+import { IdentityMnemonic } from './entities'
 const debug = Debug('daf:sodium:kms')
 
 export class RIFIdKeyManagementSystem extends AbstractKeyManagementSystem {
-  constructor (private baseSystem: AbstractKeyManagementSystem, private keyStore: KeyStore, private seedStore: SeedStore) {
+  constructor (private baseSystem: AbstractKeyManagementSystem, private keyStore: KeyStore, private mnemonicStore: MnemonicStore) {
     super()
   }
 
   async importMnemonic (mnemonic: string) {
-    const existSeed = await this.seedStore.exist()
-    if (existSeed) throw new Error('Seed already exists')
+    const existMnemonic = await this.mnemonicStore.exist()
+    if (existMnemonic) throw new Error('Mnemonic already exists')
 
-    const seed = await mnemonicToSeed(mnemonic)
-    await this.seedStore.create(seed.toString('hex'))
+    await this.mnemonicStore.create(mnemonic)
 
     return true
   }
@@ -23,13 +23,14 @@ export class RIFIdKeyManagementSystem extends AbstractKeyManagementSystem {
   async createKey (type: KeyType) {
     if (!(type === 'Secp256k1')) return this.baseSystem.createKey(type)
 
-    const existSeed = await this.seedStore.exist()
-    if (!existSeed) throw new Error('Seed not existent')
+    const existMnemonic = await this.mnemonicStore.exist()
+    if (!existMnemonic) throw new Error('Mnemonic not existent')
 
-    const seed = await this.seedStore.get()
+    const identityMnemonic = await this.mnemonicStore.get()
 
-    const hdKey = await seedToRSKHDKey(Buffer.from(seed.seedHex, 'hex'))
-    const derivedKey = hdKey.derive(seed.derivationCount)
+    const seed = await mnemonicToSeed(identityMnemonic.mnemonic)
+    const hdKey = await seedToRSKHDKey(seed)
+    const derivedKey = hdKey.derive(identityMnemonic.derivationCount)
     const privateKeyHex = derivedKey.privateKey?.toString('hex')
     const ecKey = ecKeyFromPrivate(privateKeyHex)
     const publicKeyHex = '0x' + publicFromEcKey(ecKey).toString('hex')
@@ -45,7 +46,7 @@ export class RIFIdKeyManagementSystem extends AbstractKeyManagementSystem {
 
     debug('Created key', type, serializedKey.publicKeyHex)
 
-    await this.seedStore.increment(seed.id)
+    await this.mnemonicStore.increment(identityMnemonic.id)
     return this.baseSystem.getKey(serializedKey.kid)
   }
 

@@ -4,7 +4,7 @@ import { SecretBox, KeyManagementSystem } from 'daf-libsodium'
 import { generateMnemonic, mnemonicToSeed, seedToRSKHDKey } from '@rsksmart/rif-id-mnemonic'
 import { rskAddressFromPrivateKey } from '@rsksmart/rif-id-ethr-did'
 import { createSqliteConnection, deleteDatabase } from './util'
-import { SeedStore } from '../src/seed-store'
+import { MnemonicStore } from '../src/mnemonic-store'
 import { RIFIdKeyManagementSystem } from '../src/key-management-system'
 import { RIFIdentityProvider } from '../src/identity-provider'
 
@@ -27,8 +27,8 @@ describe('identity provider', () => {
     const keyStore = new KeyStore(dbConnection, secretBox)
     const keyManagementSystem = new KeyManagementSystem(keyStore)
 
-    const seedStore = new SeedStore(dbConnection, secretBox)
-    const rifIdKeyManagementSystem = new RIFIdKeyManagementSystem(keyManagementSystem, keyStore, seedStore)
+    const mnemonicStore = new MnemonicStore(dbConnection, secretBox)
+    const rifIdKeyManagementSystem = new RIFIdKeyManagementSystem(keyManagementSystem, keyStore, mnemonicStore)
 
     const identityProvider = new RIFIdentityProvider({
       kms: rifIdKeyManagementSystem,

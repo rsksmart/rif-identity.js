@@ -4,7 +4,7 @@ import { SecretBox, KeyManagementSystem } from 'daf-libsodium'
 import { generateMnemonic, mnemonicToSeed, seedToRSKHDKey } from '@rsksmart/rif-id-mnemonic'
 import { ecKeyFromPrivate, publicFromEcKey } from '@rsksmart/rif-id-ethr-did/lib/rskAddress'
 import { createSqliteConnection, deleteDatabase } from './util'
-import { SeedStore } from '../src/seed-store'
+import { MnemonicStore } from '../src/mnemonic-store'
 import { RIFIdKeyManagementSystem } from '../src/key-management-system'
 import { Key } from 'daf-libsodium/build/key-management-system'
 
@@ -27,16 +27,14 @@ describe('key management system', () => {
     const keyStore = new KeyStore(dbConnection, secretBox)
     const keyManagementSystem = new KeyManagementSystem(keyStore)
 
-    const seedStore = new SeedStore(dbConnection, secretBox)
-    const rifIdKeyManagementSystem = new RIFIdKeyManagementSystem(keyManagementSystem, keyStore, seedStore)
+    const mnemonicStore = new MnemonicStore(dbConnection, secretBox)
+    const rifIdKeyManagementSystem = new RIFIdKeyManagementSystem(keyManagementSystem, keyStore, mnemonicStore)
 
     const mnemonic = generateMnemonic(12)
     await rifIdKeyManagementSystem.importMnemonic(mnemonic)
 
-    const seed = await mnemonicToSeed(mnemonic)
-
-    const identitySeed = await seedStore.get()
-    expect(identitySeed.seedHex).toEqual(seed.toString('hex'))
+    const identityMnemonic = await mnemonicStore.get()
+    expect(identityMnemonic.mnemonic).toEqual(mnemonic)
 
     expect(rifIdKeyManagementSystem.importMnemonic(generateMnemonic(12))).rejects.toThrow()
   })
@@ -47,8 +45,8 @@ describe('key management system', () => {
     const keyStore = new KeyStore(dbConnection, secretBox)
     const keyManagementSystem = new KeyManagementSystem(keyStore)
 
-    const seedStore = new SeedStore(dbConnection, secretBox)
-    const rifIdKeyManagementSystem = new RIFIdKeyManagementSystem(keyManagementSystem, keyStore, seedStore)
+    const mnemonicStore = new MnemonicStore(dbConnection, secretBox)
+    const rifIdKeyManagementSystem = new RIFIdKeyManagementSystem(keyManagementSystem, keyStore, mnemonicStore)
 
     const mnemonic = generateMnemonic(12)
     await rifIdKeyManagementSystem.importMnemonic(mnemonic)
@@ -81,8 +79,8 @@ describe('key management system', () => {
     const keyStore = new KeyStore(dbConnection, secretBox)
     const keyManagementSystem = new KeyManagementSystem(keyStore)
 
-    const seedStore = new SeedStore(dbConnection, secretBox)
-    const rifIdKeyManagementSystem = new RIFIdKeyManagementSystem(keyManagementSystem, keyStore, seedStore)
+    const mnemonicStore = new MnemonicStore(dbConnection, secretBox)
+    const rifIdKeyManagementSystem = new RIFIdKeyManagementSystem(keyManagementSystem, keyStore, mnemonicStore)
 
     const mnemonic = generateMnemonic(12)
     await rifIdKeyManagementSystem.importMnemonic(mnemonic)
@@ -100,8 +98,8 @@ describe('key management system', () => {
     const keyStore = new KeyStore(dbConnection, secretBox)
     const keyManagementSystem = new KeyManagementSystem(keyStore)
 
-    const seedStore = new SeedStore(dbConnection, secretBox)
-    const rifIdKeyManagementSystem = new RIFIdKeyManagementSystem(keyManagementSystem, keyStore, seedStore)
+    const mnemonicStore = new MnemonicStore(dbConnection, secretBox)
+    const rifIdKeyManagementSystem = new RIFIdKeyManagementSystem(keyManagementSystem, keyStore, mnemonicStore)
 
     const mnemonic = generateMnemonic(12)
     await rifIdKeyManagementSystem.importMnemonic(mnemonic)
