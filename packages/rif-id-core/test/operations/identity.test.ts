@@ -136,7 +136,7 @@ describe('identity operations', () => {
 
   describe('crate identity callback', () => {
     let mockCallback
-  
+
     beforeEach(() => {
       mockCallback = mockCallbackFactory()
     })
@@ -166,7 +166,7 @@ describe('identity operations', () => {
 
     test('error', async () => {
       agent = await createAgent(database)
-      
+
       store = configureStore({ reducer: identitySlice })
       initIdentity = initIdentityFactory(agent)
       createIdentity = createIdentityFactory(agent)
