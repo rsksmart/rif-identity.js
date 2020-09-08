@@ -3,29 +3,31 @@ import { KeyStore } from 'daf-core'
 import { SecretBox, KeyManagementSystem } from 'daf-libsodium'
 import { generateMnemonic, mnemonicToSeed, seedToRSKHDKey } from '@rsksmart/rif-id-mnemonic'
 import { ecKeyFromPrivate, publicFromEcKey } from '@rsksmart/rif-id-ethr-did/lib/rskAddress'
-import { createSqliteConnection } from './util'
+import { createSqliteConnection, deleteDatabase } from './util'
 import { SeedStore } from '../src/seed-store'
 import { RIFIdKeyManagementSystem } from '../src/key-management-system'
 import { Key } from 'daf-libsodium/build/key-management-system'
 
+const database = './rif-id-daf.kms.test.sqlite'
+
 describe('key management system', () => {
-  let connection: Promise<Connection>
+  let dbConnection: Promise<Connection>
 
   beforeEach(async () => {
-    connection = createSqliteConnection('./rif-id-daf.kms.test.sqlite')
+    dbConnection = createSqliteConnection(database)
   })
 
   afterEach(async () => {
-    await (await connection).close()
+    await deleteDatabase(await dbConnection, database)
   })
 
   test('import mnemonic', async () => {
     const secretKey = '29739248cad1bd1a0fc4d9b75cd4d2990de535baf5caadfdf8d8f86664aa830c'
     const secretBox = new SecretBox(secretKey)
-    const keyStore = new KeyStore(connection, secretBox)
+    const keyStore = new KeyStore(dbConnection, secretBox)
     const keyManagementSystem = new KeyManagementSystem(keyStore)
 
-    const seedStore = new SeedStore(connection, secretBox)
+    const seedStore = new SeedStore(dbConnection, secretBox)
     const rifIdKeyManagementSystem = new RIFIdKeyManagementSystem(keyManagementSystem, keyStore, seedStore)
 
     const mnemonic = generateMnemonic(12)
@@ -42,10 +44,10 @@ describe('key management system', () => {
   test('create keys', async () => {
     const secretKey = '29739248cad1bd1a0fc4d9b75cd4d2990de535baf5caadfdf8d8f86664aa830c'
     const secretBox = new SecretBox(secretKey)
-    const keyStore = new KeyStore(connection, secretBox)
+    const keyStore = new KeyStore(dbConnection, secretBox)
     const keyManagementSystem = new KeyManagementSystem(keyStore)
 
-    const seedStore = new SeedStore(connection, secretBox)
+    const seedStore = new SeedStore(dbConnection, secretBox)
     const rifIdKeyManagementSystem = new RIFIdKeyManagementSystem(keyManagementSystem, keyStore, seedStore)
 
     const mnemonic = generateMnemonic(12)
@@ -76,10 +78,10 @@ describe('key management system', () => {
   test('get keys', async () => {
     const secretKey = '29739248cad1bd1a0fc4d9b75cd4d2990de535baf5caadfdf8d8f86664aa830c'
     const secretBox = new SecretBox(secretKey)
-    const keyStore = new KeyStore(connection, secretBox)
+    const keyStore = new KeyStore(dbConnection, secretBox)
     const keyManagementSystem = new KeyManagementSystem(keyStore)
 
-    const seedStore = new SeedStore(connection, secretBox)
+    const seedStore = new SeedStore(dbConnection, secretBox)
     const rifIdKeyManagementSystem = new RIFIdKeyManagementSystem(keyManagementSystem, keyStore, seedStore)
 
     const mnemonic = generateMnemonic(12)
@@ -95,10 +97,10 @@ describe('key management system', () => {
   test('delete keys', async () => {
     const secretKey = '29739248cad1bd1a0fc4d9b75cd4d2990de535baf5caadfdf8d8f86664aa830c'
     const secretBox = new SecretBox(secretKey)
-    const keyStore = new KeyStore(connection, secretBox)
+    const keyStore = new KeyStore(dbConnection, secretBox)
     const keyManagementSystem = new KeyManagementSystem(keyStore)
 
-    const seedStore = new SeedStore(connection, secretBox)
+    const seedStore = new SeedStore(dbConnection, secretBox)
     const rifIdKeyManagementSystem = new RIFIdKeyManagementSystem(keyManagementSystem, keyStore, seedStore)
 
     const mnemonic = generateMnemonic(12)

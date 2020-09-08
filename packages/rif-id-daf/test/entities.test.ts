@@ -1,17 +1,19 @@
 import { Connection } from 'typeorm'
 import { Identity } from 'daf-core'
 import { IdentitySeed } from '../src/entities'
-import { createSqliteConnection } from './util'
+import { createSqliteConnection, deleteDatabase } from './util'
+
+const database = './rif-id-daf.entities.test.sqlite'
 
 describe('entities', () => {
   let connection: Connection
 
   beforeEach(async () => {
-    connection = await createSqliteConnection('./rif-id-daf.entities.test.sqlite')
+    connection = await createSqliteConnection(database)
   })
 
   afterEach(async () => {
-    await connection.close()
+    await deleteDatabase(connection, database)
   })
 
   test('save identity to DB', async () => {
