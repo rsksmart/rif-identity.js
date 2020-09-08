@@ -1,0 +1,1 @@
+export { DeclarativeDetail } from './DeclarativeDetail'
