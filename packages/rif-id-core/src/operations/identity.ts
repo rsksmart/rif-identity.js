@@ -2,9 +2,9 @@ import { Agent, AbstractIdentity } from 'daf-core'
 import { Dispatch } from '@reduxjs/toolkit'
 import { addIdentity } from '../reducers/identitySlice'
 
-type Callback<T> = (res?: T, err?: Error) => void
+type Callback<T> = (err?: Error, res?: T) => void
 
-const callbackify = (promise, cb) => cb ? promise().then(res => cb(res, undefined)).catch(err => cb(undefined, err)) : promise()
+const callbackify = (promise, cb) => cb ? promise().then(res => cb(undefined, res)).catch(err => cb(err, undefined)) : promise()
 
 export const initIdentityFactory = (agent: Agent) => (cb?: Callback<AbstractIdentity[]>) => (dispatch: Dispatch) => callbackify(
   () => agent.identityManager.getIdentities()

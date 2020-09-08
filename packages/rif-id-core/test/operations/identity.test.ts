@@ -6,7 +6,7 @@ import { createAgent, expectIsIdentity } from '../util'
 import identitySlice, { selectIdentities, IdentityState } from '../../src/reducers/identitySlice'
 import { initIdentityFactory, createIdentityFactory } from '../../src/operations/identity'
 
-const mockCallbackFactory = () => jest.fn((res, err) => {
+const mockCallbackFactory = () => jest.fn((err, res) => {
   if (err) return err
   else return res
 })
@@ -46,8 +46,8 @@ describe('identity operations', () => {
       await initIdentity(mockCallback)(store.dispatch)
 
       expect(mockCallback.mock.calls.length).toBe(1)
-      expect(mockCallback.mock.calls[0][0]).toEqual([])
-      expect(mockCallback.mock.calls[0][1]).toBeUndefined()
+      expect(mockCallback.mock.calls[0][0]).toBeUndefined()
+      expect(mockCallback.mock.calls[0][1]).toEqual([])
       expect(mockCallback.mock.results[0].value).toEqual([])
     })
 
@@ -63,8 +63,8 @@ describe('identity operations', () => {
       await initIdentity(mockCallback)(store.dispatch)
 
       expect(mockCallback.mock.calls.length).toBe(1)
-      expect(mockCallback.mock.calls[0][0]).toBeUndefined()
-      expect(mockCallback.mock.calls[0][1]).toBeInstanceOf(Error)
+      expect(mockCallback.mock.calls[0][0]).toBeInstanceOf(Error)
+      expect(mockCallback.mock.calls[0][1]).toBeUndefined()
       expect(mockCallback.mock.results[0].value).toBeInstanceOf(Error)
     })
   })
@@ -153,8 +153,8 @@ describe('identity operations', () => {
       await createIdentity(mockCallback)(store.dispatch)
 
       expect(mockCallback.mock.calls.length).toBe(1)
-      expectIsIdentity(mockCallback.mock.calls[0][0].did)
-      expect(mockCallback.mock.calls[0][1]).toBeUndefined()
+      expect(mockCallback.mock.calls[0][0]).toBeUndefined()
+      expectIsIdentity(mockCallback.mock.calls[0][1].did)
       expectIsIdentity(mockCallback.mock.results[0].value.did)
 
       const identities = selectIdentities(store.getState())
@@ -176,8 +176,8 @@ describe('identity operations', () => {
       await createIdentity(mockCallback)(store.dispatch)
 
       expect(mockCallback.mock.calls.length).toBe(1)
-      expect(mockCallback.mock.calls[0][0]).toBeUndefined()
-      expect(mockCallback.mock.calls[0][1]).toBeInstanceOf(Error)
+      expect(mockCallback.mock.calls[0][0]).toBeInstanceOf(Error)
+      expect(mockCallback.mock.calls[0][1]).toBeUndefined()
       expect(mockCallback.mock.results[0].value).toBeInstanceOf(Error)
 
       const identities = selectIdentities(store.getState())
