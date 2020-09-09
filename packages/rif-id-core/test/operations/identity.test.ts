@@ -205,7 +205,7 @@ describe('identity operations', () => {
       // it is ${netowork}-${type}
       identityProviderType = agent.identityManager.getIdentityProviders()[0].type
     })
-    
+
     test('should not allow to delete non existent identity', async () => {
       await deleteIdentity(identityProviderType, 'did:ethr:rsk:0xd8c84e8bb1932f095044f2aab1e2d028c582fb6b')(store.dispatch).catch(e => {
         expect(e.message).toBe('Identity not found')
@@ -268,7 +268,7 @@ describe('identity operations', () => {
       // it is ${netowork}-${type}
       identityProviderType = agent.identityManager.getIdentityProviders()[0].type
     })
-    
+
     test('should not delete anything when no existent identity', async () => {
       const deleted = await deleteAllIdentities(identityProviderType)(store.dispatch)
       expect(deleted).toHaveLength(0)
