@@ -4,7 +4,7 @@ import { generateMnemonic } from '@rsksmart/rif-id-mnemonic'
 import fs from 'fs'
 import { createAgent, expectIsIdentity } from '../util'
 import identitySlice, { selectIdentities, IdentityState } from '../../src/reducers/identitySlice'
-import { initIdentityFactory, createIdentityFactory } from '../../src/operations/identity'
+import { initIdentityFactory, createIdentityFactory, deleteIdentityFactory } from '../../src/operations/identity'
 
 const mockCallbackFactory = () => jest.fn((err, res) => {
   if (err) return err
@@ -18,6 +18,7 @@ describe('identity operations', () => {
   let mnemonic: string
   let initIdentity: ReturnType<typeof initIdentityFactory>
   let createIdentity: ReturnType<typeof createIdentityFactory>
+  let deleteIdentity: ReturnType<typeof deleteIdentityFactory>
   let preventClone = false
 
   beforeEach(async () => {
@@ -186,7 +187,9 @@ describe('identity operations', () => {
     })
   })
 
-  describe.each([[false], [true]])('delete identity - callback %s', (withCallback) => {
+  describe('delete identity', () => {
+    let identityProviderType: string
+
     beforeEach(async () => {
       mnemonic = generateMnemonic(12)
       database = `./rif-id-core-${Date.now()}.ops.identity.test.sqlite`
@@ -194,14 +197,56 @@ describe('identity operations', () => {
       store = configureStore({ reducer: identitySlice })
       initIdentity = initIdentityFactory(agent)
       createIdentity = createIdentityFactory(agent)
+      deleteIdentity = deleteIdentityFactory(agent)
 
       await initIdentity()(store.dispatch)
+
+      // it is ${netowork}-${type}
+      identityProviderType = agent.identityManager.getIdentityProviders()[0].type
     })
     
-    test('should not allow to delete non existent identity', async () => {})
+    test('should not allow to delete non existent identity', async () => {
+      await deleteIdentity(identityProviderType, 'did:ethr:rsk:0xd8c84e8bb1932f095044f2aab1e2d028c582fb6b')(store.dispatch).catch(e => {
+        expect(e.message).toBe('Identity not found')
+      })
+    })
+
+    test('should not allow to delete non existent identity with callback', async () => {
+      const mockCallback = mockCallbackFactory()
+
+      await deleteIdentity(identityProviderType, 'did:ethr:rsk:0xd8c84e8bb1932f095044f2aab1e2d028c582fb6b', mockCallback)(store.dispatch)
+
+      expect(mockCallback.mock.calls.length).toBe(1)
+      expect(mockCallback.mock.calls[0][0]).toBeInstanceOf(Error)
+      expect(mockCallback.mock.calls[0][1]).toBeUndefined()
+      expect(mockCallback.mock.results[0].value).toBeInstanceOf(Error)
+    })
 
     test('should allow to delete an identity', async () => {
+      await initIdentity()(store.dispatch)
+      const identity = await createIdentity()(store.dispatch)
 
+      await deleteIdentity(identityProviderType, identity.did)(store.dispatch)
+
+      expect(await agent.identityManager.getIdentities()).toHaveLength(0)
+      expect(store.getState().identities).toHaveLength(0)
+    })
+
+    test('should allow to delete an identity with callback', async () => {
+      const mockCallback = mockCallbackFactory()
+
+      await initIdentity()(store.dispatch)
+      const identity = await createIdentity()(store.dispatch)
+
+      await deleteIdentity(identityProviderType, identity.did, mockCallback)(store.dispatch)
+
+      expect(mockCallback.mock.calls.length).toBe(1)
+      expect(mockCallback.mock.calls[0][0]).toBeUndefined()
+      expect(mockCallback.mock.calls[0][1]).toBeTruthy()
+      expect(mockCallback.mock.results[0].value).toBeTruthy()
+
+      expect(await agent.identityManager.getIdentities()).toHaveLength(0)
+      expect(store.getState().identities).toHaveLength(0)
     })
   })
 })

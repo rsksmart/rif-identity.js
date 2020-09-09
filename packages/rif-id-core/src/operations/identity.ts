@@ -1,6 +1,6 @@
 import { Agent, AbstractIdentity } from 'daf-core'
 import { Dispatch } from '@reduxjs/toolkit'
-import { addIdentity } from '../reducers/identitySlice'
+import { addIdentity, deleteIdentity } from '../reducers/identitySlice'
 
 type Callback<T> = (err?: Error, res?: T) => void
 
@@ -20,4 +20,13 @@ export const createIdentityFactory = (agent: Agent) => (cb?: Callback<AbstractId
       dispatch(addIdentity({ did: identity.did }))
       return identity
     }), cb
+)
+
+export const deleteIdentityFactory = (agent: Agent) => (identityProviderType: string, did: string, cb?: Callback<void>) => (dispatch: Dispatch) => callbackify(
+  () => agent.identityManager.deleteIdentity(identityProviderType, did) // the rif identity provider is of type 'ethr-did' - this can be extended
+  .then(success => {
+    if (!success) throw new Error(`Error deleting identity ${did}`)
+    dispatch(deleteIdentity({ did }))
+    return true
+  }), cb
 )
