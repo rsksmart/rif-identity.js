@@ -7,10 +7,10 @@ import {
 } from 'typeorm'
 
 @Entity()
-export class IdentitySeed extends BaseEntity {
-  constructor (seedHex: string) {
+export class IdentityMnemonic extends BaseEntity {
+  constructor (mnemonic: string) {
     super()
-    this.seedHex = seedHex
+    this.mnemonic = mnemonic
   }
 
   @PrimaryColumn()
@@ -18,10 +18,10 @@ export class IdentitySeed extends BaseEntity {
   id: number
 
   @Column()
-  seedHex: string
+  mnemonic: string
 
   @Column()
   derivationCount: number = 0
 }
 
-export const Entities = [IdentitySeed]
+export const Entities = [IdentityMnemonic]

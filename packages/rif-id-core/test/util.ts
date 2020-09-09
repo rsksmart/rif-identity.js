@@ -1,7 +1,7 @@
 import { createConnection, Connection } from 'typeorm'
 import * as Daf from 'daf-core'
 import { SecretBox, KeyManagementSystem } from 'daf-libsodium'
-import { Entities, SeedStore, RIFIdKeyManagementSystem, RIFIdentityProvider } from '@rsksmart/rif-id-daf'
+import { Entities, MnemonicStore, RIFIdKeyManagementSystem, RIFIdentityProvider } from '@rsksmart/rif-id-daf'
 import { DafResolver } from 'daf-resolver'
 
 const network = 'rsk:testnet'
@@ -22,9 +22,9 @@ export const createAgent = async (database: string, mnemonic?: string) => {
   const secretKey = '8b5bbbc3ee2d33608e6abc77b872122f95c4d1ca0c24dfa48281ed227321d160'
   const secretBox = new SecretBox(secretKey)
   const keyStore = new Daf.KeyStore(dbConnection, secretBox)
-  const seedStore = new SeedStore(dbConnection, secretBox)
+  const mnemonicStore = new MnemonicStore(dbConnection, secretBox)
 
-  const kms = new RIFIdKeyManagementSystem(new KeyManagementSystem(keyStore), keyStore, seedStore)
+  const kms = new RIFIdKeyManagementSystem(new KeyManagementSystem(keyStore), keyStore, mnemonicStore)
   const identityStore = new Daf.IdentityStore('rsk-testnet-ethr', dbConnection)
 
   const identityProvider = new RIFIdentityProvider({

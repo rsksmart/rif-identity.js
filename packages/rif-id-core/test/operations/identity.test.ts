@@ -4,7 +4,7 @@ import { generateMnemonic } from '@rsksmart/rif-id-mnemonic'
 import fs from 'fs'
 import { createAgent, expectIsIdentity } from '../util'
 import identitySlice, { selectIdentities, IdentityState } from '../../src/reducers/identitySlice'
-import { initIdentityFactory, createIdentityFactory } from '../../src/operations/identity'
+import { initIdentityFactory, createIdentityFactory, deleteIdentityFactory, deleteAllIdentitiesFactory } from '../../src/operations/identity'
 
 const mockCallbackFactory = () => jest.fn((err, res) => {
   if (err) return err
@@ -18,6 +18,8 @@ describe('identity operations', () => {
   let mnemonic: string
   let initIdentity: ReturnType<typeof initIdentityFactory>
   let createIdentity: ReturnType<typeof createIdentityFactory>
+  let deleteIdentity: ReturnType<typeof deleteIdentityFactory>
+  let deleteAllIdentities: ReturnType<typeof deleteAllIdentitiesFactory>
   let preventClone = false
 
   beforeEach(async () => {
@@ -183,6 +185,143 @@ describe('identity operations', () => {
       const identities = selectIdentities(store.getState())
 
       expect(identities).toHaveLength(0)
+    })
+  })
+
+  describe('delete identity', () => {
+    let identityProviderType: string
+
+    beforeEach(async () => {
+      mnemonic = generateMnemonic(12)
+      database = `./rif-id-core-${Date.now()}.ops.identity.test.sqlite`
+      agent = await createAgent(database, mnemonic)
+      store = configureStore({ reducer: identitySlice })
+      initIdentity = initIdentityFactory(agent)
+      createIdentity = createIdentityFactory(agent)
+      deleteIdentity = deleteIdentityFactory(agent)
+
+      await initIdentity()(store.dispatch)
+
+      // it is ${netowork}-${type}
+      identityProviderType = agent.identityManager.getIdentityProviders()[0].type
+    })
+
+    test('should not allow to delete non existent identity', async () => {
+      await deleteIdentity(identityProviderType, 'did:ethr:rsk:0xd8c84e8bb1932f095044f2aab1e2d028c582fb6b')(store.dispatch).catch(e => {
+        expect(e.message).toBe('Identity not found')
+      })
+    })
+
+    test('should not allow to delete non existent identity with callback', async () => {
+      const mockCallback = mockCallbackFactory()
+
+      await deleteIdentity(identityProviderType, 'did:ethr:rsk:0xd8c84e8bb1932f095044f2aab1e2d028c582fb6b', mockCallback)(store.dispatch)
+
+      expect(mockCallback.mock.calls.length).toBe(1)
+      expect(mockCallback.mock.calls[0][0]).toBeInstanceOf(Error)
+      expect(mockCallback.mock.calls[0][1]).toBeUndefined()
+      expect(mockCallback.mock.results[0].value).toBeInstanceOf(Error)
+    })
+
+    test('should allow to delete an identity', async () => {
+      await initIdentity()(store.dispatch)
+      const identity = await createIdentity()(store.dispatch)
+
+      await deleteIdentity(identityProviderType, identity.did)(store.dispatch)
+
+      expect(await agent.identityManager.getIdentities()).toHaveLength(0)
+      expect(store.getState().identities).toHaveLength(0)
+    })
+
+    test('should allow to delete an identity with callback', async () => {
+      const mockCallback = mockCallbackFactory()
+
+      await initIdentity()(store.dispatch)
+      const identity = await createIdentity()(store.dispatch)
+
+      await deleteIdentity(identityProviderType, identity.did, mockCallback)(store.dispatch)
+
+      expect(mockCallback.mock.calls.length).toBe(1)
+      expect(mockCallback.mock.calls[0][0]).toBeUndefined()
+      expect(mockCallback.mock.calls[0][1]).toBeTruthy()
+      expect(mockCallback.mock.results[0].value).toBeTruthy()
+
+      expect(await agent.identityManager.getIdentities()).toHaveLength(0)
+      expect(store.getState().identities).toHaveLength(0)
+    })
+  })
+
+  describe('delete all identities', () => {
+    let identityProviderType: string
+
+    beforeEach(async () => {
+      mnemonic = generateMnemonic(12)
+      database = `./rif-id-core-${Date.now()}.ops.identity.test.sqlite`
+      agent = await createAgent(database, mnemonic)
+      store = configureStore({ reducer: identitySlice })
+      initIdentity = initIdentityFactory(agent)
+      createIdentity = createIdentityFactory(agent)
+      deleteAllIdentities = deleteAllIdentitiesFactory(agent)
+
+      await initIdentity()(store.dispatch)
+
+      // it is ${netowork}-${type}
+      identityProviderType = agent.identityManager.getIdentityProviders()[0].type
+    })
+
+    test('should not delete anything when no existent identity', async () => {
+      const deleted = await deleteAllIdentities(identityProviderType)(store.dispatch)
+      expect(deleted).toHaveLength(0)
+
+      expect(await agent.identityManager.getIdentities()).toHaveLength(0)
+      expect(store.getState().identities).toHaveLength(0)
+    })
+
+    test('should not delete anything when no existent identity with callback', async () => {
+      const mockCallback = mockCallbackFactory()
+
+      await deleteAllIdentities(identityProviderType, mockCallback)(store.dispatch)
+
+      expect(mockCallback.mock.calls.length).toBe(1)
+      expect(mockCallback.mock.calls[0][0]).toBeUndefined()
+      expect(mockCallback.mock.calls[0][1]).toEqual([])
+      expect(mockCallback.mock.results[0].value).toEqual([])
+
+      expect(await agent.identityManager.getIdentities()).toHaveLength(0)
+      expect(store.getState().identities).toHaveLength(0)
+    })
+
+    test('should allow to delete all identities', async () => {
+      await initIdentity()(store.dispatch)
+      await createIdentity()(store.dispatch)
+      await createIdentity()(store.dispatch)
+      await createIdentity()(store.dispatch)
+
+      const deleted = await deleteAllIdentities(identityProviderType)(store.dispatch)
+
+      expect(deleted).toEqual([true, true, true])
+
+      expect(await agent.identityManager.getIdentities()).toHaveLength(0)
+      expect(store.getState().identities).toHaveLength(0)
+    })
+
+    test('should allow to delete an identity with callback', async () => {
+      const mockCallback = mockCallbackFactory()
+
+      await initIdentity()(store.dispatch)
+      await createIdentity()(store.dispatch)
+      await createIdentity()(store.dispatch)
+      await createIdentity()(store.dispatch)
+
+      await deleteAllIdentities(identityProviderType, mockCallback)(store.dispatch)
+
+      expect(mockCallback.mock.calls.length).toBe(1)
+      expect(mockCallback.mock.calls[0][0]).toBeUndefined()
+      expect(mockCallback.mock.calls[0][1]).toEqual([true, true, true])
+      expect(mockCallback.mock.results[0].value).toEqual([true, true, true])
+
+      expect(await agent.identityManager.getIdentities()).toHaveLength(0)
+      expect(store.getState().identities).toHaveLength(0)
     })
   })
 })

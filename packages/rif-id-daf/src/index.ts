@@ -1,4 +1,4 @@
-export { Entities, IdentitySeed } from './entities'
+export { Entities, IdentityMnemonic } from './entities'
 export { RIFIdentityProvider } from './identity-provider'
 export { RIFIdKeyManagementSystem } from './key-management-system'
-export { SeedStore } from './seed-store'
+export { MnemonicStore } from './mnemonic-store'

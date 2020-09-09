@@ -1,6 +1,6 @@
 import { Agent, AbstractIdentity } from 'daf-core'
 import { Dispatch } from '@reduxjs/toolkit'
-import { addIdentity } from '../reducers/identitySlice'
+import { addIdentity, deleteIdentity, deleteAllIdentities } from '../reducers/identitySlice'
 
 type Callback<T> = (err?: Error, res?: T) => void
 
@@ -20,4 +20,27 @@ export const createIdentityFactory = (agent: Agent) => (cb?: Callback<AbstractId
       dispatch(addIdentity({ did: identity.did }))
       return identity
     }), cb
+)
+
+export const deleteIdentityFactory = (agent: Agent) => (identityProviderType: string, did: string, cb?: Callback<void>) => (dispatch: Dispatch) => callbackify(
+  () => agent.identityManager.deleteIdentity(identityProviderType, did)
+    .then(success => {
+      if (!success) throw new Error(`Error deleting identity ${did}`)
+      dispatch(deleteIdentity({ did }))
+      return true
+    }), cb
+)
+
+export const deleteAllIdentitiesFactory = (agent: Agent) => (identityProviderType: string, cb?: Callback<void>) => (dispatch: Dispatch) => callbackify(
+  () => {
+    const identityProvider = agent.identityManager.getIdentityProvider(identityProviderType)
+
+    return identityProvider.getIdentities()
+      .then(identities => Promise.all(identities.map(({ did }) => identityProvider.deleteIdentity(did))))
+      .then(successes => {
+        if (successes.filter(success => !success).length > 0) throw new Error('Error deleting identities')
+        dispatch(deleteAllIdentities())
+        return successes
+      })
+  }, cb
 )
