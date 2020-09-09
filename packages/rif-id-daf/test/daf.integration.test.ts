@@ -3,40 +3,42 @@ import { KeyStore, IdentityStore, Agent } from 'daf-core'
 import { SecretBox, KeyManagementSystem } from 'daf-libsodium'
 import { generateMnemonic, mnemonicToSeed, seedToRSKHDKey } from '@rsksmart/rif-id-mnemonic'
 import { rskAddressFromPrivateKey } from '@rsksmart/rif-id-ethr-did'
-import { createSqliteConnection } from './util'
-import { SeedStore } from '../src/seed-store'
+import { createSqliteConnection, deleteDatabase } from './util'
+import { MnemonicStore } from '../src/mnemonic-store'
 import { RIFIdKeyManagementSystem } from '../src/key-management-system'
 import { RIFIdentityProvider } from '../src/identity-provider'
 
+const database = './rif-id-daf.agent.test.sqlite'
+
 describe('agent', () => {
-  let connection: Promise<Connection>
+  let dbConnection: Promise<Connection>
 
   beforeEach(async () => {
-    connection = createSqliteConnection('./rif-id-daf.agent.test.sqlite')
+    dbConnection = createSqliteConnection(database)
   })
 
   afterEach(async () => {
-    await (await connection).close()
+    await deleteDatabase(await dbConnection, database)
   })
 
   test('create identity', async () => {
     const secretKey = '29739248cad1bd1a0fc4d9b75cd4d2990de535baf5caadfdf8d8f86664aa830c'
     const secretBox = new SecretBox(secretKey)
-    const keyStore = new KeyStore(connection, secretBox)
+    const keyStore = new KeyStore(dbConnection, secretBox)
     const keyManagementSystem = new KeyManagementSystem(keyStore)
 
-    const seedStore = new SeedStore(connection, secretBox)
-    const rifIdKeyManagementSystem = new RIFIdKeyManagementSystem(keyManagementSystem, keyStore, seedStore)
+    const mnemonicStore = new MnemonicStore(dbConnection, secretBox)
+    const rifIdKeyManagementSystem = new RIFIdKeyManagementSystem(keyManagementSystem, keyStore, mnemonicStore)
 
     const identityProvider = new RIFIdentityProvider({
       kms: rifIdKeyManagementSystem,
-      identityStore: new IdentityStore('rsk-testnet-ethr', connection),
+      identityStore: new IdentityStore('rsk-testnet-ethr', dbConnection),
       network: 'rsk',
       rpcUrl: 'http://localhost:8545'
     })
 
     const agent = new Agent({
-      dbConnection: connection,
+      dbConnection,
       identityProviders: [identityProvider],
       didResolver: null
     })

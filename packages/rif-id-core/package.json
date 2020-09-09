@@ -1,9 +1,9 @@
 {
   "name": "@rsksmart/rif-id-core",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "RIF Identity - Core",
   "main": "lib/index.js",
-  "types": "lib/index.d.js",
+  "types": "lib/index.d.ts",
   "scripts": {
     "build": "tsc"
   },
@@ -24,11 +24,13 @@
   "homepage": "https://github.com/rsksamrt/rif-identity.js#readme",
   "dependencies": {
     "@reduxjs/toolkit": "^1.4.0",
-    "@rsksmart/rif-id-core-reducer": "0.0.0",
-    "@rsksmart/rif-id-ethr-did": "0.0.1",
+    "@rsksmart/rif-id-daf": "0.0.3",
+    "daf-core": "^6.1.2"
+  },
+  "devDependencies": {
     "@rsksmart/rif-id-mnemonic": "0.0.1",
-    "@types/lodash": "^4.14.157",
-    "lodash": "^4.17.15",
-    "redux": "^4.0.5"
+    "daf-libsodium": "^6.1.2",
+    "daf-resolver": "^6.0.0",
+    "typeorm": "0.2.24"
   }
 }
