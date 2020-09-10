@@ -7,7 +7,7 @@ import {
 
 @Entity()
 export class DeclarativeDetail extends BaseEntity {
-  constructor(did: string, name: string, type: string, value: string) {
+  constructor (did: string, name: string, type: string, value: string) {
     super()
     this.key = `${did}:${name}`
     this.name = name

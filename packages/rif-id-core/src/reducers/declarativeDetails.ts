@@ -22,7 +22,7 @@ const declarativeDetailsSlice = createSlice({
   name: 'declarativeDetails',
   initialState,
   reducers: {
-    setDeclarativeDetails(
+    setDeclarativeDetails (
       state: DeclarativeDetailsState,
       { payload: { did, declarativeDetails } }: PayloadAction<SetDeclarativeDetailsPayload>
     ) {
@@ -36,8 +36,8 @@ export const { setDeclarativeDetails } = declarativeDetailsSlice.actions
 export const findDeclarativeDetails = (state: DeclarativeDetailsState, did: string) => state[did]
 export const findDeclarativeDetailsMatchingNames = (state: DeclarativeDetailsState, did: string, names: string[]) => {
   const declarativeDetails = state[did]
-  let result: DeclarativeDetails = {}
-  for(let name of names) result[name] = declarativeDetails[name]
+  const result: DeclarativeDetails = {}
+  for (const name of names) result[name] = declarativeDetails[name]
   return result
 }
 

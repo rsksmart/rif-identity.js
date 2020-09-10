@@ -9,15 +9,15 @@ import declarativeDetailsReducer, {
 import { did, did2 } from '../util'
 
 const declarativeDetails: DeclarativeDetails = {
-  'fullName': { type: 'string', value: 'Donald Knuth' },
-  'dateOfBirth': { type: 'timestamp', value: '-1009065600' },
-  'city': { type: 'string', value: 'Wisconsin' }
+  fullName: { type: 'string', value: 'Donald Knuth' },
+  dateOfBirth: { type: 'timestamp', value: '-1009065600' },
+  city: { type: 'string', value: 'Wisconsin' }
 }
 
 const declarativeDetails2: DeclarativeDetails = {
-  'fullName': { type: 'string', value: 'Edsger Dijkstra' },
-  'dateOfBirth': { type: 'timestamp', value: '-1248379200' },
-  'city': { type: 'string', value: 'Rotterdam' }
+  fullName: { type: 'string', value: 'Edsger Dijkstra' },
+  dateOfBirth: { type: 'timestamp', value: '-1248379200' },
+  city: { type: 'string', value: 'Rotterdam' }
 }
 
 describe('declarative details slice', () => {
@@ -34,14 +34,14 @@ describe('declarative details slice', () => {
 
   describe('selectors', () => {
     test('find declarative details', () => {
-      let state: DeclarativeDetailsState = {}
+      const state: DeclarativeDetailsState = {}
       state[did] = declarativeDetails
 
       expect(findDeclarativeDetails(state, did)).toEqual(declarativeDetails)
     })
 
     test('find declarative details in more than one identity', () => {
-      let state: DeclarativeDetailsState = {}
+      const state: DeclarativeDetailsState = {}
       state[did] = declarativeDetails
       state[did2] = declarativeDetails2
 
@@ -50,25 +50,25 @@ describe('declarative details slice', () => {
     })
 
     test('find declarative details matching names', () => {
-      let state: DeclarativeDetailsState = {}
+      const state: DeclarativeDetailsState = {}
       state[did] = declarativeDetails
 
       expect(
         findDeclarativeDetailsMatchingNames(state, did, ['fullName', 'dateOfBirth'])
       ).toEqual({
-        'fullName': { type: 'string', value: 'Donald Knuth' },
-        'dateOfBirth': { type: 'timestamp', value: '-1009065600' }
+        fullName: { type: 'string', value: 'Donald Knuth' },
+        dateOfBirth: { type: 'timestamp', value: '-1009065600' }
       })
     })
 
     test('find declarative details matching inexistent names', () => {
-      let state: DeclarativeDetailsState = {}
+      const state: DeclarativeDetailsState = {}
       state[did] = declarativeDetails
 
       expect(
         findDeclarativeDetailsMatchingNames(state, did, ['children'])
       ).toEqual({
-        'children': undefined
+        children: undefined
       })
     })
   })
@@ -86,61 +86,64 @@ describe('declarative details slice', () => {
 
     test('can add a declarative detail', () => {
       const declarativeDetails = {
-        'fullName': { type: 'string', value: 'Donald Knuth' }
+        fullName: { type: 'string', value: 'Donald Knuth' }
       }
 
       store.dispatch(setDeclarativeDetails({ did, declarativeDetails }))
 
-      let expected: DeclarativeDetailsState = {}
+      const expected: DeclarativeDetailsState = {}
       expected[did] = declarativeDetails
 
       expect(store.getState()).toEqual(expected)
     })
 
     test('can edit a declarative detail', () => {
-      store.dispatch(setDeclarativeDetails({ did, declarativeDetails: {
-        'fullName': { type: 'string', value: 'Donald Knuth' }
-      }}))
+      store.dispatch(setDeclarativeDetails({
+        did,
+        declarativeDetails: {
+          fullName: { type: 'string', value: 'Donald Knuth' }
+        }
+      }))
 
       const declarativeDetails = {
-        'fullName': { type: 'string', value: 'Edsger Dijkstra' }
+        fullName: { type: 'string', value: 'Edsger Dijkstra' }
       }
 
       store.dispatch(setDeclarativeDetails({ did, declarativeDetails }))
 
-      let expected: DeclarativeDetailsState = {}
+      const expected: DeclarativeDetailsState = {}
       expected[did] = declarativeDetails
 
       expect(store.getState()).toEqual(expected)
     })
 
     test('can set many declarative details', () => {
-      const declarativeDetails =  {
-        'fullName': { type: 'string', value: 'Donald Knuth' },
-        'dateOfBirth': { type: 'timestamp', value: '-1009065600' }
+      const declarativeDetails = {
+        fullName: { type: 'string', value: 'Donald Knuth' },
+        dateOfBirth: { type: 'timestamp', value: '-1009065600' }
       }
 
       store.dispatch(setDeclarativeDetails({ did, declarativeDetails }))
 
-      let expected: DeclarativeDetailsState = {}
+      const expected: DeclarativeDetailsState = {}
       expected[did] = declarativeDetails
 
       expect(store.getState()).toEqual(expected)
     })
 
     test('can delete a declarative detail', () => {
-      const declarativeDetail1 =  {
-        'fullName': { type: 'string', value: 'Donald Knuth' },
+      const declarativeDetail1 = {
+        fullName: { type: 'string', value: 'Donald Knuth' }
       }
 
       const declarativeDetail2 = {
-        'dateOfBirth': { type: 'timestamp', value: '-1009065600' }
+        dateOfBirth: { type: 'timestamp', value: '-1009065600' }
       }
 
       store.dispatch(setDeclarativeDetails({ did, declarativeDetails: Object.assign({}, declarativeDetail1, declarativeDetail2) }))
-      store.dispatch(setDeclarativeDetails({ did, declarativeDetails: { 'dateOfBirth': undefined }}))
+      store.dispatch(setDeclarativeDetails({ did, declarativeDetails: { dateOfBirth: undefined } }))
 
-      let expected: DeclarativeDetailsState = {}
+      const expected: DeclarativeDetailsState = {}
       expected[did] = declarativeDetail1
 
       expect(store.getState()).toEqual(expected)

@@ -1,4 +1,4 @@
-import { createConnection, Connection, Repository } from 'typeorm'
+import { createConnection } from 'typeorm'
 import fs from 'fs'
 import { DeclarativeDetail } from '../../src/entities/DeclarativeDetail'
 import { did } from '../util'
@@ -29,7 +29,7 @@ describe('CRUD declarative details', () => {
     // read
     const founDelcarativeDetails = await repository.find()
 
-    for (let founDelcarativeDetail of founDelcarativeDetails) {
+    for (const founDelcarativeDetail of founDelcarativeDetails) {
       const declarativeDetail = declarativeDetails.find(declarativeDetail => declarativeDetail.name === founDelcarativeDetail.name)
 
       expect(!!DeclarativeDetail).toBeTruthy()
@@ -51,7 +51,7 @@ describe('CRUD declarative details', () => {
     await repository.createQueryBuilder()
       .delete()
       .from(DeclarativeDetail)
-      .where("did = :did and name = :name", { did, name: 'fullName' })
+      .where('did = :did and name = :name', { did, name: 'fullName' })
       .execute()
 
     const foundAfterDelete = await repository.find()
