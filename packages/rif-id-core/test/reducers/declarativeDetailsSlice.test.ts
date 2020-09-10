@@ -6,7 +6,7 @@ import declarativeDetailsReducer, {
   DeclarativeDetails,
   DeclarativeDetailsState
 } from '../../src/reducers/declarativeDetails'
-import { did, did2 } from './utils'
+import { did, did2 } from '../util'
 
 const declarativeDetails: DeclarativeDetails = {
   'fullName': { type: 'string', value: 'Donald Knuth' },

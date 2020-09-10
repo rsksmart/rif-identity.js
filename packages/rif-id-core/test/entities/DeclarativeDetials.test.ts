@@ -1,6 +1,7 @@
 import { createConnection, Connection, Repository } from 'typeorm'
 import fs from 'fs'
-import { DeclarativeDetail } from '../src/DeclarativeDetail'
+import { DeclarativeDetail } from '../../src/entities/DeclarativeDetail'
+import { did } from '../util'
 
 const database = './rif-id.declarative-details.sqlite'
 describe('CRUD declarative details', () => {
@@ -19,8 +20,8 @@ describe('CRUD declarative details', () => {
 
     // create
     const declarativeDetails = [
-      new DeclarativeDetail('fullName', 'string', 'Alan Turing'),
-      new DeclarativeDetail('city', 'string', 'London')
+      new DeclarativeDetail(did, 'fullName', 'string', 'Alan Turing'),
+      new DeclarativeDetail(did, 'city', 'string', 'London')
     ]
 
     await repository.save(declarativeDetails)
@@ -32,6 +33,7 @@ describe('CRUD declarative details', () => {
       const declarativeDetail = declarativeDetails.find(declarativeDetail => declarativeDetail.name === founDelcarativeDetail.name)
 
       expect(!!DeclarativeDetail).toBeTruthy()
+      expect(founDelcarativeDetail.did).toBe(did)
       expect(founDelcarativeDetail.type).toBe(declarativeDetail.type)
       expect(founDelcarativeDetail.value).toBe(declarativeDetail.value)
     }
@@ -41,7 +43,7 @@ describe('CRUD declarative details', () => {
 
     await repository.update({ name: 'city' }, { value: cambridge })
 
-    const foundCityDeclarativeDetail = await repository.findOne({ name: 'city' })
+    const foundCityDeclarativeDetail = await repository.findOne({ did, name: 'city' })
 
     expect(foundCityDeclarativeDetail.value).toBe(cambridge)
 
@@ -49,7 +51,7 @@ describe('CRUD declarative details', () => {
     await repository.createQueryBuilder()
       .delete()
       .from(DeclarativeDetail)
-      .where("name = :name", { name: 'fullName' })
+      .where("did = :did and name = :name", { did, name: 'fullName' })
       .execute()
 
     const foundAfterDelete = await repository.find()
