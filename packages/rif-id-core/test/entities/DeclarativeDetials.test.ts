@@ -4,6 +4,7 @@ import { DeclarativeDetail } from '../../src/entities/DeclarativeDetail'
 import { did } from '../util'
 
 const database = './rif-id.declarative-details.sqlite'
+
 describe('CRUD declarative details', () => {
   test('create read update delete', async () => {
     // create db connection
