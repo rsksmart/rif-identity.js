@@ -2,7 +2,8 @@ import {
   Entity,
   Column,
   BaseEntity,
-  PrimaryGeneratedColumn
+  PrimaryGeneratedColumn,
+  PrimaryColumn
 } from 'typeorm'
 
 @Entity()
@@ -14,10 +15,7 @@ export class DeclarativeDetail extends BaseEntity {
     this.value = value
   }
 
-  @PrimaryGeneratedColumn()
-  id!: string
-
-  @Column({ unique: true })
+  @PrimaryColumn({ unique: true })
   name!: string
 
   @Column()
