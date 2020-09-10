@@ -2,7 +2,7 @@ import { Agent, AbstractIdentity } from 'daf-core'
 import { Dispatch } from '@reduxjs/toolkit'
 import { addIdentity, deleteIdentity, deleteAllIdentities } from '../reducers/identitySlice'
 
-type Callback<T> = (err?: Error, res?: T) => void
+export type Callback<T> = (err?: Error, res?: T) => void;
 
 const callbackify = (promise, cb) => cb ? promise().then(res => cb(undefined, res)).catch(err => cb(err, undefined)) : promise()
 
