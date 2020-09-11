@@ -31,8 +31,10 @@ const declarativeDetailsSlice = createSlice({
   }
 })
 
+// actions
 export const { setDeclarativeDetails } = declarativeDetailsSlice.actions
 
+// selectors
 export const findDeclarativeDetails = (state: DeclarativeDetailsState, did: string) => state[did]
 export const findDeclarativeDetailsMatchingNames = (state: DeclarativeDetailsState, did: string, names: string[]) => {
   const declarativeDetails = state[did]
@@ -40,5 +42,8 @@ export const findDeclarativeDetailsMatchingNames = (state: DeclarativeDetailsSta
   for (const name of names) result[name] = declarativeDetails[name]
   return result
 }
+
+// utils
+export const joinDeclarativeDetails = (...declarativeDetails: DeclarativeDetails[]) => Object.assign({}, ...declarativeDetails)
 
 export default declarativeDetailsSlice.reducer

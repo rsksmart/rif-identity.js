@@ -9,7 +9,7 @@ import {
 export class DeclarativeDetail extends BaseEntity {
   constructor (did: string, name: string, type: string, value: string) {
     super()
-    this.key = `${did}:${name}`
+    this.id = `${did}:${name}`
     this.name = name
     this.did = did
     this.type = type
@@ -17,7 +17,7 @@ export class DeclarativeDetail extends BaseEntity {
   }
 
   @PrimaryColumn({ unique: true })
-  key!: string
+  id!: string
 
   @Column()
   did: string

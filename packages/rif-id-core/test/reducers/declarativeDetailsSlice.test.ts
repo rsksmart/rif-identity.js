@@ -3,6 +3,7 @@ import declarativeDetailsReducer, {
   setDeclarativeDetails,
   findDeclarativeDetails,
   findDeclarativeDetailsMatchingNames,
+  joinDeclarativeDetails,
   DeclarativeDetails,
   DeclarativeDetailsState
 } from '../../src/reducers/declarativeDetails'
@@ -150,5 +151,17 @@ describe('declarative details slice', () => {
     })
 
     test('can delete many declarative details', () => {})
+  })
+})
+
+describe('utils', () => {
+  test('join declarative details', () => {
+    const dl1: DeclarativeDetails = { fullName: { type: 'string', value: 'Donald Knuth' } }
+    const dl2: DeclarativeDetails = { dateOfBirth: { type: 'timestamp', value: '-1009065600' } }
+    const dl3: DeclarativeDetails = { city: { type: 'string', value: 'Wisconsin' } }
+
+    const result = joinDeclarativeDetails(dl1, dl2, dl3)
+
+    expect(result).toEqual(declarativeDetails)
   })
 })
