@@ -24,7 +24,7 @@
   "homepage": "https://github.com/rsksamrt/rif-identity.js#readme",
   "dependencies": {
     "@reduxjs/toolkit": "^1.4.0",
-    "@rsksmart/rif-id-daf": "0.0.3",
+    "@rsksmart/rif-id-daf": "0.0.4",
     "daf-core": "^6.1.2"
   },
   "devDependencies": {
