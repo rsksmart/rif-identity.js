@@ -1,27 +1,27 @@
-import { Agent, Entities } from 'daf-core'
+import { Agent } from 'daf-core'
 import { Dispatch } from '@reduxjs/toolkit'
 import { callbackify, Callback } from './util'
-import { setDeclarativeDetails, joinDeclarativeDetails, DeclarativeDetails } from '../reducers/declarativeDetails'
+import { setDeclarativeDetails, DeclarativeDetails } from '../reducers/declarativeDetails'
 import { DeclarativeDetail } from '../entities/DeclarativeDetail'
 
 const getID = (did: string, name: string) => `${did}:${name}`
 
 const entityToDeclarativeDetail = (entity: DeclarativeDetail) => {
-  let declarativeDetail: DeclarativeDetails = {}
+  const declarativeDetail: DeclarativeDetails = {}
   declarativeDetail[entity.name] = { type: entity.type, value: entity.value }
   return declarativeDetail
 }
 
 export const setDeclarativeDetailsFactory = (agent: Agent) => (did: string, declarativeDetails: DeclarativeDetails, cb?: Callback<boolean>) => (dispatch: Dispatch) => callbackify(
-  () => agent.dbConnection.then(connection => connection.manager.createQueryBuilder(DeclarativeDetail, "dl")
-    .where("dl.id IN (:...ids)", { ids: Object.keys(declarativeDetails).map(name => getID(did, name)) })
+  () => agent.dbConnection.then(connection => connection.manager.createQueryBuilder(DeclarativeDetail, 'dl')
+    .where('dl.id IN (:...ids)', { ids: Object.keys(declarativeDetails).map(name => getID(did, name)) })
     .getMany()
     .then(entities => {
-      let entitiesToSave = []
-      let idsOfEntitiesToDelete = []
+      const entitiesToSave = []
+      const idsOfEntitiesToDelete = []
 
-      for (let [name, declarativeDetail] of Object.entries(declarativeDetails)) {
-        let entity = entities.find(entity => entity.name === name)
+      for (const [name, declarativeDetail] of Object.entries(declarativeDetails)) {
+        const entity = entities.find(entity => entity.name === name)
 
         if (entity && declarativeDetails[name]) {
           // updates
@@ -56,7 +56,7 @@ export const setDeclarativeDetailsFactory = (agent: Agent) => (did: string, decl
 export const initDeclarativeDetailsFactory = (agent: Agent) => (cb?: Callback<boolean>) => (dispatch: Dispatch) => callbackify(
   () => agent.dbConnection.then(connection => connection.getRepository(DeclarativeDetail).find()
     .then(entities => {
-      for (let entity of entities) dispatch(setDeclarativeDetails({ did: entity.did, declarativeDetails: entityToDeclarativeDetail(entity) }))
+      for (const entity of entities) dispatch(setDeclarativeDetails({ did: entity.did, declarativeDetails: entityToDeclarativeDetail(entity) }))
     })
   ),
   cb

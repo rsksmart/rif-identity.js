@@ -1,6 +1,5 @@
 import { Agent } from 'daf-core'
 import { configureStore, Store, AnyAction } from '@reduxjs/toolkit'
-import fs from 'fs'
 import { createAgent, deleteDatabase, did, did2 } from '../util'
 import declarativeDetailsReducer, {
   joinDeclarativeDetails,
@@ -15,7 +14,7 @@ const cityDL: DeclarativeDetails = { city: { type: 'string', value: 'Wisconsin' 
 const dobDL: DeclarativeDetails = { dateOfBirth: { type: 'timestamp', value: '-1009065600' } }
 const newDobDL = { dateOfBirth: { type: 'timestamp', value: '-1009069999' } }
 
-function assertCompareDeclarativeDetail(entity: DeclarativeDetail, { did, name, type, value }: { did: string, name: string, type: string, value: string }) {
+function assertCompareDeclarativeDetail (entity: DeclarativeDetail, { did, name, type, value }: { did: string, name: string, type: string, value: string }) {
   expect(entity.did).toEqual(did)
   expect(entity.name).toEqual(name)
   expect(entity.type).toEqual(type)
@@ -24,7 +23,7 @@ function assertCompareDeclarativeDetail(entity: DeclarativeDetail, { did, name, 
 
 const findDeclarativeDetailsAndOrderByName = async (agent: Agent) => {
   const entities: DeclarativeDetail[] = await (await agent.dbConnection).getRepository(DeclarativeDetail)
-    .find({ order: { name: 'ASC' }})
+    .find({ order: { name: 'ASC' } })
   return entities
 }
 
@@ -113,7 +112,6 @@ describe('declarative details operations', () => {
       test('create, update, then read', async () => {
         await setDeclarativeDetailsAndAssert(did, joinDeclarativeDetails(fullNameDL, cityDL, dobDL))
         await setDeclarativeDetailsAndAssert(did, newDobDL)
-
       })
 
       test('create and update at the same time, then read', async () => {
@@ -130,7 +128,6 @@ describe('declarative details operations', () => {
 
         // test db state
         const entities = await findDeclarativeDetailsAndOrderByName(agent)
-
 
         expect(entities).toHaveLength(3)
 
@@ -222,7 +219,7 @@ describe('declarative details operations', () => {
 
       await initDeclarativeDetailsFactory(agent2)()(store2.dispatch)
 
-      let expectedState: DeclarativeDetailsState = {}
+      const expectedState: DeclarativeDetailsState = {}
       expectedState[did] = fullNameDL
 
       expect(store2.getState()).toEqual(expectedState)
@@ -240,7 +237,7 @@ describe('declarative details operations', () => {
 
       await initDeclarativeDetailsFactory(agent2)()(store2.dispatch)
 
-      let expectedState: DeclarativeDetailsState = {}
+      const expectedState: DeclarativeDetailsState = {}
       expectedState[did] = declarativeDetails
 
       expect(store2.getState()).toEqual(expectedState)
@@ -260,7 +257,7 @@ describe('declarative details operations', () => {
 
       await initDeclarativeDetailsFactory(agent2)()(store2.dispatch)
 
-      let expectedState: DeclarativeDetailsState = {}
+      const expectedState: DeclarativeDetailsState = {}
       expectedState[did] = fullNameDL
       expectedState[did2] = cityDL
 

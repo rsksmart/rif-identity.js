@@ -1,5 +1,5 @@
 import { Agent } from 'daf-core'
-import { configureStore, Store, AnyAction, findNonSerializableValue } from '@reduxjs/toolkit'
+import { configureStore, Store, AnyAction } from '@reduxjs/toolkit'
 import { generateMnemonic } from '@rsksmart/rif-id-mnemonic'
 import { createAgent, deleteDatabase, expectIsIdentity } from '../util'
 import identitySlice, { selectIdentities, IdentityState } from '../../src/reducers/identitySlice'
@@ -27,7 +27,7 @@ describe('identity operations', () => {
   })
 
   afterEach(async () => {
-    if(!preventDelete) await deleteDatabase(agent, database)
+    if (!preventDelete) await deleteDatabase(agent, database)
   })
 
   describe('init with callback', () => {
