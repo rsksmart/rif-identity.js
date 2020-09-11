@@ -3,7 +3,6 @@
   "references": [
       { "path": "rif-id-core" },
       { "path": "rif-id-daf" },
-      { "path": "rif-id-declarative-details" },
       { "path": "rif-id-ethr-did" },
       { "path": "rif-id-mnemonic" }
   ]
