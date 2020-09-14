@@ -31,11 +31,11 @@ const credentialsSlice = createSlice({
   name: 'credentials',
   initialState,
   reducers: {
-    addCredential (state: CredentialsState, { payload: { credential } }: PayloadAction<AddCredentialPayload>) {
+    addCredential(state: CredentialsState, { payload: { credential }}: PayloadAction<AddCredentialPayload>) {
       if (!state[credential.subject]) state[credential.subject] = []
       state[credential.subject].push(credential)
     },
-    removeCredential (state: CredentialsState, { payload: { subject, hash } }: PayloadAction<RemoveCredentialPayload>) {
+    removeCredential(state: CredentialsState, { payload: { subject, hash }}: PayloadAction<RemoveCredentialPayload>) {
       state[subject] = state[subject].filter(credential => credential.hash !== hash)
       if (state[subject].length === 0) delete state[subject]
     }
