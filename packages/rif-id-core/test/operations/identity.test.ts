@@ -1,8 +1,8 @@
+import { Connection } from 'typeorm'
 import { Agent } from 'daf-core'
 import { configureStore, Store, AnyAction } from '@reduxjs/toolkit'
 import { generateMnemonic } from '@rsksmart/rif-id-mnemonic'
-import fs from 'fs'
-import { createAgent, expectIsIdentity } from '../util'
+import { createAgent, createSqliteConnection, resetDatabase, deleteDatabase, expectIsIdentity } from '../util'
 import identitySlice, { selectIdentities, IdentityState } from '../../src/reducers/identitySlice'
 import { initIdentityFactory, createIdentityFactory, deleteIdentityFactory, deleteAllIdentitiesFactory } from '../../src/operations/identity'
 
@@ -11,8 +11,10 @@ const mockCallbackFactory = () => jest.fn((err, res) => {
   else return res
 })
 
+const database = 'rif-id-core.test.operations.identity.t'
+
 describe('identity operations', () => {
-  let database: string
+  let dbConnection: Promise<Connection>
   let agent: Agent
   let store: Store<IdentityState, AnyAction>
   let mnemonic: string
@@ -20,15 +22,17 @@ describe('identity operations', () => {
   let createIdentity: ReturnType<typeof createIdentityFactory>
   let deleteIdentity: ReturnType<typeof deleteIdentityFactory>
   let deleteAllIdentities: ReturnType<typeof deleteAllIdentitiesFactory>
-  let preventClone = false
 
-  beforeEach(async () => {
-    database = `./rif-id-core-${Date.now()}.ops.identity.test.sqlite`
+  beforeAll(() => {
+    dbConnection = createSqliteConnection(database)
   })
 
-  afterEach(async () => {
-    if (!preventClone) await (await agent.dbConnection).close()
-    if (fs.existsSync(database)) fs.unlinkSync(database)
+  beforeEach(async () => {
+    await resetDatabase(dbConnection)
+  })
+
+  afterAll(async () => {
+    deleteDatabase(agent, database)
   })
 
   describe('init with callback', () => {
@@ -40,7 +44,7 @@ describe('identity operations', () => {
 
     test('success', async () => {
       mnemonic = generateMnemonic(12)
-      agent = await createAgent(database, mnemonic)
+      agent = await createAgent(dbConnection, { mnemonic })
       store = configureStore({ reducer: identitySlice })
       initIdentity = initIdentityFactory(agent)
       createIdentity = createIdentityFactory(agent)
@@ -54,7 +58,7 @@ describe('identity operations', () => {
     })
 
     test('error', async () => {
-      agent = await createAgent(database)
+      agent = await createAgent(dbConnection, {})
       store = configureStore({ reducer: identitySlice })
       initIdentity = initIdentityFactory(agent)
       createIdentity = createIdentityFactory(agent)
@@ -74,8 +78,7 @@ describe('identity operations', () => {
   describe('after init', () => {
     beforeEach(async () => {
       mnemonic = generateMnemonic(12)
-      database = `./rif-id-core-${Date.now()}.ops.identity.test.sqlite`
-      agent = await createAgent(database, mnemonic)
+      agent = await createAgent(dbConnection, { mnemonic })
       store = configureStore({ reducer: identitySlice })
       initIdentity = initIdentityFactory(agent)
       createIdentity = createIdentityFactory(agent)
@@ -112,14 +115,12 @@ describe('identity operations', () => {
     })
 
     test('restores identities', async () => {
-      preventClone = true
-
       await createIdentity()(store.dispatch)
       await createIdentity()(store.dispatch)
 
-      await (await agent.dbConnection).close()
+      await (await dbConnection).close()
 
-      const agent2 = await createAgent(database) // same database
+      const agent2 = await createAgent(database, {}) // same database, new connection
       const store2 = configureStore({ reducer: identitySlice })
       const initIdentity2 = initIdentityFactory(agent2)
 
@@ -133,6 +134,7 @@ describe('identity operations', () => {
       expectIsIdentity(identities[1])
 
       await (await agent2.dbConnection).close()
+      dbConnection = createSqliteConnection(database)
     })
   })
 
@@ -145,7 +147,7 @@ describe('identity operations', () => {
 
     test('success', async () => {
       mnemonic = generateMnemonic(12)
-      agent = await createAgent(database, mnemonic)
+      agent = await createAgent(dbConnection, { mnemonic })
       store = configureStore({ reducer: identitySlice })
       initIdentity = initIdentityFactory(agent)
       createIdentity = createIdentityFactory(agent)
@@ -167,7 +169,7 @@ describe('identity operations', () => {
     })
 
     test('error', async () => {
-      agent = await createAgent(database)
+      agent = await createAgent(dbConnection, {})
 
       store = configureStore({ reducer: identitySlice })
       initIdentity = initIdentityFactory(agent)
@@ -193,8 +195,7 @@ describe('identity operations', () => {
 
     beforeEach(async () => {
       mnemonic = generateMnemonic(12)
-      database = `./rif-id-core-${Date.now()}.ops.identity.test.sqlite`
-      agent = await createAgent(database, mnemonic)
+      agent = await createAgent(dbConnection, { mnemonic })
       store = configureStore({ reducer: identitySlice })
       initIdentity = initIdentityFactory(agent)
       createIdentity = createIdentityFactory(agent)
@@ -256,8 +257,7 @@ describe('identity operations', () => {
 
     beforeEach(async () => {
       mnemonic = generateMnemonic(12)
-      database = `./rif-id-core-${Date.now()}.ops.identity.test.sqlite`
-      agent = await createAgent(database, mnemonic)
+      agent = await createAgent(dbConnection, { mnemonic })
       store = configureStore({ reducer: identitySlice })
       initIdentity = initIdentityFactory(agent)
       createIdentity = createIdentityFactory(agent)

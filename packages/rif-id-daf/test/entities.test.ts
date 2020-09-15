@@ -1,19 +1,23 @@
 import { Connection } from 'typeorm'
 import { Identity } from 'daf-core'
 import { IdentityMnemonic } from '../src/entities'
-import { createSqliteConnection, deleteDatabase } from './util'
+import { createSqliteConnection, resetDatabase, deleteDatabase } from './util'
 
 const database = './rif-id-daf.entities.test.sqlite'
 
 describe('entities', () => {
-  let connection: Connection
+  let dbConnection: Promise<Connection>
 
-  beforeEach(async () => {
-    connection = await createSqliteConnection(database)
+  beforeAll(() => {
+    dbConnection = createSqliteConnection(database)
   })
 
-  afterEach(async () => {
-    await deleteDatabase(connection, database)
+  beforeEach(async () => {
+    await resetDatabase(dbConnection)
+  })
+
+  afterAll(async () => {
+    deleteDatabase(await dbConnection, database)
   })
 
   test('save identity to DB', async () => {

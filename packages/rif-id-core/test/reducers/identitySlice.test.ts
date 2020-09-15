@@ -1,8 +1,6 @@
 import { configureStore, Store, AnyAction } from '@reduxjs/toolkit'
 import identitySlice, { addIdentity, deleteIdentity, selectIdentities, IdentityState, deleteAllIdentities } from '../../src/reducers/identitySlice'
-
-const did = 'did:ethr:rsk:0xf3beac30c498d9e26865f34fcaa57dbb935b0d74'
-const did2 = 'did:ethr:rsk:0xdcbe93e98e0dcebe677c39a84f5f212b85ba7ef0'
+import { did, did2 } from '../util'
 
 describe('identity slice', () => {
   describe('action creators', () => {
