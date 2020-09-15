@@ -8,7 +8,7 @@
     "test:package": "npx jest packages/$npm_config_package/test --verbose --coverage --collectCoverageFrom=packages/*/src/**/*",
     "test:watch": "npx jest packages/*/test --watchAll",
     "test:coverage": "npx jest packages/*/test --verbose --coverage --collectCoverageFrom=packages/*/src/**/*",
-    "test:ci": "npx jest packages/*/test --verbose --coverage --collectCoverageFrom=packages/*/src/**/* --coverageDirectory reports",
+    "test:ci": "npx jest packages/*/test --verbose --coverage --collectCoverageFrom=packages/*/src/**/* --coverageDirectory reports --maxWorkers=2",
     "lint": "npx eslint packages/*/src/**/* packages/*/test/**/* --ext .json,.js,.ts",
     "lint:fix": "npx eslint packages/*/src/**/* packages/*/test/**/* --ext .json,.js,.ts --fix",
     "lint:ci": "npx eslint packages/*/src/**/* packages/*/test/**/* --ext .json,.js,.ts --format junit --output-file ./reports/eslint.xml",
