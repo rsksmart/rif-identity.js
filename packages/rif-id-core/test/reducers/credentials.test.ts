@@ -20,7 +20,7 @@ const credential1: Credential = {
   credentialSubject: {
     name: 'Alice',
     age: 35
-  },
+  }
 }
 
 const credential2: Credential = {
@@ -56,7 +56,7 @@ describe('credentials reducer', () => {
   describe('action creators', () => {
     test('add credential', () => {
       expect(addCredential({ credential: credential1 })).toEqual({
-        payload: { credential: credential1},
+        payload: { credential: credential1 },
         type: addCredential.type
       })
     })
@@ -75,7 +75,7 @@ describe('credentials reducer', () => {
     })
 
     test('select credentials', () => {
-      let state: CredentialsState = {}
+      const state: CredentialsState = {}
       state[credential1.subject] = [credential1]
       expect(selectCredentials(state, credential1.subject)).toEqual([credential1])
     })
@@ -142,4 +142,3 @@ describe('credentials reducer', () => {
     })
   })
 })
-
