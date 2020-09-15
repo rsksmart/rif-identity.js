@@ -12,6 +12,11 @@ export const createSqliteConnection = (database: string) => createConnection({
   synchronize: true
 })
 
+export const resetDatabase = async (dbConnection: Promise<Connection>) => {
+  await (await dbConnection).dropDatabase()
+  await (await dbConnection).synchronize()
+}
+
 export const deleteDatabase = (connection: Connection, database: string) => connection.close().then(() => {
   if (fs.existsSync(database)) fs.unlinkSync(database)
 })
