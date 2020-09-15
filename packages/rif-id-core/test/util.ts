@@ -1,4 +1,4 @@
-import { createConnection } from 'typeorm'
+import { createConnection, Connection } from 'typeorm'
 import * as Daf from 'daf-core'
 import { SecretBox, KeyManagementSystem } from 'daf-libsodium'
 import { Entities, MnemonicStore, RIFIdKeyManagementSystem, RIFIdentityProvider } from '@rsksmart/rif-id-daf'
@@ -14,22 +14,33 @@ type CreateAgentOptions = {
   declarativeDetailsFeature?: boolean
 }
 
-export const createAgent = async (database: string, {
+const getEntities = (declarativeDetailsFeature: boolean) => {
+  let entities: any[] = [...Entities, ...Daf.Entities]
+  if (declarativeDetailsFeature) entities.push(DeclarativeDetail)
+  return entities
+}
+
+export const createSqliteConnection = (database: string, declarativeDetailsFeature: boolean = false) => createConnection({
+  name: database,
+  type: 'sqlite',
+  database,
+  entities: getEntities(declarativeDetailsFeature),
+  logging: false,
+  synchronize: true
+})
+
+export const createAgent = async (database: string | Promise<Connection>, {
   mnemonic,
   declarativeDetailsFeature = false
 }: CreateAgentOptions) => {
   /* setup db */
-  let entities: any[] = [...Entities, ...Daf.Entities]
-  if (declarativeDetailsFeature) entities.push(DeclarativeDetail)
+  let dbConnection: Promise<Connection>
 
-  const dbConnection = createConnection({
-    name: database,
-    type: 'sqlite',
-    database,
-    entities,
-    logging: false,
-    synchronize: true
-  })
+  if (typeof database === 'string') {
+    dbConnection = createSqliteConnection(database, declarativeDetailsFeature)
+  } else {
+    dbConnection = database
+  }
 
   /* setup identity provider */
   const secretKey = '8b5bbbc3ee2d33608e6abc77b872122f95c4d1ca0c24dfa48281ed227321d160'
@@ -65,6 +76,11 @@ export const createAgent = async (database: string, {
   }
 
   return agent
+}
+
+export const resetDatabase = async (dbConnection: Promise<Connection>) => {
+  await (await dbConnection).dropDatabase()
+  await (await dbConnection).synchronize()
 }
 
 export const expectIsIdentity = (identity: string) => {
