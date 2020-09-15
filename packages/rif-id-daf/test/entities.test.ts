@@ -5,8 +5,6 @@ import { createSqliteConnection, deleteDatabase } from './util'
 
 const database = './rif-id-daf.entities.test.sqlite'
 
-jest.setTimeout(10000)
-
 describe('entities', () => {
   let connection: Connection
 

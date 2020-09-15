@@ -5,8 +5,6 @@ import { createAgent, deleteDatabase, expectIsIdentity } from '../util'
 import identitySlice, { selectIdentities, IdentityState } from '../../src/reducers/identitySlice'
 import { initIdentityFactory, createIdentityFactory, deleteIdentityFactory, deleteAllIdentitiesFactory } from '../../src/operations/identity'
 
-jest.setTimeout(10000)
-
 const mockCallbackFactory = () => jest.fn((err, res) => {
   if (err) return err
   else return res

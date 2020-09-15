@@ -10,8 +10,6 @@ import { RIFIdentityProvider } from '../src/identity-provider'
 
 const database = './rif-id-daf.agent.test.sqlite'
 
-jest.setTimeout(10000)
-
 describe('agent', () => {
   let dbConnection: Promise<Connection>
 
