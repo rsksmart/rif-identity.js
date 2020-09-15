@@ -8,5 +8,5 @@ module.exports = {
       "tsConfig": "./packages/tsconfig.settings.json"
     }
   },
-  testTimeout: 15000
+  testTimeout: 30000
 };
