@@ -22,7 +22,6 @@ describe('identity operations', () => {
   let createIdentity: ReturnType<typeof createIdentityFactory>
   let deleteIdentity: ReturnType<typeof deleteIdentityFactory>
   let deleteAllIdentities: ReturnType<typeof deleteAllIdentitiesFactory>
-  let preventDelete
 
   beforeAll(() => {
     dbConnection = createSqliteConnection(database)
