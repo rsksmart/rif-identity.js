@@ -6,8 +6,8 @@ import { addCredential, Credential, removeCredential } from '../reducers/credent
 const entityToCredential = (entity: DafCredential): Credential => ({
   issuer: entity.issuer.did,
   subject: entity.subject?.did,
-  issuanceDate: entity.issuanceDate.getTime(), // TODO: Divide by 1000?
-  expirationDate: entity.expirationDate?.getTime(), // TODO: Divide by 1000?
+  issuanceDate: entity.issuanceDate.getTime(),
+  expirationDate: entity.expirationDate?.getTime(),
   hash: entity.hash,
   credentialSubject: entity.credentialSubject,
   context: entity.context,
