@@ -1,6 +1,6 @@
 {
   "name": "@rsksmart/rif-id-core",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "RIF Identity - Core",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

@@ -3,7 +3,7 @@ import { KeyStore, IdentityStore, Agent } from 'daf-core'
 import { SecretBox, KeyManagementSystem } from 'daf-libsodium'
 import { generateMnemonic, mnemonicToSeed, seedToRSKHDKey } from '@rsksmart/rif-id-mnemonic'
 import { rskAddressFromPrivateKey } from '@rsksmart/rif-id-ethr-did'
-import { createSqliteConnection, deleteDatabase } from './util'
+import { createSqliteConnection, resetDatabase, deleteDatabase } from './util'
 import { MnemonicStore } from '../src/mnemonic-store'
 import { RIFIdKeyManagementSystem } from '../src/key-management-system'
 import { RIFIdentityProvider } from '../src/identity-provider'
@@ -13,12 +13,16 @@ const database = './rif-id-daf.agent.test.sqlite'
 describe('agent', () => {
   let dbConnection: Promise<Connection>
 
-  beforeEach(async () => {
+  beforeAll(() => {
     dbConnection = createSqliteConnection(database)
   })
 
-  afterEach(async () => {
-    await deleteDatabase(await dbConnection, database)
+  beforeEach(async () => {
+    await resetDatabase(dbConnection)
+  })
+
+  afterAll(async () => {
+    deleteDatabase(await dbConnection, database)
   })
 
   test('create identity', async () => {

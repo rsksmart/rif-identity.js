@@ -1,6 +1,6 @@
 import { Connection } from 'typeorm'
 import { SecretBox } from 'daf-libsodium'
-import { createSqliteConnection, deleteDatabase } from './util'
+import { createSqliteConnection, resetDatabase, deleteDatabase } from './util'
 import { MnemonicStore } from '../src/mnemonic-store'
 
 const database = './rif-id-daf.mnemonic-store.test.sqlite'
@@ -8,12 +8,16 @@ const database = './rif-id-daf.mnemonic-store.test.sqlite'
 describe('mnemonic store', () => {
   let dbConnection: Promise<Connection>
 
-  beforeEach(async () => {
+  beforeAll(() => {
     dbConnection = createSqliteConnection(database)
   })
 
-  afterEach(async () => {
-    await deleteDatabase(await dbConnection, database)
+  beforeEach(async () => {
+    await resetDatabase(dbConnection)
+  })
+
+  afterAll(async () => {
+    deleteDatabase(await dbConnection, database)
   })
 
   test('with secret box', async () => {

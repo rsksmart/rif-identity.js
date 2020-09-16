@@ -3,7 +3,7 @@ import { KeyStore } from 'daf-core'
 import { SecretBox, KeyManagementSystem } from 'daf-libsodium'
 import { generateMnemonic, mnemonicToSeed, seedToRSKHDKey } from '@rsksmart/rif-id-mnemonic'
 import { ecKeyFromPrivate, publicFromEcKey } from '@rsksmart/rif-id-ethr-did/lib/rskAddress'
-import { createSqliteConnection, deleteDatabase } from './util'
+import { createSqliteConnection, resetDatabase, deleteDatabase } from './util'
 import { MnemonicStore } from '../src/mnemonic-store'
 import { RIFIdKeyManagementSystem } from '../src/key-management-system'
 import { Key } from 'daf-libsodium/build/key-management-system'
@@ -13,12 +13,16 @@ const database = './rif-id-daf.kms.test.sqlite'
 describe('key management system', () => {
   let dbConnection: Promise<Connection>
 
-  beforeEach(async () => {
+  beforeAll(() => {
     dbConnection = createSqliteConnection(database)
   })
 
-  afterEach(async () => {
-    await deleteDatabase(await dbConnection, database)
+  beforeEach(async () => {
+    await resetDatabase(dbConnection)
+  })
+
+  afterAll(async () => {
+    deleteDatabase(await dbConnection, database)
   })
 
   test('import mnemonic', async () => {
