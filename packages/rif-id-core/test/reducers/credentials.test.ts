@@ -4,7 +4,7 @@ import credentialsReducer, {
   removeCredential,
   selectCredentials,
   Credential,
-  CredentialsState
+  CredentialsState, selectCredentialByHash
 } from '../../src/reducers/credentials'
 import { did, did2, did3 } from '../util'
 
@@ -79,6 +79,43 @@ describe('credentials reducer', () => {
       state[credential1.subject] = [credential1]
       expect(selectCredentials(state, credential1.subject)).toEqual([credential1])
     })
+
+    test('select credential by hash of initial state', () => {
+      const state: CredentialsState = {}
+
+      expect(selectCredentialByHash(state, credential1.subject, credential1.hash)).toBeUndefined()
+    })
+
+    test('select credential by hash when non existent hash', () => {
+      const state: CredentialsState = {}
+      state[credential1.subject] = [credential1]
+
+      expect(selectCredentialByHash(state, credential1.subject, credential2.hash)).toBeUndefined()
+    })
+
+    test('select credential by hash when non existent hash nor subject', () => {
+      const state: CredentialsState = {}
+      state[credential1.subject] = [credential1]
+
+      expect(selectCredentialByHash(state, credential2.subject, credential2.hash)).toBeUndefined()
+    })
+
+    test('select credential by hash when only one subject and one hash', () => {
+      const state: CredentialsState = {}
+      state[credential1.subject] = [credential1]
+
+      expect(selectCredentialByHash(state, credential1.subject, credential1.hash)).toEqual(credential1)
+    })
+
+    test('select credential by hash when more than one subject and hash', () => {
+      const state: CredentialsState = {}
+      state[credential1.subject] = [credential1, credential3]
+      state[credential2.subject] = [credential2]
+
+      expect(selectCredentialByHash(state, credential1.subject, credential1.hash)).toEqual(credential1)
+      expect(selectCredentialByHash(state, credential2.subject, credential2.hash)).toEqual(credential2)
+      expect(selectCredentialByHash(state, credential3.subject, credential3.hash)).toEqual(credential3)
+    })
   })
 
   describe('reducer', () => {
@@ -111,6 +148,14 @@ describe('credentials reducer', () => {
       expectedState = {}
       expectedState[did] = [credential1]
       expectedState[did2] = [credential2]
+    })
+
+    test('add two credentials in same identity', () => {
+      store.dispatch(addCredential({ credential: credential1 }))
+      store.dispatch(addCredential({ credential: credential3 }))
+
+      expectedState = {}
+      expectedState[did] = [credential1, credential3]
     })
 
     test('removes credential from one credential', () => {

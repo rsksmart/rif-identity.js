@@ -45,5 +45,6 @@ const credentialsSlice = createSlice({
 export const { addCredential, removeCredential } = credentialsSlice.actions
 
 export const selectCredentials = (state: CredentialsState, subject: string) => state[subject]
+export const selectCredentialByHash = (state: CredentialsState, subject: string, hash: string) => state[subject]?.find(cred => cred.hash === hash)
 
 export default credentialsSlice.reducer
