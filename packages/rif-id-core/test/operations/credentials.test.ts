@@ -2,7 +2,7 @@ import { AbstractIdentity, Agent, Credential as DafCredential } from 'daf-core'
 import credentialReducer, { CredentialsState, Credential } from '../../src/reducers/credentials'
 import { Store, AnyAction, configureStore } from '@reduxjs/toolkit'
 import { deleteCredentialFactory, initCredentialsFactory, receiveCredentialFactory } from '../../src/operations/credentials'
-import { createAgent, deleteDatabase, generateCredential } from '../util'
+import { createAgent, deleteDatabase, issueTestCredential } from '../util'
 import { generateMnemonic } from '@rsksmart/rif-id-mnemonic'
 
 const assertCompareCredentialValues = (actual: Credential, expected: DafCredential) => {
@@ -62,7 +62,7 @@ describe('credentials operations', () => {
 
     beforeEach(async () => {
       identity = await agent.identityManager.createIdentity()
-      vc = await generateCredential(identity.did)
+      vc = await issueTestCredential(identity.did)
 
       await receiveCredential(vc.raw)(store.dispatch)
     })
@@ -131,9 +131,9 @@ describe('credentials operations', () => {
 
       expect(identity1).not.toEqual(identity2)
 
-      vc1Id1 = await generateCredential(identity1.did)
-      vc2Id1 = await generateCredential(identity1.did)
-      vc1Id2 = await generateCredential(identity2.did)
+      vc1Id1 = await issueTestCredential(identity1.did)
+      vc2Id1 = await issueTestCredential(identity1.did)
+      vc1Id2 = await issueTestCredential(identity2.did)
 
       expect(vc1Id1).not.toEqual(vc1Id2)
       expect(vc1Id2).not.toEqual(vc2Id1)

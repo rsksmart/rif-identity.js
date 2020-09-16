@@ -26,7 +26,7 @@ export const receiveCredentialFactory = (agent: Agent) => (jwt: string, cb?: Cal
 export const deleteCredentialFactory = (agent: Agent) => (subject: string, hash: string, cb?: Callback<DafCredential>) => (dispatch: Dispatch) => callbackify(
   async () => {
     const connection = await agent.dbConnection
-    const credential = await connection.getRepository(DafCredential).findOne({ where: { hash, subject } })
+    const credential = await connection.getRepository(DafCredential).findOne(hash)
 
     await connection.getRepository(Claim).delete({ credential })
     await connection.getRepository(DafCredential).delete({ hash })
