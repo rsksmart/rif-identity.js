@@ -16,7 +16,8 @@ const addIssuedCredentialRequestPayload = {
   claims: [
     { claimType: 'fullName', claimValue: 'Steve Wozniak' },
     { claimType: 'age', claimValue: '70' }
-  ]
+  ],
+  status: 'pending'
 }
 
 const getSetIssuedCredentialRequestStatusPayload = (status: string) => ({

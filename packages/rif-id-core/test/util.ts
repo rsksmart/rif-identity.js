@@ -105,8 +105,10 @@ export const createAgent = async (database: string | Promise<Connection>, {
 }
 
 export const resetDatabase = async (dbConnection: Promise<Connection>) => {
-  await (await dbConnection).dropDatabase()
-  await (await dbConnection).synchronize()
+  if ((await dbConnection).isConnected) {
+    await (await dbConnection).dropDatabase()
+    await (await dbConnection).synchronize()
+  }
 }
 
 export const expectIsIdentity = (identity: string) => {

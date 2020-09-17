@@ -4,12 +4,30 @@ import { Agent } from 'daf-core'
 import { SelectiveDisclosureRequest } from 'daf-selective-disclosure'
 import { ActionSendDIDComm } from 'daf-did-comm'
 import { addIssuedCredentialRequest, Claims, IssuedCredentialRequest, setIssuedCredentialRequestStatus, deleteIssuedCredentialRequest } from '../reducers/issuedCredentialRequests'
-import { CredentialRequest } from '../entities/CredentialRequest'
+import { CredentialRequest, findCredentialRequests } from '../entities/CredentialRequest'
 import { callbackify, Callback } from './util'
 
-export const defaultIssuedCredentialRequestStatus = 'pending'
+export const initCredentialRequestsFactory = (agent: Agent) => (cb?: Callback<IssuedCredentialRequest[]>) => (dispatch: Dispatch): IssuedCredentialRequest => callbackify(
+  async () => {
+    const identities = await agent.identityManager.getIdentities()
+    const connection = await agent.dbConnection
+    const credentialRequests = await findCredentialRequests(connection)
+    credentialRequests.forEach(credentialRequest => {
+      if (credentialRequest.message.from && identities.filter(identity => identity.did === credentialRequest.message.from.did).length > 0) {
+        dispatch(addIssuedCredentialRequest({
+          id: credentialRequest.id,
+          from: credentialRequest.message.from.did,
+          to: credentialRequest.message.to.did,
+          claims: credentialRequest.message.data.claims,
+          status: credentialRequest.status
+        }))
+      }
+    })
+  },
+  cb
+)
 
-export const issueCredentialRequestFactory = (agent: Agent) => (from: string, to: string, claims: Claims, url?: string, cb?: Callback<IssuedCredentialRequest>) => (dispatch: Dispatch): IssuedCredentialRequest => callbackify(
+export const issueCredentialRequestFactory = (agent: Agent) => (from: string, to: string, claims: Claims, status: string, url?: string, cb?: Callback<IssuedCredentialRequest>) => (dispatch: Dispatch): IssuedCredentialRequest => callbackify(
   () => agent.handleAction({
     type: 'sign.sdr.jwt',
     data: {
@@ -34,14 +52,15 @@ export const issueCredentialRequestFactory = (agent: Agent) => (from: string, to
   }).then(({ connection, message }) => {
     const credentialRequest = new CredentialRequest()
     credentialRequest.message = message
-    credentialRequest.status = defaultIssuedCredentialRequestStatus
+    credentialRequest.status = status
     return connection.getRepository(CredentialRequest).save(credentialRequest)
   }).then(credentialRequest => {
     const addIssuedCredentialRequestPayload = {
       from,
       id: credentialRequest.id,
       to,
-      claims
+      claims,
+      status
     }
     dispatch(addIssuedCredentialRequest(addIssuedCredentialRequestPayload))
     return addIssuedCredentialRequestPayload

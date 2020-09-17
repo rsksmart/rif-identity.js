@@ -15,12 +15,7 @@ export interface IssuedCredentialRequestsState {
   [from: string]: IssuedCredentialRequest[]
 }
 
-interface AddIssuedCredentialRequestPayload {
-  from: string
-  id: string
-  to: string
-  claims: Claims
-}
+type AddIssuedCredentialRequestPayload = IssuedCredentialRequest
 
 interface SetIssuedCredentialRequestStatusPayload {
   from: string
@@ -41,10 +36,7 @@ const issuedCredentialRequestSlice = createSlice({
   reducers: {
     addIssuedCredentialRequest (state: IssuedCredentialRequestsState, { payload }: PayloadAction<AddIssuedCredentialRequestPayload>) {
       if (!state[payload.from]) state[payload.from] = []
-      state[payload.from].push({
-        ...payload,
-        status: 'pending'
-      })
+      state[payload.from].push(payload)
     },
     setIssuedCredentialRequestStatus (state: IssuedCredentialRequestsState, { payload: { from, id, status } }: PayloadAction<SetIssuedCredentialRequestStatusPayload>) {
       state[from] = state[from].map(issuedCredentialRequest => issuedCredentialRequest.id === id ? {

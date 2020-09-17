@@ -25,4 +25,4 @@ export class CredentialRequest extends BaseEntity {
 }
 
 export const findOneCredentialRequest = (connection: Connection, id: string) => connection.getRepository(CredentialRequest).findOne(id, { relations: [connection.getRepository(Message).metadata.tableName] })
-export const findCredentialRequests = (connection: Connection) => connection.getRepository(CredentialRequest).find()
+export const findCredentialRequests = (connection: Connection) => connection.getRepository(CredentialRequest).find({ relations: [connection.getRepository(Message).metadata.tableName] })
