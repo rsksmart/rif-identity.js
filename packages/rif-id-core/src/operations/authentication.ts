@@ -7,15 +7,21 @@ import { addServiceToken } from '../reducers/authentication'
 
 export const serviceLoginFactory = (agent: Agent) => (serviceUrl: string, serviceDid: string, did: string, cb?: Callback<string>) => (dispatch: Dispatch) => callbackify(
   async () => {
-    const makeLoginCredentialPayload = (challenge: string) => ({
-      '@context': ['https://www.w3.org/2018/credentials/v1'],
-      type: ['VerifiableCredential'],
-      issuer: did,
-      credentialSubject: {
-        id: serviceDid,
-        claims: [{ claimType: 'challenge', claimValue: challenge }]
+    const makeLoginCredentialPayload = (challenge: string) => {
+      if (!challenge) {
+        throw new Error('Server did not return any challenge to login')
       }
-    })
+
+      return {
+        '@context': ['https://www.w3.org/2018/credentials/v1'],
+        type: ['VerifiableCredential'],
+        issuer: did,
+        credentialSubject: {
+          id: serviceDid,
+          claims: [{ claimType: 'challenge', claimValue: challenge }]
+        }
+      }
+    }
 
     const verifyServiceDid = (message: Message): Credential => {
       const credential = message.credentials[0]
