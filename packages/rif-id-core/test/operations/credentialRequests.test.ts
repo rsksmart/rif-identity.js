@@ -4,7 +4,8 @@ import { configureStore, Store, AnyAction } from '@reduxjs/toolkit'
 import { startGanacheServerAndDeployEthrDidRegistry } from '@rsksmart/ethr-did-utils/index'
 import { createAgent, resetDatabase, deleteDatabase, startTestIssuerServer, importMnemonic, did2, did3 } from '../util'
 import issueCredentialRequestReducer, { IssuedCredentialRequestsState } from '../../src/reducers/issuedCredentialRequests'
-import { issueCredentialRequestFactory, setIssuedCredentialRequestStatusFactory } from '../../src/operations/credentialRequests'
+import { issueCredentialRequestFactory, setIssuedCredentialRequestStatusFactory, deleteIssuedCredentialRequestFactory } from '../../src/operations/credentialRequests'
+import { findCredentialRequests } from '../../src/entities'
 
 const database = 'rif-id-core.test.operations.issued-cred-reqs.sqlite'
 const port = 5454
@@ -23,6 +24,7 @@ describe('credential requests operations', () => {
   let store: Store<IssuedCredentialRequestsState, AnyAction>
   let issueCredentialRequest: ReturnType<typeof issueCredentialRequestFactory>
   let setIssuedCredentialRequestStatus: ReturnType<typeof setIssuedCredentialRequestStatusFactory>
+  let deleteIssuedCredentialRequest: ReturnType<typeof deleteIssuedCredentialRequestFactory>
   let issuerServer: Server
   let did: string
 
@@ -36,6 +38,7 @@ describe('credential requests operations', () => {
 
     issueCredentialRequest = issueCredentialRequestFactory(agent)
     setIssuedCredentialRequestStatus = setIssuedCredentialRequestStatusFactory(agent)
+    deleteIssuedCredentialRequest = deleteIssuedCredentialRequestFactory(agent)
 
     store = configureStore({ reducer: issueCredentialRequestReducer })
 
@@ -95,11 +98,6 @@ describe('credential requests operations', () => {
       const credentialRequest = await issueCredentialRequest(did, did2, claims, issuerServerUrl + '/request_credential')(store.dispatch)
       await setIssuedCredentialRequestStatus(did, credentialRequest.id, 'received')(store.dispatch)
 
-      expect(credentialRequest.from).toBe(did)
-      expect(credentialRequest.to).toBe(did2)
-      expect(credentialRequest.claims[0]).toEqual(claims[0])
-      expect(credentialRequest.claims[1]).toEqual(claims[1])
-
       const state = store.getState()
       expect(Object.keys(state)).toEqual([did])
 
@@ -108,6 +106,31 @@ describe('credential requests operations', () => {
       expect(credentialRequestState.to).toEqual(did2)
       expect(credentialRequestState.claims).toEqual(claims)
       expect(credentialRequestState.status).toEqual('received')
+
+      const foundCredentialRequest = await findCredentialRequests(await agent.dbConnection)
+
+      expect(foundCredentialRequest[0].status).toEqual('received')
+    })
+
+    test('fails when credential request does not exists request', async () => {
+      expect(setIssuedCredentialRequestStatus(did, 'id2', 'received')(store.dispatch)).rejects.toThrow()
+    })
+  })
+
+  describe('delete issued credential request', () => {
+    test('success', async () => {
+      const credentialRequest = await issueCredentialRequest(did, did2, claims, issuerServerUrl + '/request_credential')(store.dispatch)
+      await deleteIssuedCredentialRequest(did, credentialRequest.id)(store.dispatch)
+
+      expect(store.getState()).toEqual({})
+
+      const foundCredentialRequest = await findCredentialRequests(await agent.dbConnection)
+
+      expect(foundCredentialRequest).toHaveLength(0)
+    })
+
+    test('fails when credential request does not exists request', async () => {
+      expect(deleteIssuedCredentialRequest(did, 'id2')(store.dispatch)).rejects.toThrow()
     })
   })
 })

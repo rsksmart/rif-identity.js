@@ -3,10 +3,9 @@ import { Dispatch } from '@reduxjs/toolkit'
 import { Agent } from 'daf-core'
 import { SelectiveDisclosureRequest } from 'daf-selective-disclosure'
 import { ActionSendDIDComm } from 'daf-did-comm'
-import { addIssuedCredentialRequest, Claims, IssuedCredentialRequest, setIssuedCredentialRequestStatus } from '../reducers/issuedCredentialRequests'
+import { addIssuedCredentialRequest, Claims, IssuedCredentialRequest, setIssuedCredentialRequestStatus, deleteIssuedCredentialRequest } from '../reducers/issuedCredentialRequests'
 import { CredentialRequest } from '../entities/CredentialRequest'
 import { callbackify, Callback } from './util'
-import { addCredential } from '../reducers/credentials'
 
 export const defaultIssuedCredentialRequestStatus = 'pending'
 
@@ -58,5 +57,15 @@ export const setIssuedCredentialRequestStatusFactory = (agent: Agent) => (from: 
     await connection.manager.save(credentialRequest)
     dispatch(setIssuedCredentialRequestStatus({ from, id, status }))
   },
+  cb
+)
+
+export const deleteIssuedCredentialRequestFactory = (agent: Agent) => (from: string, id: string, cb?: Callback<void>) => (dispatch: Dispatch) => callbackify(
+  () => agent.dbConnection.then(connection => connection.manager.createQueryBuilder()
+    .delete()
+    .from(CredentialRequest)
+    .where('id = :id', { id })
+    .execute()
+  ).then(() => dispatch(deleteIssuedCredentialRequest({ from, id }))),
   cb
 )

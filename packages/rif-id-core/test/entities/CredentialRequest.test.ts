@@ -1,13 +1,11 @@
 import { Message } from 'daf-core'
 import fs from 'fs'
 import { createSqliteConnection } from '../util'
-import { CredentialRequest, findOneCredentialRequest } from '../../src/entities'
+import { CredentialRequest, findOneCredentialRequest, findCredentialRequests } from '../../src/entities'
 
 test('credential requests entity', async () => {
   const database = `rif-id-core.test.entities.cred-reqs.${+new Date()}.sqlite`
   const connection = await createSqliteConnection(database, false, true)
-
-  const messageRepository = await connection.getRepository(Message)
 
   const message = new Message()
   message.id = 'id'
@@ -34,7 +32,7 @@ test('credential requests entity', async () => {
     .where('id = :id', { id: credentialRequest.id })
     .execute()
 
-  expect(await credentialRequestRepository.find()).toHaveLength(0)
+  expect(await findCredentialRequests(connection)).toHaveLength(0)
 
   await connection.close()
   fs.unlinkSync(database)

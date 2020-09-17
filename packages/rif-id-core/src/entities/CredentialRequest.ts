@@ -5,7 +5,7 @@ import {
   PrimaryGeneratedColumn,
   Column,
   OneToOne,
-  JoinColumn, Repository
+  JoinColumn
 } from 'typeorm'
 import { Message } from 'daf-core'
 
@@ -14,6 +14,7 @@ export class CredentialRequest extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: string
 
+  // docs: https://github.com/typeorm/typeorm/blob/master/docs/one-to-one-relations.md
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   @OneToOne(message => Message)
   @JoinColumn()
@@ -24,3 +25,4 @@ export class CredentialRequest extends BaseEntity {
 }
 
 export const findOneCredentialRequest = (connection: Connection, id: string) => connection.getRepository(CredentialRequest).findOne(id, { relations: [connection.getRepository(Message).metadata.tableName] })
+export const findCredentialRequests = (connection: Connection) => connection.getRepository(CredentialRequest).find()
