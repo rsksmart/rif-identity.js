@@ -30,11 +30,16 @@
     "daf-selective-disclosure": "^6.3.0"
   },
   "devDependencies": {
+    "@rsksmart/ethr-did-utils": "^1.0.0",
     "@rsksmart/rif-id-mnemonic": "0.0.1",
+    "@types/body-parser": "^1.19.0",
+    "@types/express": "^4.17.8",
+    "body-parser": "^1.19.0",
     "daf-did-jwt": "^6.3.0",
     "daf-libsodium": "^6.1.2",
     "daf-resolver": "^6.0.0",
     "daf-w3c": "^6.3.0",
+    "express": "^4.17.1",
     "typeorm": "0.2.24"
   }
 }

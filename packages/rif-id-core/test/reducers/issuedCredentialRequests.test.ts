@@ -1,4 +1,4 @@
-import { configureStore, Store, AnyAction } from '@reduxjs/toolkit'
+import { configureStore } from '@reduxjs/toolkit'
 import issuedCredentialRequestsReducer, {
   addIssuedCredentialRequest,
   setIssuedCredentialRequestStatus,
@@ -8,7 +8,7 @@ import issuedCredentialRequestsReducer, {
   IssuedCredentialRequestStatus,
   IssuedCredentialRequestsState
 } from '../../src/reducers/issuedCredentialRequests'
-import { did, did2, did3 } from '../util'
+import { did, did3 } from '../util'
 
 const addIssuedCredentialRequestPayload = {
   from: did,
@@ -28,7 +28,7 @@ const getSetIssuedCredentialRequestStatusPayload = (status: IssuedCredentialRequ
 
 const deleteIssuedCredentialRequestPayload = {
   from: did,
-  messageId: '10',
+  messageId: '10'
 }
 
 const issuedCredentialRequest: IssuedCredentialRequest = {
@@ -72,7 +72,7 @@ describe('issued credential requests reducer', () => {
     })
 
     test('from identity reducer', () => {
-      let state: IssuedCredentialRequestsState = {}
+      const state: IssuedCredentialRequestsState = {}
       state[did] = [issuedCredentialRequest]
       expect(selectIssuedCredentialRequests(state, did)).toEqual([issuedCredentialRequest])
     })
@@ -80,7 +80,7 @@ describe('issued credential requests reducer', () => {
 
   test('reducer', () => {
     let expectedState: IssuedCredentialRequestsState = {}
-    let store = configureStore({ reducer: issuedCredentialRequestsReducer })
+    const store = configureStore({ reducer: issuedCredentialRequestsReducer })
     expect(store.getState()).toEqual(expectedState)
 
     expectedState[did] = [issuedCredentialRequest]

@@ -11,7 +11,7 @@ const mockCallbackFactory = () => jest.fn((err, res) => {
   else return res
 })
 
-const database = 'rif-id-core.test.operations.identity.t'
+const database = 'rif-id-core.test.operations.identity.sqlite'
 
 describe('identity operations', () => {
   let dbConnection: Promise<Connection>

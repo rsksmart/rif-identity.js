@@ -42,20 +42,20 @@ const issuedCredentialRequestSlice = createSlice({
   name: 'issuedCredentialRequest',
   initialState,
   reducers: {
-    addIssuedCredentialRequest(state: IssuedCredentialRequestsState, { payload }: PayloadAction<AddIssuedCredentialRequestPayload>) {
+    addIssuedCredentialRequest (state: IssuedCredentialRequestsState, { payload }: PayloadAction<AddIssuedCredentialRequestPayload>) {
       if (!state[payload.from]) state[payload.from] = []
       state[payload.from].push({
         ...payload,
         status: 'pending'
       })
     },
-    setIssuedCredentialRequestStatus(state: IssuedCredentialRequestsState, { payload: { from, messageId, status } }: PayloadAction<SetIssuedCredentialRequestStatusPayload>) {
+    setIssuedCredentialRequestStatus (state: IssuedCredentialRequestsState, { payload: { from, messageId, status } }: PayloadAction<SetIssuedCredentialRequestStatusPayload>) {
       state[from] = state[from].map(issuedCredentialRequest => issuedCredentialRequest.messageId === messageId ? {
         ...issuedCredentialRequest,
         status
       } : issuedCredentialRequest)
     },
-    deleteIssuedCredentialRequest(state: IssuedCredentialRequestsState, { payload: { from, messageId } }: PayloadAction<DeleteIssuedCredentialRequestPayload>) {
+    deleteIssuedCredentialRequest (state: IssuedCredentialRequestsState, { payload: { from, messageId } }: PayloadAction<DeleteIssuedCredentialRequestPayload>) {
       state[from] = state[from].filter(issuedCredentialRequest => issuedCredentialRequest.messageId !== messageId)
       if (state[from].length === 0) delete state[from]
     }
