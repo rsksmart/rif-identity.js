@@ -5,14 +5,13 @@ import issuedCredentialRequestsReducer, {
   deleteIssuedCredentialRequest,
   selectIssuedCredentialRequests,
   IssuedCredentialRequest,
-  IssuedCredentialRequestStatus,
   IssuedCredentialRequestsState
 } from '../../src/reducers/issuedCredentialRequests'
 import { did, did3 } from '../util'
 
 const addIssuedCredentialRequestPayload = {
   from: did,
-  messageId: '10',
+  id: '10',
   to: did3,
   claims: [
     { claimType: 'fullName', claimValue: 'Steve Wozniak' },
@@ -20,20 +19,20 @@ const addIssuedCredentialRequestPayload = {
   ]
 }
 
-const getSetIssuedCredentialRequestStatusPayload = (status: IssuedCredentialRequestStatus) => ({
+const getSetIssuedCredentialRequestStatusPayload = (status: string) => ({
   from: did,
-  messageId: '10',
+  id: '10',
   status
 })
 
 const deleteIssuedCredentialRequestPayload = {
   from: did,
-  messageId: '10'
+  id: '10'
 }
 
 const issuedCredentialRequest: IssuedCredentialRequest = {
   from: did,
-  messageId: '10',
+  id: '10',
   to: did3,
   claims: [
     { claimType: 'fullName', claimValue: 'Steve Wozniak' },
@@ -51,7 +50,7 @@ describe('issued credential requests reducer', () => {
       })
     })
 
-    test.each([['pending', 'pending', 'received', 'denied', 'invalid', 'error']])('set issued credential request status - %s', (status: IssuedCredentialRequestStatus) => {
+    test.each([['pending', 'pending', 'received', 'denied', 'invalid', 'error']])('set issued credential request status - %s', (status: string) => {
       expect(setIssuedCredentialRequestStatus(getSetIssuedCredentialRequestStatusPayload(status))).toEqual({
         payload: getSetIssuedCredentialRequestStatusPayload(status),
         type: setIssuedCredentialRequestStatus.type

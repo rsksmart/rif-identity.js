@@ -1,15 +1,13 @@
 import {
+  Connection,
   Entity,
   BaseEntity,
   PrimaryGeneratedColumn,
   Column,
   OneToOne,
-  JoinColumn
+  JoinColumn, Repository
 } from 'typeorm'
 import { Message } from 'daf-core'
-import { IssuedCredentialRequestStatus } from '../reducers/issuedCredentialRequests'
-
-type CredentialRequestStatus = IssuedCredentialRequestStatus // | ReceivedCredentialRequestStatus
 
 @Entity()
 export class CredentialRequest extends BaseEntity {
@@ -22,5 +20,7 @@ export class CredentialRequest extends BaseEntity {
   message!: Message
 
   @Column()
-  status!: CredentialRequestStatus
+  status!: string
 }
+
+export const findOneCredentialRequest = (connection: Connection, id: string) => connection.getRepository(CredentialRequest).findOne(id, { relations: [connection.getRepository(Message).metadata.tableName] })

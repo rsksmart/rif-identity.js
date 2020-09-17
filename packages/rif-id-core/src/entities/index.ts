@@ -1,2 +1,2 @@
 export { DeclarativeDetail } from './DeclarativeDetail'
-export { CredentialRequest } from './CredentialRequest'
+export { CredentialRequest, findOneCredentialRequest } from './CredentialRequest'

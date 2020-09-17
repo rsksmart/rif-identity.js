@@ -3,13 +3,14 @@ import { Dispatch } from '@reduxjs/toolkit'
 import { Agent } from 'daf-core'
 import { SelectiveDisclosureRequest } from 'daf-selective-disclosure'
 import { ActionSendDIDComm } from 'daf-did-comm'
-import { addIssuedCredentialRequest, Claims, IssuedCredentialRequest, IssuedCredentialRequestStatus } from '../reducers/issuedCredentialRequests'
+import { addIssuedCredentialRequest, Claims, IssuedCredentialRequest, setIssuedCredentialRequestStatus } from '../reducers/issuedCredentialRequests'
 import { CredentialRequest } from '../entities/CredentialRequest'
 import { callbackify, Callback } from './util'
+import { addCredential } from '../reducers/credentials'
 
-export const defaultIssuedCredentialRequestStatus: IssuedCredentialRequestStatus = 'pending'
+export const defaultIssuedCredentialRequestStatus = 'pending'
 
-export const issueCredentialRequestFactory = (agent: Agent) => (from: string, to: string, claims: Claims, url?: string, cb?: Callback<IssuedCredentialRequest>) => (dispatch: Dispatch) => callbackify(
+export const issueCredentialRequestFactory = (agent: Agent) => (from: string, to: string, claims: Claims, url?: string, cb?: Callback<IssuedCredentialRequest>) => (dispatch: Dispatch): IssuedCredentialRequest => callbackify(
   () => agent.handleAction({
     type: 'sign.sdr.jwt',
     data: {
@@ -39,12 +40,23 @@ export const issueCredentialRequestFactory = (agent: Agent) => (from: string, to
   }).then(credentialRequest => {
     const addIssuedCredentialRequestPayload = {
       from,
-      messageId: credentialRequest.message.id,
+      id: credentialRequest.id,
       to,
       claims
     }
     dispatch(addIssuedCredentialRequest(addIssuedCredentialRequestPayload))
     return addIssuedCredentialRequestPayload
   }),
+  cb
+)
+
+export const setIssuedCredentialRequestStatusFactory = (agent: Agent) => (from: string, id: string, status: string, cb?: Callback<void>) => (dispatch: Dispatch) => callbackify(
+  async () => {
+    const connection = await agent.dbConnection
+    const credentialRequest = await connection.getRepository(CredentialRequest).findOne(id)
+    credentialRequest.status = status
+    await connection.manager.save(credentialRequest)
+    dispatch(setIssuedCredentialRequestStatus({ from, id, status }))
+  },
   cb
 )

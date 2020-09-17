@@ -1,17 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { CredentialRequestInput } from 'daf-selective-disclosure'
 
-// use generic type T to customize status possible values - use strings, they are stored in de DB
-export type IssuedCredentialRequestStatus<T = 'pending' | 'received' | 'denied' | 'invalid' | 'error'> = T
-
 export type Claims = CredentialRequestInput[]
 
 export interface IssuedCredentialRequest {
   from: string
-  messageId: string
+  id: string
   to: string
   claims: Claims
-  status: IssuedCredentialRequestStatus
+  status: string
 }
 
 export interface IssuedCredentialRequestsState {
@@ -20,20 +17,20 @@ export interface IssuedCredentialRequestsState {
 
 interface AddIssuedCredentialRequestPayload {
   from: string
-  messageId: string
+  id: string
   to: string
   claims: Claims
 }
 
 interface SetIssuedCredentialRequestStatusPayload {
   from: string
-  messageId: string
-  status: IssuedCredentialRequestStatus
+  id: string
+  status: string
 }
 
 interface DeleteIssuedCredentialRequestPayload {
   from: string
-  messageId: string
+  id: string
 }
 
 const initialState: IssuedCredentialRequestsState = {}
@@ -49,14 +46,14 @@ const issuedCredentialRequestSlice = createSlice({
         status: 'pending'
       })
     },
-    setIssuedCredentialRequestStatus (state: IssuedCredentialRequestsState, { payload: { from, messageId, status } }: PayloadAction<SetIssuedCredentialRequestStatusPayload>) {
-      state[from] = state[from].map(issuedCredentialRequest => issuedCredentialRequest.messageId === messageId ? {
+    setIssuedCredentialRequestStatus (state: IssuedCredentialRequestsState, { payload: { from, id, status } }: PayloadAction<SetIssuedCredentialRequestStatusPayload>) {
+      state[from] = state[from].map(issuedCredentialRequest => issuedCredentialRequest.id === id ? {
         ...issuedCredentialRequest,
         status
       } : issuedCredentialRequest)
     },
-    deleteIssuedCredentialRequest (state: IssuedCredentialRequestsState, { payload: { from, messageId } }: PayloadAction<DeleteIssuedCredentialRequestPayload>) {
-      state[from] = state[from].filter(issuedCredentialRequest => issuedCredentialRequest.messageId !== messageId)
+    deleteIssuedCredentialRequest (state: IssuedCredentialRequestsState, { payload: { from, id } }: PayloadAction<DeleteIssuedCredentialRequestPayload>) {
+      state[from] = state[from].filter(issuedCredentialRequest => issuedCredentialRequest.id !== id)
       if (state[from].length === 0) delete state[from]
     }
   }
