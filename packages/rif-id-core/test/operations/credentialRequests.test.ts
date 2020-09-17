@@ -57,9 +57,9 @@ describe('credential requests operations', () => {
 
   afterEach(() => resetDatabase(agent.dbConnection))
 
-  afterAll(() => {
+  afterAll(async () => {
     ganacheServer.close()
-    deleteDatabase(agent, database)
+    await deleteDatabase(agent, database)
     issuerServer.close()
   })
 
