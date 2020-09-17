@@ -160,7 +160,6 @@ export const startTestIssuerServer = (handle: any) => {
 
   app.post('/request_credential', function(req, res) {
     const jwt = req.body
-    console.log(jwt)
     res.status(200).send('')
   })
 
