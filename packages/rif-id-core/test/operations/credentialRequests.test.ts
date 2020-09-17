@@ -55,10 +55,12 @@ describe('credential requests operations', () => {
     did = identity.did
   })
 
-  afterEach(() => resetDatabase(agent.dbConnection))
+  afterEach(async () => {
+    await resetDatabase(agent.dbConnection)
+  })
 
   afterAll(async () => {
-    ganacheServer.close()
+    await ganacheServer.close()
     await deleteDatabase(agent, database)
     issuerServer.close()
   })
@@ -161,6 +163,8 @@ describe('credential requests operations', () => {
       expect(credentialRequestState.to).toEqual(did2)
       expect(credentialRequestState.claims).toEqual(claims)
       expect(credentialRequestState.status).toEqual('pending')
+
+      await resetDatabase(dbConnection2)
     })
   })
 })
