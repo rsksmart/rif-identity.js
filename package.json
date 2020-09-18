@@ -5,6 +5,7 @@
     "setup": "npm run bootstrap && npm run link",
     "build": "npx lerna run build",
     "test": "npx jest packages/*/test --verbose --coverage --collectCoverageFrom=packages/*/src/**/*",
+    "test:oh": "npx jest packages/*/test --verbose --coverage --collectCoverageFrom=packages/*/src/**/* --runInBand --detectOpenHandles",
     "test:package": "npx jest packages/$npm_config_package/test --verbose --coverage --collectCoverageFrom=packages/*/src/**/*",
     "test:watch": "npx jest packages/*/test --watchAll",
     "test:coverage": "npx jest packages/*/test --verbose --coverage --collectCoverageFrom=packages/*/src/**/*",
@@ -39,6 +40,7 @@
     "jest": "^26.1.0",
     "jest-junit": "^11.0.1",
     "lerna": "^3.22.1",
+    "pify": "^5.0.0",
     "sqlite3": "^5.0.0",
     "ts-jest": "^26.1.0",
     "typescript": "^3.9.5"

@@ -1,6 +1,7 @@
 import { Agent } from 'daf-core'
 import { Server } from 'http'
 import { configureStore, Store, AnyAction } from '@reduxjs/toolkit'
+import promisify from 'pify'
 import { startGanacheServerAndDeployEthrDidRegistry } from '@rsksmart/ethr-did-utils/index'
 import { createSqliteConnection, createAgent, resetDatabase, deleteDatabase, startTestIssuerServer, importMnemonic, did2, did3 } from '../util'
 import issuedCredentialRequestReducer, { IssuedCredentialRequestsState } from '../../src/reducers/issuedCredentialRequests'
@@ -55,86 +56,88 @@ describe('credential requests operations', () => {
     did = identity.did
   })
 
-  afterEach(async () => {
-    await resetDatabase(agent.dbConnection)
-  })
-
   afterAll(async () => {
-    await ganacheServer.close()
     await deleteDatabase(agent, database)
-    issuerServer.close()
+    await promisify(ganacheServer.close)()
+    await promisify(issuerServer.close)()
   })
 
-  describe('issue credential request', () => {
-    test('success', async () => {
-      const credentialRequest = await issueCredentialRequest(did, did2, claims, defaultIssuedCredentialRequestStatus, issuerServerUrl + '/request_credential')(store.dispatch)
-
-      expect(credentialRequest.from).toBe(did)
-      expect(credentialRequest.to).toBe(did2)
-      expect(credentialRequest.claims[0]).toEqual(claims[0])
-      expect(credentialRequest.claims[1]).toEqual(claims[1])
-
-      const state = store.getState()
-      expect(Object.keys(state)).toEqual([did])
-
-      const [credentialRequestState] = state[did]
-      expect(credentialRequestState.from).toEqual(did)
-      expect(credentialRequestState.to).toEqual(did2)
-      expect(credentialRequestState.claims).toEqual(claims)
-      expect(credentialRequestState.status).toEqual(defaultIssuedCredentialRequestStatus)
+  describe('without init', () => {
+    afterEach(async () => {
+      await resetDatabase(agent.dbConnection)
     })
 
-    test('fails to sign jwt when identity does not exist', async () => {
-      await expect(
-        issueCredentialRequest(did3, did2, claims, defaultIssuedCredentialRequestStatus, issuerServerUrl + '/request_credential')(store.dispatch)
-      ).rejects.toThrow('Identity not found')
+    describe('issue credential request', () => {
+      test('success', async () => {
+        const credentialRequest = await issueCredentialRequest(did, did2, claims, defaultIssuedCredentialRequestStatus, issuerServerUrl + '/request_credential')(store.dispatch)
+
+        expect(credentialRequest.from).toBe(did)
+        expect(credentialRequest.to).toBe(did2)
+        expect(credentialRequest.claims[0]).toEqual(claims[0])
+        expect(credentialRequest.claims[1]).toEqual(claims[1])
+
+        const state = store.getState()
+        expect(Object.keys(state)).toEqual([did])
+
+        const [credentialRequestState] = state[did]
+        expect(credentialRequestState.from).toEqual(did)
+        expect(credentialRequestState.to).toEqual(did2)
+        expect(credentialRequestState.claims).toEqual(claims)
+        expect(credentialRequestState.status).toEqual(defaultIssuedCredentialRequestStatus)
+      })
+
+      test('fails to sign jwt when identity does not exist', async () => {
+        await expect(
+          issueCredentialRequest(did3, did2, claims, defaultIssuedCredentialRequestStatus, issuerServerUrl + '/request_credential')(store.dispatch)
+        ).rejects.toThrow('Identity not found')
+      })
+
+      test('fails to sign jwt when url is not set and receiver has no service endpoint', async () => {
+        await expect(
+          issueCredentialRequest(did, did2, claims, defaultIssuedCredentialRequestStatus)(store.dispatch)
+        ).rejects.toThrow('Failed to send credential request')
+      })
     })
 
-    test('fails to sign jwt when url is not set and receiver has no service endpoint', async () => {
-      await expect(
-        issueCredentialRequest(did, did2, claims, defaultIssuedCredentialRequestStatus)(store.dispatch)
-      ).rejects.toThrow('Failed to send credential request')
-    })
-  })
+    describe('set issued credential request status', () => {
+      test('success', async () => {
+        const credentialRequest = await issueCredentialRequest(did, did2, claims, defaultIssuedCredentialRequestStatus, issuerServerUrl + '/request_credential')(store.dispatch)
+        await setIssuedCredentialRequestStatus(did, credentialRequest.id, 'received')(store.dispatch)
 
-  describe('set issued credential request status', () => {
-    test('success', async () => {
-      const credentialRequest = await issueCredentialRequest(did, did2, claims, defaultIssuedCredentialRequestStatus, issuerServerUrl + '/request_credential')(store.dispatch)
-      await setIssuedCredentialRequestStatus(did, credentialRequest.id, 'received')(store.dispatch)
+        const state = store.getState()
+        expect(Object.keys(state)).toEqual([did])
 
-      const state = store.getState()
-      expect(Object.keys(state)).toEqual([did])
+        const [credentialRequestState] = state[did]
+        expect(credentialRequestState.from).toEqual(did)
+        expect(credentialRequestState.to).toEqual(did2)
+        expect(credentialRequestState.claims).toEqual(claims)
+        expect(credentialRequestState.status).toEqual('received')
 
-      const [credentialRequestState] = state[did]
-      expect(credentialRequestState.from).toEqual(did)
-      expect(credentialRequestState.to).toEqual(did2)
-      expect(credentialRequestState.claims).toEqual(claims)
-      expect(credentialRequestState.status).toEqual('received')
+        const foundCredentialRequest = await findCredentialRequests(await agent.dbConnection)
 
-      const foundCredentialRequest = await findCredentialRequests(await agent.dbConnection)
+        expect(foundCredentialRequest[0].status).toEqual('received')
+      })
 
-      expect(foundCredentialRequest[0].status).toEqual('received')
+      test('fails when credential request does not exists request', async () => {
+        await expect(setIssuedCredentialRequestStatus(did, 'id2', 'received')(store.dispatch)).rejects.toThrow()
+      })
     })
 
-    test('fails when credential request does not exists request', async () => {
-      await expect(setIssuedCredentialRequestStatus(did, 'id2', 'received')(store.dispatch)).rejects.toThrow()
-    })
-  })
+    describe('delete issued credential request', () => {
+      test('success', async () => {
+        const credentialRequest = await issueCredentialRequest(did, did2, claims, defaultIssuedCredentialRequestStatus, issuerServerUrl + '/request_credential')(store.dispatch)
+        await deleteIssuedCredentialRequest(did, credentialRequest.id)(store.dispatch)
 
-  describe('delete issued credential request', () => {
-    test('success', async () => {
-      const credentialRequest = await issueCredentialRequest(did, did2, claims, defaultIssuedCredentialRequestStatus, issuerServerUrl + '/request_credential')(store.dispatch)
-      await deleteIssuedCredentialRequest(did, credentialRequest.id)(store.dispatch)
+        expect(store.getState()).toEqual({})
 
-      expect(store.getState()).toEqual({})
+        const foundCredentialRequest = await findCredentialRequests(await agent.dbConnection)
 
-      const foundCredentialRequest = await findCredentialRequests(await agent.dbConnection)
+        expect(foundCredentialRequest).toHaveLength(0)
+      })
 
-      expect(foundCredentialRequest).toHaveLength(0)
-    })
-
-    test('fails when credential request does not exists', async () => {
-      await expect(deleteIssuedCredentialRequest(did, 'id2')(store.dispatch)).rejects.toThrow()
+      test('fails when credential request does not exists', async () => {
+        await expect(deleteIssuedCredentialRequest(did, 'id2')(store.dispatch)).rejects.toThrow()
+      })
     })
   })
 
@@ -143,6 +146,8 @@ describe('credential requests operations', () => {
       await initCredentialRequests()(store.dispatch)
 
       expect(store.getState()).toEqual({})
+
+      await resetDatabase(agent.dbConnection)
     })
 
     test('with issued credential request', async () => {
@@ -150,8 +155,7 @@ describe('credential requests operations', () => {
 
       await (await agent.dbConnection).close()
 
-      const dbConnection2 = createSqliteConnection(database, false, true)
-      const agent2 = await createAgent(dbConnection2, { credentialRequestsFeature: true })
+      const agent2 = await createAgent(database, { credentialRequestsFeature: true })
       const store2 = configureStore({ reducer: issuedCredentialRequestReducer })
       await initCredentialRequestsFactory(agent2)()(store2.dispatch)
 
@@ -164,7 +168,7 @@ describe('credential requests operations', () => {
       expect(credentialRequestState.claims).toEqual(claims)
       expect(credentialRequestState.status).toEqual('pending')
 
-      await resetDatabase(dbConnection2)
+      await resetDatabase(agent2.dbConnection)
     })
   })
 })
