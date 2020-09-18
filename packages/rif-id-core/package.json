@@ -27,7 +27,7 @@
     "@rsksmart/rif-id-daf": "0.0.4",
     "daf-core": "^6.1.2",
     "daf-did-comm": "^6.3.0",
-    "daf-selective-disclosure": "^6.3.0"
+    "daf-selective-disclosure": "^6.3.0",
     "daf-w3c": "^6.3.0",
     "axios": "^0.20.0"
   },

@@ -11,3 +11,6 @@ lib
 coverage
 junit.xml
 *.sqlite
+
+# logs
+*.log
