@@ -2,7 +2,6 @@ import { Agent } from 'daf-core'
 import { Server } from 'http'
 import { configureStore, Store, AnyAction } from '@reduxjs/toolkit'
 import promisify from 'pify'
-import { startGanacheServerAndDeployEthrDidRegistry } from '@rsksmart/ethr-did-utils/index'
 import { createAgent, resetDatabase, deleteDatabase, startTestIssuerServer, importMnemonic, did2, did3 } from '../util'
 import issuedCredentialRequestReducer, { IssuedCredentialRequestsState } from '../../src/reducers/issuedCredentialRequests'
 import { initCredentialRequestsFactory, issueCredentialRequestFactory, setIssuedCredentialRequestStatusFactory, deleteIssuedCredentialRequestFactory } from '../../src/operations/credentialRequests'
@@ -22,7 +21,6 @@ const claims = [
 ]
 
 describe('credential requests operations', () => {
-  let ganacheServer: any
   let agent: Agent
   let store: Store<IssuedCredentialRequestsState, AnyAction>
   let initCredentialRequests: ReturnType<typeof initCredentialRequestsFactory>
@@ -33,12 +31,7 @@ describe('credential requests operations', () => {
   let did: string
 
   beforeAll(async () => {
-    const startGanacheServerAndDeployEthrDidRegistryResult = await startGanacheServerAndDeployEthrDidRegistry()
-    ganacheServer = startGanacheServerAndDeployEthrDidRegistryResult.server
-
-    const rpcUrl = startGanacheServerAndDeployEthrDidRegistryResult.rpcUrl
-    const registryAddress = startGanacheServerAndDeployEthrDidRegistryResult.registryAddress
-    agent = await createAgent(database, { credentialRequestsFeature: true, rpcUrl, registryAddress })
+    agent = await createAgent(database, { credentialRequestsFeature: true })
 
     initCredentialRequests = initCredentialRequestsFactory(agent)
     issueCredentialRequest = issueCredentialRequestFactory(agent)
@@ -58,7 +51,6 @@ describe('credential requests operations', () => {
 
   afterAll(async () => {
     await deleteDatabase(agent, database)
-    await promisify(ganacheServer.close)()
     await promisify(issuerServer.close)()
   })
 
