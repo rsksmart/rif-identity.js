@@ -20,6 +20,8 @@ npm i @rsksmart/rif-id-ethr-did
 - Manage DID v1.0 compliant identifiers for RSK BIP-44 schema
 - Derive RSK DID identifiers from private keys
 - Use it with a uPort `ethr-did` compatible interface
+- Support RSK Mainnet and Testnet
+- Support `Web3Provider`, `Web3,js`, `rpcUrl` or, by default, RKS public nodes.
 
 ## Usage
 
@@ -30,10 +32,10 @@ Get an RSK DID using a private key:
 ```javascript
 import { rskDIDFromPrivateKey } from '@rsksmart/rif-id-ethr-did'
 
-const privateKey = 'c9000722b8ead4ad9d7ea7ef49f2f3c1d82110238822b7191152fbc4849e1891'
+const privateKey = '139d64ebceeb8b7702104a13d1d041303bd4a2f42090fa8c0b11c89cb97a5b24'
 const rskDID = rskDIDFromPrivateKey()(privateKey)
 rskDID.did
-// did:ethr:0x8f4438b78c56B48d9f47c6Ca1be9B69B6fAF9dDa
+// did:ethr:rsk:0x285b30492a3F444D78f75261a35cB292Fc8F41a6
 ```
 
 Use a it with a custom provider:
@@ -54,9 +56,19 @@ const provider = web3.currentProvider
 rskDIDFactory = rskDIDFromPrivateKey({ provider })
 ```
 
+Use it with RSK Testnet:
+
+```typescript
+import { rskTestnetDIDFromPrivateKey } from '@rsksmart/rif-id-ethr-did'
+
+const rskTestnetDID = rskTestnetDIDFromPrivateKey()(privateKey)
+rskDID.did
+// did:ethr:rsk:testnet:0x285B30492a3F444d78f75261A35cB292Fc8F41A6
+```
+
 ## Todo
 
-- Use `ethr:rsk` method
+- Provide tests for registry interaction
 
 ## Extend
 
