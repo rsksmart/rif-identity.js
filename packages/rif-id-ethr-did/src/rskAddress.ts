@@ -15,19 +15,21 @@ export const publicFromEcKey: (ecKey: EC.KeyPair) => Buffer = pipe(
   ])
 )
 
-export const ethereumDigestFromPublicKey = (publicKey: Buffer) => (
-  createKeccakHash('keccak256')
-    .update(publicKey)
-    .digest()
-    .toString('hex')
-    .slice(-40)
+export const ethereumDigestFromPublicKey = (publicKey: Buffer) => createKeccakHash('keccak256')
+  .update(publicKey)
+  .digest()
+  .toString('hex')
+  .slice(-40)
+
+const ethereumDigestFromPrivateKey = pipe(
+  ecKeyFromPrivate,
+  publicFromEcKey,
+  ethereumDigestFromPublicKey
 )
 
 export const rskAddressFromEthereumDigest: (address: string) => string = _.partial(toChecksumAddress, _, 30)
 
-export const rskAddressFromPrivateKey: (privateKey: string) => string = pipe(
-  ecKeyFromPrivate,
-  publicFromEcKey,
-  ethereumDigestFromPublicKey,
+export const rskAddressFromPrivateKey = pipe(
+  ethereumDigestFromPrivateKey,
   rskAddressFromEthereumDigest
 )
