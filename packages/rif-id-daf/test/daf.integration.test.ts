@@ -10,7 +10,7 @@ import { RIFIdentityProvider } from '../src/identity-provider'
 
 const database = './rif-id-daf.agent.test.sqlite'
 
-describe('agent', () => {
+describe('agent - network %s', () => {
   let dbConnection: Promise<Connection>
 
   beforeAll(() => {
@@ -25,7 +25,10 @@ describe('agent', () => {
     deleteDatabase(await dbConnection, database)
   })
 
-  test('create identity', async () => {
+  test.each([
+    ['rsk'],
+    ['rsk:testnet']
+  ])('create identity - network %s', async (network) => {
     const secretKey = '29739248cad1bd1a0fc4d9b75cd4d2990de535baf5caadfdf8d8f86664aa830c'
     const secretBox = new SecretBox(secretKey)
     const keyStore = new KeyStore(dbConnection, secretBox)
@@ -36,8 +39,8 @@ describe('agent', () => {
 
     const identityProvider = new RIFIdentityProvider({
       kms: rifIdKeyManagementSystem,
-      identityStore: new IdentityStore('rsk-testnet-ethr', dbConnection),
-      network: 'rsk',
+      identityStore: new IdentityStore('rsk-ethr', dbConnection),
+      network,
       rpcUrl: 'http://localhost:8545'
     })
 
@@ -59,20 +62,22 @@ describe('agent', () => {
     const privateKey = hdKey.derive(0).privateKey.toString('hex')
     const rskAddress = rskAddressFromPrivateKey(privateKey)
 
-    expect(identity.did).toEqual(`did:ethr:rsk:${rskAddress.toLowerCase()}`)
+    const expectedPrefix = `did:ethr:${network}`
 
-    expect(identity.did.slice(0, 15)).toEqual('did:ethr:rsk:0x')
-    expect(identity.did.slice(15)).toHaveLength(40)
+    expect(identity.did).toEqual(`${expectedPrefix}:${rskAddress.toLowerCase()}`)
+
+    expect(identity.did.slice(0, expectedPrefix.length + 3)).toEqual(`${expectedPrefix}:0x`)
+    expect(identity.did.slice(expectedPrefix.length + 3)).toHaveLength(40)
 
     const identity2 = await agent.identityManager.createIdentity()
 
     const privateKey2 = hdKey.derive(1).privateKey.toString('hex')
     const rskAddress2 = rskAddressFromPrivateKey(privateKey2)
 
-    expect(identity2.did).toEqual(`did:ethr:rsk:${rskAddress2.toLowerCase()}`)
+    expect(identity2.did).toEqual(`${expectedPrefix}:${rskAddress2.toLowerCase()}`)
 
-    expect(identity2.did.slice(0, 15)).toEqual('did:ethr:rsk:0x')
-    expect(identity2.did.slice(15)).toHaveLength(40)
+    expect(identity2.did.slice(0, expectedPrefix.length + 3)).toEqual(`${expectedPrefix}:0x`)
+    expect(identity2.did.slice(expectedPrefix.length + 3)).toHaveLength(40)
 
     expect(identity.did).not.toEqual(identity2.did)
   })
