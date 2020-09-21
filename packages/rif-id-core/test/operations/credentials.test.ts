@@ -49,11 +49,7 @@ describe('credentials operations', () => {
     })
 
     test('delete when empty db should throw an error', async () => {
-      try {
-        await deleteCredential('no exists', 'no exists')(store.dispatch)
-      } catch (err) {
-        expect(err.message).toBeTruthy()
-      }
+      await expect(deleteCredential('no exists', 'no exists')(store.dispatch)).rejects.toThrowError()
     })
   })
 
@@ -86,7 +82,7 @@ describe('credentials operations', () => {
 
       assertCompareCredentialValues(credential, vc)
 
-      return deleteDatabase(agent2, database)
+      await deleteDatabase(agent2, database)
     })
 
     test('receive', async () => {
@@ -104,7 +100,7 @@ describe('credentials operations', () => {
       expect(credentials).toHaveLength(1)
       assertCompareCredentialValues(credential, credentials[0])
 
-      return deleteDatabase(agent, database)
+      await deleteDatabase(agent, database)
     })
 
     test('delete', async () => {
@@ -117,7 +113,7 @@ describe('credentials operations', () => {
       const credentials = await findCredentialsOrderedByIssuanceDate(agent)
       expect(credentials).toHaveLength(0)
 
-      return deleteDatabase(agent, database)
+      await deleteDatabase(agent, database)
     })
   })
 
@@ -160,7 +156,7 @@ describe('credentials operations', () => {
       expect(state[identity1.did]).toHaveLength(2)
       expect(state[identity2.did]).toHaveLength(1)
 
-      return deleteDatabase(agent2, database)
+      await deleteDatabase(agent2, database)
     })
 
     test('receive', async () => {
@@ -187,7 +183,7 @@ describe('credentials operations', () => {
       assertCompareCredentialValues(cred2id1, credentials[1])
       assertCompareCredentialValues(cred1id2, credentials[2])
 
-      return deleteDatabase(agent, database)
+      await deleteDatabase(agent, database)
     })
 
     test('delete just one credential', async () => {
@@ -202,7 +198,7 @@ describe('credentials operations', () => {
       const credentials = await findCredentialsOrderedByIssuanceDate(agent)
       expect(credentials).toHaveLength(2)
 
-      return deleteDatabase(agent, database)
+      await deleteDatabase(agent, database)
     })
 
     test('delete all', async () => {
@@ -218,7 +214,7 @@ describe('credentials operations', () => {
       const credentials = await findCredentialsOrderedByIssuanceDate(agent)
       expect(credentials).toHaveLength(0)
 
-      return deleteDatabase(agent, database)
+      await deleteDatabase(agent, database)
     })
   })
 })
