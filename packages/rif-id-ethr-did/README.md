@@ -20,6 +20,8 @@ npm i @rsksmart/rif-id-ethr-did
 - Manage DID v1.0 compliant identifiers for RSK BIP-44 schema
 - Derive RSK DID identifiers from private keys
 - Use it with a uPort `ethr-did` compatible interface
+- Support RSK Mainnet and Testnet
+- Support `Web3Provider`, `Web3,js`, `rpcUrl` or, by default, RKS public nodes.
 
 ## Usage
 

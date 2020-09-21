@@ -28,8 +28,7 @@ const ethereumDigestFromPrivateKey = pipe(
 )
 
 export const rskAddressFromEthereumDigest: (address: string) => string = _.partial(toChecksumAddress, _, 30)
+export const rskTestnetAddressFromEthereumDigest: (address: string) => string = _.partial(toChecksumAddress, _, 31)
 
-export const rskAddressFromPrivateKey = pipe(
-  ethereumDigestFromPrivateKey,
-  rskAddressFromEthereumDigest
-)
+export const rskAddressFromPrivateKey = pipe(ethereumDigestFromPrivateKey, rskAddressFromEthereumDigest)
+export const rskTestnetAddressFromPrivateKey = pipe(ethereumDigestFromPrivateKey, rskTestnetAddressFromEthereumDigest)
