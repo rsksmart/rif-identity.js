@@ -56,7 +56,7 @@ rskDIDFactory = rskDIDFromPrivateKey({ provider })
 
 ## Todo
 
-- Use `ethr:rsk` method
+- Provide tests for registry interaction
 
 ## Extend
 

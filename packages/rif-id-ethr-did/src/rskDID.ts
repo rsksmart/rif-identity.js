@@ -1,7 +1,7 @@
-import EthrDID from 'ethr-did'
+import EthrDID from '@rsksmart/ethr-did'
 import { rskAddressFromPrivateKey } from './rskAddress'
 
-const RSK_RPC_URL = 'https://public-node.rsk.co'
+export const RSK_RPC_URL = 'https://public-node.rsk.co'
 
 export type RSKDIDFromPrivateKeyConf = {
   [key: string]: any
@@ -16,11 +16,11 @@ type RSKDIDFromPrivateKey = (conf?: RSKDIDFromPrivateKeyConf) => (privateKey: st
 export const rskDIDFromPrivateKey: RSKDIDFromPrivateKey = (conf = {}) => (privateKey) => {
   // assign account
   const address = rskAddressFromPrivateKey(privateKey)
-  const confWithAccount = (<any>Object).assign({}, conf, { privateKey, address })
+  let confWithAccount = (<any>Object).assign({ method: 'ethr:rsk', privateKey, address }, conf)
 
   // assign provider
   if (!(conf.provider || conf.web3 || conf.rpcUrl)) {
-    (<any>Object).assign(confWithAccount, { rpcUrl: RSK_RPC_URL })
+    confWithAccount = (<any>Object).assign({}, confWithAccount, { rpcUrl: RSK_RPC_URL })
   }
 
   return new EthrDID(confWithAccount)
