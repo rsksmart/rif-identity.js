@@ -26,6 +26,7 @@ Setup:
 ```
 npm install
 npm run setup
+npm run build
 ```
 
 First installs global dependencies, then links inner packages, finally installs inner packages dependencies.
