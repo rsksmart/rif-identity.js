@@ -3,7 +3,7 @@ import { mnemonicToSeed, seedToRSKHDKey } from '@rsksmart/rif-id-mnemonic'
 import { ecKeyFromPrivate, publicFromEcKey } from '@rsksmart/rif-id-ethr-did/lib/rskAddress'
 import { MnemonicStore } from './mnemonic-store'
 import Debug from 'debug'
-import { IdentityMnemonic } from './entities'
+
 const debug = Debug('daf:sodium:kms')
 
 export class RIFIdKeyManagementSystem extends AbstractKeyManagementSystem {

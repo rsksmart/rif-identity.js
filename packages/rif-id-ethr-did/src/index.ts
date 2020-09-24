@@ -1,2 +1,2 @@
-export { rskDIDFromPrivateKey } from './rskDID'
-export { rskAddressFromPrivateKey } from './rskAddress'
+export { rskDIDFromPrivateKey, rskTestnetDIDFromPrivateKey } from './rskDID'
+export { rskAddressFromPrivateKey, rskTestnetAddressFromPrivateKey } from './rskAddress'
