@@ -24,8 +24,8 @@
   "homepage": "https://github.com/rsksamrt/rif-identity.js#readme",
   "dependencies": {
     "@reduxjs/toolkit": "^1.4.0",
-    "@rsksmart/rif-id-daf": "0.0.5",
-    "daf-core": "^6.1.2",
+    "@rsksmart/rif-id-daf": "0.0.6",
+    "daf-core": "^6.3.0",
     "daf-did-comm": "^6.3.0",
     "daf-selective-disclosure": "^6.3.0",
     "daf-w3c": "^6.3.0",
