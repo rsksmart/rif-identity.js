@@ -25,6 +25,7 @@
   "dependencies": {
     "@rsksmart/rif-id-ethr-did": "0.0.2",
     "@rsksmart/rif-id-mnemonic": "0.0.1",
+    "axios": "^0.20.0",
     "cross-fetch": "^3.0.6",
     "daf-core": "^6.3.0",
     "daf-ethr-did": "^6.1.2",

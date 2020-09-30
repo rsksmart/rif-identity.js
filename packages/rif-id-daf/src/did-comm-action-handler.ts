@@ -2,6 +2,7 @@ import 'cross-fetch/polyfill'
 import { Agent, AbstractActionHandler, Action, Message } from 'daf-core'
 import uuid from 'uuid'
 import Debug from 'debug'
+import axios from 'axios'
 
 const debug = Debug('daf:did-comm:action-handler')
 
@@ -67,11 +68,7 @@ export class DIDCommActionHandler extends AbstractActionHandler {
           } catch (e) {}
 
           debug('Sending to %s', serviceEndpoint)
-          const res = await fetch(serviceEndpoint, {
-            method: 'POST',
-            body: postPayload,
-            headers,
-          })
+          const res = await axios.post(serviceEndpoint, postPayload, { headers })
           debug('Status', res.status, res.statusText)
 
           if (res.status == 200) {
