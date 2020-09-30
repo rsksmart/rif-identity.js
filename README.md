@@ -11,14 +11,6 @@
     </a>
 </p>
 
-```
-npm i @rsksmart/rif-id
-```
-
-## Usage
-
-TBD
-
 ## Development
 
 Setup:
