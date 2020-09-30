@@ -1,7 +1,7 @@
 import { Dispatch } from '@reduxjs/toolkit'
 import { Agent } from 'daf-core'
 import { SelectiveDisclosureRequest } from 'daf-selective-disclosure'
-import { ActionSendDIDComm } from 'daf-did-comm'
+import { ActionSendDIDComm } from '@rsksmart/rif-id-daf/lib/did-comm-action-handler'
 import { addIssuedCredentialRequest, Claims, IssuedCredentialRequest, setIssuedCredentialRequestStatus, deleteIssuedCredentialRequest } from '../reducers/issuedCredentialRequests'
 import { CredentialRequest, findCredentialRequests } from '../entities/CredentialRequest'
 import { callbackify, Callback } from './util'
@@ -26,7 +26,7 @@ export const initCredentialRequestsFactory = (agent: Agent) => (cb?: Callback<Is
   cb
 )
 
-export const issueCredentialRequestFactory = (agent: Agent) => (from: string, to: string, claims: Claims, status: string, url?: string, cb?: Callback<IssuedCredentialRequest>) => (dispatch: Dispatch): IssuedCredentialRequest => callbackify(
+export const issueCredentialRequestFactory = (agent: Agent) => (from: string, to: string, claims: Claims, status: string, sendOptions?: { url?: string, headers?: HeadersInit }, cb?: Callback<IssuedCredentialRequest>) => (dispatch: Dispatch): IssuedCredentialRequest => callbackify(
   () => agent.handleAction({
     type: 'sign.sdr.jwt',
     data: {
@@ -42,7 +42,7 @@ export const issueCredentialRequestFactory = (agent: Agent) => (from: string, to
       type: 'jwt',
       body: jwt
     },
-    url,
+    ...sendOptions,
     save: true
   } as ActionSendDIDComm)
   ).then(message => {

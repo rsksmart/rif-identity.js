@@ -1,17 +1,18 @@
 import { createConnection, Connection } from 'typeorm'
 import * as Daf from 'daf-core'
 import { SecretBox, KeyManagementSystem } from 'daf-libsodium'
-import { Entities, MnemonicStore, RIFIdKeyManagementSystem, RIFIdentityProvider } from '@rsksmart/rif-id-daf'
 import { DafResolver } from 'daf-resolver'
 import { JwtMessageHandler } from 'daf-did-jwt'
 import { W3cMessageHandler, W3cActionHandler, ActionSignW3cVc } from 'daf-w3c'
+import { DIDCommMessageHandler } from 'daf-did-comm'
+import { DIDCommActionHandler } from '@rsksmart/rif-id-daf/lib/did-comm-action-handler'
+import { SdrMessageHandler, SdrActionHandler } from 'daf-selective-disclosure'
+import { generateMnemonic } from '@rsksmart/rif-id-mnemonic'
+import { Entities, MnemonicStore, RIFIdKeyManagementSystem, RIFIdentityProvider } from '@rsksmart/rif-id-daf'
 import fs from 'fs'
 import express from 'express'
 import bodyParser from 'body-parser'
 import { DeclarativeDetail, CredentialRequest } from '../src/entities'
-import { generateMnemonic } from '@rsksmart/rif-id-mnemonic'
-import { DIDCommMessageHandler, DIDCommActionHandler } from 'daf-did-comm'
-import { SdrMessageHandler, SdrActionHandler } from 'daf-selective-disclosure'
 
 const network = 'rsk:testnet'
 
@@ -162,7 +163,7 @@ export const startTestIssuerServer = (handle: any) => {
   app.use(bodyParser.text())
 
   app.post('/request_credential', function(req, res) {
-    const jwt = req.body
+    if (!!req.headers['testHeader']) expect(req.headers['testHeader']).toEqual('test')
     res.status(200).send('')
   })
 

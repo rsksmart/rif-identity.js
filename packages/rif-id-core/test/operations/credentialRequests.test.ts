@@ -61,7 +61,7 @@ describe('credential requests operations', () => {
 
     describe('issue credential request', () => {
       test('success', async () => {
-        const credentialRequest = await issueCredentialRequest(did, did2, claims, defaultIssuedCredentialRequestStatus, issuerServerUrl + '/request_credential')(store.dispatch)
+        const credentialRequest = await issueCredentialRequest(did, did2, claims, defaultIssuedCredentialRequestStatus, { url: issuerServerUrl + '/request_credential', headers: { testHeader: 'test' } })(store.dispatch)
 
         expect(credentialRequest.from).toBe(did)
         expect(credentialRequest.to).toBe(did2)
@@ -80,7 +80,7 @@ describe('credential requests operations', () => {
 
       test('fails to sign jwt when identity does not exist', async () => {
         await expect(
-          issueCredentialRequest(did3, did2, claims, defaultIssuedCredentialRequestStatus, issuerServerUrl + '/request_credential')(store.dispatch)
+          issueCredentialRequest(did3, did2, claims, defaultIssuedCredentialRequestStatus, { url: issuerServerUrl + '/request_credential' })(store.dispatch)
         ).rejects.toThrow('Identity not found')
       })
 
@@ -93,7 +93,7 @@ describe('credential requests operations', () => {
 
     describe('set issued credential request status', () => {
       test('success', async () => {
-        const credentialRequest = await issueCredentialRequest(did, did2, claims, defaultIssuedCredentialRequestStatus, issuerServerUrl + '/request_credential')(store.dispatch)
+        const credentialRequest = await issueCredentialRequest(did, did2, claims, defaultIssuedCredentialRequestStatus, { url: issuerServerUrl + '/request_credential' })(store.dispatch)
         await setIssuedCredentialRequestStatus(did, credentialRequest.id, 'received')(store.dispatch)
 
         const state = store.getState()
@@ -117,7 +117,7 @@ describe('credential requests operations', () => {
 
     describe('delete issued credential request', () => {
       test('success', async () => {
-        const credentialRequest = await issueCredentialRequest(did, did2, claims, defaultIssuedCredentialRequestStatus, issuerServerUrl + '/request_credential')(store.dispatch)
+        const credentialRequest = await issueCredentialRequest(did, did2, claims, defaultIssuedCredentialRequestStatus, { url: issuerServerUrl + '/request_credential' })(store.dispatch)
         await deleteIssuedCredentialRequest(did, credentialRequest.id)(store.dispatch)
 
         expect(store.getState()).toEqual({})
@@ -143,7 +143,7 @@ describe('credential requests operations', () => {
     })
 
     test('with issued credential request', async () => {
-      await issueCredentialRequest(did, did2, claims, defaultIssuedCredentialRequestStatus, issuerServerUrl + '/request_credential')(store.dispatch)
+      await issueCredentialRequest(did, did2, claims, defaultIssuedCredentialRequestStatus, { url: issuerServerUrl + '/request_credential' })(store.dispatch)
 
       await (await agent.dbConnection).close()
 

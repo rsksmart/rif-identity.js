@@ -1,6 +1,6 @@
 {
   "name": "@rsksmart/rif-id-daf",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "RIF Identity - DAF",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -25,9 +25,13 @@
   "dependencies": {
     "@rsksmart/rif-id-ethr-did": "0.0.2",
     "@rsksmart/rif-id-mnemonic": "0.0.1",
-    "daf-core": "^6.1.2",
+    "axios": "^0.20.0",
+    "cross-fetch": "^3.0.6",
+    "daf-core": "^6.3.0",
     "daf-ethr-did": "^6.1.2",
-    "typeorm": "0.2.24"
+    "debug": "^4.2.0",
+    "typeorm": "0.2.24",
+    "uuid": "^3.3.3"
   },
   "devDependencies": {
     "daf-libsodium": "^6.1.2"
