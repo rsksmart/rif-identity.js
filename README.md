@@ -6,8 +6,14 @@
     RIF Self-sovereign identity library.
 </p>
 <p align="middle">
-    <a href="https://badge.fury.io/js/%40rsksmart%2Frif-id">
-        <img src="https://badge.fury.io/js/%40rsksmart%2Frif-id.svg" alt="npm" />
+    <a href="https://circleci.com/gh/rsksmart/rif-identity.js">
+        <img src="https://img.shields.io/circleci/build/github/rsksmart/rif-identity.js?label=CircleCI" alt="npm" />
+    </a>
+    <a href="https://lgtm.com/projects/g/rsksmart/rif-identity.js/alerts/">
+      <img src="https://img.shields.io/lgtm/alerts/github/rsksmart/rif-identity.js" alt="alerts">
+    </a>
+    <a href="https://lgtm.com/projects/g/rsksmart/rif-identity.js/context:javascript">
+      <img src="https://img.shields.io/lgtm/grade/javascript/github/rsksmart/rif-identity.js">
     </a>
 </p>
 
