@@ -1,17 +1,18 @@
 import { createConnection, Connection } from 'typeorm'
 import * as Daf from 'daf-core'
 import { SecretBox, KeyManagementSystem } from 'daf-libsodium'
-import { Entities, MnemonicStore, RIFIdKeyManagementSystem, RIFIdentityProvider } from '@rsksmart/rif-id-daf'
 import { DafResolver } from 'daf-resolver'
 import { JwtMessageHandler } from 'daf-did-jwt'
 import { W3cMessageHandler, W3cActionHandler, ActionSignW3cVc } from 'daf-w3c'
+import { DIDCommMessageHandler } from 'daf-did-comm'
+import { DIDCommActionHandler } from '@rsksmart/rif-id-daf/lib/did-comm-action-handler'
+import { SdrMessageHandler, SdrActionHandler } from 'daf-selective-disclosure'
+import { generateMnemonic } from '@rsksmart/rif-id-mnemonic'
+import { Entities, MnemonicStore, RIFIdKeyManagementSystem, RIFIdentityProvider } from '@rsksmart/rif-id-daf'
 import fs from 'fs'
 import express from 'express'
 import bodyParser from 'body-parser'
 import { DeclarativeDetail, CredentialRequest } from '../src/entities'
-import { generateMnemonic } from '@rsksmart/rif-id-mnemonic'
-import { DIDCommMessageHandler, DIDCommActionHandler } from 'daf-did-comm'
-import { SdrMessageHandler, SdrActionHandler } from 'daf-selective-disclosure'
 
 const network = 'rsk:testnet'
 
@@ -123,6 +124,7 @@ export const deleteDatabase = (agent: Daf.Agent, database: string) => agent.dbCo
 export const did = 'did:ethr:rsk:testnet:0xf3beac30c498d9e26865f34fcaa57dbb935b0d74'
 export const did2 = 'did:ethr:rsk:testnet:0xdcbe93e98e0dcebe677c39a84f5f212b85ba7ef0'
 export const did3 = 'did:ethr:rsk:testnet:0xbe935f08e079e7a7c898bcbde5dceba214fe6f2'
+export const did4 = 'did:ethr:rsk:testnet:0xc78b1d101938ea2f1e6dc5c16766627cf88b7a28'
 
 export const issueTestCredential = async (subject: string): Promise<Daf.Credential> => {
   const mnemonic = generateMnemonic(12)
@@ -161,7 +163,7 @@ export const startTestIssuerServer = (handle: any) => {
   app.use(bodyParser.text())
 
   app.post('/request_credential', function(req, res) {
-    const jwt = req.body
+    if (!!req.headers['testHeader']) expect(req.headers['testHeader']).toEqual('test')
     res.status(200).send('')
   })
 
