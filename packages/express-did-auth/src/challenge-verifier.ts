@@ -30,6 +30,6 @@ export default class implements ChallengeVerifier {
   private calculateChallenge(did: string) {
     const timestamp = Math.floor(Date.now() / (this.expirationTimeInSeconds * 1000))
     
-    return keccak256(`${did}-${this.secret}-${timestamp}`)// .toString('hex') // TODO: Test without digest
+    return keccak256(`${did}-${this.secret}-${timestamp}`)
   }
 }
