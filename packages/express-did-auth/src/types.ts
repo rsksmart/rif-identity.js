@@ -10,6 +10,12 @@ export interface RequestCounter {
   count(did): void
 }
 
+export interface SessionManager {
+  createRefreshToken(did: string): string
+  renewRefreshToken(oldToken: string): { refreshToken: string, did: string, metadata: any }
+  logout(did: string): void
+}
+
 export interface Claim {
   claimType: string
   claimValue: string
@@ -17,7 +23,9 @@ export interface Claim {
   essential?: boolean
 }
 
-export interface SelectiveDisclosureRequest extends JWTPayload {
+export interface SelectiveDisclosureRequest {
+  issuer: string
+  subject: string
   replyUrl?: string
   claims?: Claim[]
   credentials?: string[]
@@ -30,17 +38,22 @@ export interface SelectiveDisclosureResponse {
   credentials: VerifiableCredential[]
 }
 
-export interface ExpressDidAuthConfig extends TokenConfig, ChallengeConfig, RequestCounterConfig, SignupConfig {
+export interface ExpressDidAuthConfig extends TokenConfig, ChallengeConfig, RequestCounterConfig, SignupConfig, AccessTokenOptions, UserSessionConfig {
   includeSignup?: boolean
   requestSignupPath?: string
   signupPath?: string
   requestAuthPath?: string
   authPath?: string
   logoutPath?: string
+  refreshTokenPath?: string
   authenticationBusinessLogic?: AuthenticationBusinessLogic
 }
 
-export interface SignupConfig {
+export interface UserSessionConfig {
+  userSessionDurationInHours?: number
+}
+
+export interface SignupConfig extends TokenConfig {
   requiredCredentials?: string[] 
   requiredClaims?: Claim[]
   signupBusinessLogic?: SignupBusinessLogic
@@ -56,15 +69,15 @@ export interface ChallengeConfig {
   challengeSecret: string
 }
 
-export interface TokenConfig extends AccessTokenOptions {
+export interface TokenConfig {
   useCookies?: boolean
-}
-
-export interface AccessTokenOptions {
-  accessTokenExpirationTimeInSeconds?: number
   serviceDid: string
   serviceUrl: string
   signer: Signer
+}
+
+export interface AccessTokenOptions extends TokenConfig {
+  accessTokenExpirationTimeInSeconds?: number
 }
 
 export interface ChallengeResponsePayload extends JWTPayload {
