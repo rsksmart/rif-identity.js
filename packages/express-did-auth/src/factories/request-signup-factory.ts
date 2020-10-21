@@ -1,20 +1,23 @@
 import { createJWT } from 'did-jwt'
+import { ErrorCodes } from '../errors'
 import { ChallengeVerifier, SignupConfig, SelectiveDisclosureRequest } from '../types'
 
 export default function requestSignupFactory (challengeVerifier: ChallengeVerifier, signupConfig: SignupConfig) {
   return async function (req, res) {
     const { did } = req.params
 
+    if (!did) return res.status(401).send(ErrorCodes.INVALID_DID)
+
     const challenge = challengeVerifier.get(did)
 
-    const { requiredClaims, requiredCredentials, serviceDid, signer } = signupConfig
+    const { requiredClaims, requiredCredentials, serviceDid, serviceSigner: signer } = signupConfig
   
     if (requiredClaims || requiredCredentials) {
       const sdrData: SelectiveDisclosureRequest = {
         subject: did,
         issuer: serviceDid, 
-        claims: requiredClaims,
         credentials: requiredCredentials,
+        claims: requiredClaims
       }
 
       const sdr = await createJWT(

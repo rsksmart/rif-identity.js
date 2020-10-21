@@ -8,7 +8,7 @@ export default function generateAccessToken(
 ): Promise<string> {
   const now = Math.floor(Date.now() / 1000) // must be in seconds
 
-  const { serviceUrl, serviceDid, accessTokenExpirationTimeInSeconds, signer } = opts
+  const { serviceUrl, serviceDid, accessTokenExpirationTimeInSeconds, serviceSigner: signer } = opts
   const payload = {
     aud: serviceUrl,
     sub: subjectDid,

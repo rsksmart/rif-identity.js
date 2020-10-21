@@ -5,6 +5,7 @@ import MockDate from 'mockdate'
 describe('RequestCounter', () => {
   describe('count', () => {
     const did = 'did:ethr:rsk:testnet:0xd69ced736454347be68aead53fcc1678cb9a70ef'
+
     it('should throw an error if no did', () => {
       const counter = new RequestCounter({})
 

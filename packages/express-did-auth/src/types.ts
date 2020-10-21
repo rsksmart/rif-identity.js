@@ -18,7 +18,7 @@ export interface SessionManager {
 
 export interface Claim {
   claimType: string
-  claimValue: string
+  claimValue?: string
   reason?: string
   essential?: boolean
 }
@@ -73,7 +73,7 @@ export interface TokenConfig {
   useCookies?: boolean
   serviceDid: string
   serviceUrl: string
-  signer: Signer
+  serviceSigner: Signer
 }
 
 export interface AccessTokenOptions extends TokenConfig {

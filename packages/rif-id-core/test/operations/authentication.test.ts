@@ -55,6 +55,7 @@ describe('authentication operations', () => {
     serviceAuthentication = serviceAuthenticationFactory(agent)
 
     identity = await agent.identityManager.createIdentity()
+    console.log(identity.did)
   })
 
   afterEach(() => deleteDatabase(agent, database))
