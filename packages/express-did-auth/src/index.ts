@@ -34,12 +34,12 @@ export default function setupAppFactory(config: ExpressDidAuthConfig) {
     if (config.includeSignup) {
       app.get(requestSignupPath || DEFAULT_REQUEST_SIGNUP, requestSignupFactory(challengeVerifier, config))
 
-      app.post(signupPath || DEFAULT_SIGNUP, authenticationFactory(challengeVerifier, sessionManager, config.signupBusinessLogic, config))
+      app.post(signupPath || DEFAULT_SIGNUP, authenticationFactory(challengeVerifier, sessionManager, config, config.signupBusinessLogic))
     }
 
     app.get(requestAuthPath || DEFAULT_REQUEST_AUTH, requestAuthFactory(challengeVerifier))
 
-    app.post(authPath || DEFAULT_AUTH, authenticationFactory(challengeVerifier, sessionManager, config.authenticationBusinessLogic, config))
+    app.post(authPath || DEFAULT_AUTH, authenticationFactory(challengeVerifier, sessionManager, config, config.authenticationBusinessLogic))
 
     app.post(refreshTokenPath || DEFAULT_REFRESH_TOKEN, refreshTokenFactory(sessionManager, config))
 

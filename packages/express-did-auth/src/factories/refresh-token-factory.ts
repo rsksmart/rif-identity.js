@@ -1,9 +1,9 @@
 import { REFRESH_TOKEN_COOKIE_NAME, ACCESS_TOKEN_COOKIE_NAME } from '../constants'
 import { ErrorCodes } from '../errors'
 import generateAccessToken from '../generate-access-token'
-import { AccessTokenOptions, SessionManager } from '../types'
+import { AccessTokenConfig, SessionManager } from '../types'
 
-export default function refreshTokenFactory (sessionManager: SessionManager, accessTokenOptions: AccessTokenOptions) {
+export default function refreshTokenFactory (sessionManager: SessionManager, accessTokenOptions: AccessTokenConfig) {
   return function (req, res) {
     let currentRefreshToken: string
     if (accessTokenOptions.useCookies) {

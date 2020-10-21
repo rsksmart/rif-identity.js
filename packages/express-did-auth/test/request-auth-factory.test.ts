@@ -7,9 +7,9 @@ import { ErrorCodes } from '../src/errors'
 describe('requestAuthFactory', () => {
   const did = 'did:ethr:rsk:testnet:0xd69ced736454347be68aead53fcc1678cb9a70ef'
   const challengeSecret = 'theSecret'
-  const challengeExpirationTimeInSeconds = 100
+  const challengeExpirationTimeInSeconds = 60
 
-  const modulo0Timestamp = 1603300440000 // modulo0Timestamp % (challengeExpirationTimeInSeconds * 1000) = 0 secs
+  const modulo0Timestamp = 1603300440000
   
   const challengeVerifier = new ChallengeVerifier({ challengeSecret, challengeExpirationTimeInSeconds })
 

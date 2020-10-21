@@ -7,6 +7,13 @@ export const DEFAULT_MAX_REQUESTS_PER_TIME_SLOT = 20
 export const DEFAULT_REQUEST_COUNTER_TIME_SLOT = 10 * 60 // seconds
 export const DEFAULT_USER_SESSION_DURATION = 7 * 24 // hours
 
+export const DEFAULT_REGISTRY_ADDRESS = '0xdca7ef03e98e0dc2b855be647c39abe984fcf21b'
+export const DEFAULT_RSK_MAINNET_RPC_URL = 'https://did.rsk.co:4444'
+export const DEFAULT_RSK_TESTNET_RPC_URL = 'https://did.testnet.rsk.co:4444'
+
+export const RSK_TESTNET_NETWORK_NAME = 'rsk:testnet'
+export const RSK_MAINNET_NETWORK_NAME = 'rsk'
+
 // default routes
 export const DEFAULT_REQUEST_SIGNUP = '/request-signup/:did'
 export const DEFAULT_SIGNUP = '/signup'

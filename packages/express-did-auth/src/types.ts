@@ -38,7 +38,7 @@ export interface SelectiveDisclosureResponse {
   credentials: VerifiableCredential[]
 }
 
-export interface ExpressDidAuthConfig extends TokenConfig, ChallengeConfig, RequestCounterConfig, SignupConfig, AccessTokenOptions, UserSessionConfig {
+export interface ExpressDidAuthConfig extends TokenConfig, ChallengeConfig, RequestCounterConfig, SignupConfig, AccessTokenConfig, UserSessionConfig, DidResolverConfig {
   includeSignup?: boolean
   requestSignupPath?: string
   signupPath?: string
@@ -76,7 +76,13 @@ export interface TokenConfig {
   serviceSigner: Signer
 }
 
-export interface AccessTokenOptions extends TokenConfig {
+export interface DidResolverConfig {
+  rpcUrl?: string
+  networkName?: string
+  registry?: string
+}
+
+export interface AccessTokenConfig extends TokenConfig {
   accessTokenExpirationTimeInSeconds?: number
 }
 

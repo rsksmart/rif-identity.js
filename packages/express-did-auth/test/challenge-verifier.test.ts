@@ -5,7 +5,7 @@ import { keccak256 } from 'js-sha3';
 
 describe('ChallengeVerifier', () => {
   const challengeSecret = 'theSecret'
-  const challengeExpirationTimeInSeconds = 100
+  const challengeExpirationTimeInSeconds = 60
 
   const modulo0Timestamp = 1603300440000 // modulo0Timestamp % (challengeExpirationTimeInSeconds * 1000) = 0 secs
   const modulo8Timestamp = 1603300448000 // modulo8Timestamp % (challengeExpirationTimeInSeconds * 1000) = 8 secs
