@@ -3,8 +3,8 @@ import { ACCESS_TOKEN_COOKIE_NAME, ACCESS_TOKEN_HEADER_NAME } from '../constants
 import { ErrorCodes } from '../errors'
 import { TokenConfig, RequestCounter } from '../types'
 
-export default function expressMiddlewareFactory(tokenOptions: TokenConfig, requestCounter: RequestCounter) {
-  return async function expressMiddleware(req, res, next) {
+export default function expressMiddlewareFactory (tokenOptions: TokenConfig, requestCounter: RequestCounter) {
+  return async function expressMiddleware (req, res, next) {
     try {
       let jwt: string
       if (tokenOptions.useCookies) {
@@ -23,9 +23,9 @@ export default function expressMiddlewareFactory(tokenOptions: TokenConfig, requ
 
       if (payload.exp < now) res.status(401).send(ErrorCodes.EXPIRED_ACCESS_TOKEN)
       if (payload.nbf > now) res.status(401).send(ErrorCodes.INVALID_ACCESS_TOKEN)
-      
+
       const did = payload.sub
-      
+
       requestCounter.count(did)
 
       req.user = { did }

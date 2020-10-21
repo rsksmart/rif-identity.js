@@ -11,11 +11,11 @@ export default function requestSignupFactory (challengeVerifier: ChallengeVerifi
     const challenge = challengeVerifier.get(did)
 
     const { requiredClaims, requiredCredentials, serviceDid, serviceSigner: signer } = signupConfig
-  
+
     if (requiredClaims || requiredCredentials) {
       const sdrData: SelectiveDisclosureRequest = {
         subject: did,
-        issuer: serviceDid, 
+        issuer: serviceDid,
         credentials: requiredCredentials,
         claims: requiredClaims
       }

@@ -3,8 +3,8 @@ import { ErrorCodes } from '../errors'
 import generateAccessToken from '../generate-access-token'
 import { AccessTokenOptions, SessionManager } from '../types'
 
-export default function refreshTokenFactory(sessionManager: SessionManager, accessTokenOptions: AccessTokenOptions) {
-  return function(req, res) {
+export default function refreshTokenFactory (sessionManager: SessionManager, accessTokenOptions: AccessTokenOptions) {
+  return function (req, res) {
     let currentRefreshToken: string
     if (accessTokenOptions.useCookies) {
       currentRefreshToken = req.cookies[REFRESH_TOKEN_COOKIE_NAME]
@@ -25,9 +25,9 @@ export default function refreshTokenFactory(sessionManager: SessionManager, acce
 
     if (accessTokenOptions.useCookies) {
       const cookiesAttributes = { httpOnly: true, sameSite: 'Strict', secure: true }
-    
-      res.cookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, cookiesAttributes);
-      res.cookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken, cookiesAttributes);
+
+      res.cookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, cookiesAttributes)
+      res.cookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken, cookiesAttributes)
 
       return res.status(200).send()
     }

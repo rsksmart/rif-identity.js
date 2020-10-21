@@ -13,13 +13,13 @@ export default class implements RequestCounter {
   private maxRequests: number
   private timeSlotInSeconds: number
 
-  constructor({ maxRequestsPerTimeSlot, timeSlotInSeconds }: RequestCounterConfig) {
+  constructor ({ maxRequestsPerTimeSlot, timeSlotInSeconds }: RequestCounterConfig) {
     this.accesses = { }
     this.maxRequests = maxRequestsPerTimeSlot || DEFAULT_MAX_REQUESTS_PER_TIME_SLOT
     this.timeSlotInSeconds = timeSlotInSeconds || DEFAULT_REQUEST_COUNTER_TIME_SLOT
   }
 
-  count(did: string) {
+  count (did: string) {
     if (!did) throw new Error(ErrorCodes.INVALID_DID)
 
     const now = Date.now()

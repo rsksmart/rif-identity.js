@@ -28,7 +28,7 @@ export default class implements SessionManager {
     this.didRefreshTokenMapping = {}
   }
 
-  create(did: string, metadata?: any): string {
+  create (did: string, metadata?: any): string {
     if (!did) throw new Error(ErrorCodes.INVALID_DID)
 
     // invalidates prior token
@@ -47,17 +47,17 @@ export default class implements SessionManager {
     return refreshToken
   }
 
-  renew(refreshToken: string): { refreshToken: string, did: string, metadata: any } {
+  renew (refreshToken: string): { refreshToken: string, did: string, metadata: any } {
     if (!refreshToken) throw new Error(ErrorCodes.INVALID_REFRESH_TOKEN)
-    
+
     const userInfo = this.userSessions[refreshToken]
 
     if (userInfo) {
       if (userInfo.expirationDate >= Date.now()) {
         const { did, metadata } = userInfo
-       
+
         delete this.userSessions[refreshToken]
-        
+
         const newToken = this.create(did, metadata)
         this.didRefreshTokenMapping[did] = newToken
 
@@ -70,7 +70,7 @@ export default class implements SessionManager {
     return null
   }
 
-  delete(did: string) {
+  delete (did: string) {
     if (!did) throw new Error(ErrorCodes.INVALID_DID)
 
     const token = this.didRefreshTokenMapping[did]
