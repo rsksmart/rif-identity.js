@@ -1,5 +1,6 @@
 import { SessionManager, UserSessionConfig } from './types'
 import { randomBytes } from 'crypto'
+import { ErrorCodes } from './errors'
 
 export interface UserSessionInfo {
   did: string
@@ -26,7 +27,13 @@ export default class implements SessionManager {
     this.didRefreshTokenMapping = {}
   }
 
-  createRefreshToken(did: string, metadata?: any): string {
+  create(did: string, metadata?: any): string {
+    if (!did) throw new Error(ErrorCodes.INVALID_DID)
+
+    // invalidates prior token
+    const oldRefreshToken = this.didRefreshTokenMapping[did]
+    if (oldRefreshToken) delete this.userSessions[oldRefreshToken]
+
     const refreshToken = randomBytes(64).toString('hex')
 
     this.userSessions[refreshToken] = {
@@ -39,25 +46,37 @@ export default class implements SessionManager {
     return refreshToken
   }
 
-  renewRefreshToken(refreshToken: string): { refreshToken: string, did: string, metadata: any } {
+  renew(refreshToken: string): { refreshToken: string, did: string, metadata: any } {
+    if (!refreshToken) throw new Error(ErrorCodes.INVALID_REFRESH_TOKEN)
+    
     const userInfo = this.userSessions[refreshToken]
 
-    if (userInfo?.expirationDate >= Date.now()) {
-      const { did, metadata } = userInfo
-      delete this.userSessions[refreshToken]
-      const newToken = this.createRefreshToken(did, metadata)
-      this.didRefreshTokenMapping[did] = newToken
+    if (userInfo) {
+      if (userInfo.expirationDate >= Date.now()) {
+        const { did, metadata } = userInfo
+       
+        delete this.userSessions[refreshToken]
+        
+        const newToken = this.create(did, metadata)
+        this.didRefreshTokenMapping[did] = newToken
 
-      return { refreshToken: newToken, metadata, did }
+        return { refreshToken: newToken, metadata, did }
+      } else {
+        delete this.userSessions[refreshToken]
+      }
     }
 
     return null
   }
 
-  logout(did: string) {
+  delete(did: string) {
+    if (!did) throw new Error(ErrorCodes.INVALID_DID)
+
     const token = this.didRefreshTokenMapping[did]
 
-    delete this.didRefreshTokenMapping[did]
-    delete this.userSessions[token]
+    if (token) {
+      delete this.didRefreshTokenMapping[did]
+      delete this.userSessions[token]
+    }
   }
 }

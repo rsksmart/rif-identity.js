@@ -11,9 +11,9 @@ export interface RequestCounter {
 }
 
 export interface SessionManager {
-  createRefreshToken(did: string): string
-  renewRefreshToken(oldToken: string): { refreshToken: string, did: string, metadata: any }
-  logout(did: string): void
+  create(did: string): string
+  renew(oldToken: string): { refreshToken: string, did: string, metadata: any }
+  delete(did: string): void
 }
 
 export interface Claim {

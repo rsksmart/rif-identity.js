@@ -96,7 +96,7 @@ function authenticationFactory(
           const userDid = payload.iss
 
           const accessToken = await generateAccessToken(userDid, tokenOptions)
-          const refreshToken = sessionManager.createRefreshToken(userDid)
+          const refreshToken = sessionManager.create(userDid)
 
           if (tokenOptions.useCookies) {
             const cookiesAttributes = { httpOnly: true, sameSite: 'Strict', secure: true }
@@ -128,7 +128,7 @@ function refreshTokenFactory(sessionManager: SessionManager, accessTokenOptions:
 
     if (!currentRefreshToken) return res.status(401).send(ErrorCodes.NO_REFRESH_TOKEN)
 
-    const newUserSession = sessionManager.renewRefreshToken(currentRefreshToken)
+    const newUserSession = sessionManager.renew(currentRefreshToken)
 
     if (!newUserSession) {
       res.status(401).send(ErrorCodes.INVALID_OR_EXPIRED_SESSION)
@@ -190,7 +190,7 @@ function expressMiddlewareFactory(tokenOptions: TokenConfig, requestCounter: Req
 
 function logoutFactory(sessionManager: SessionManager) {
   return function(req, res) {
-    sessionManager.logout(req.user.did)
+    sessionManager.delete(req.user.did)
 
     res.status(200).send()
   }

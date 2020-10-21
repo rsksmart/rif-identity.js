@@ -3,7 +3,7 @@ import ChallengeVerifier from '../src/challenge-verifier'
 import MockDate from 'mockdate'
 import { keccak256 } from 'js-sha3';
 
-describe('RequestCounter', () => {
+describe('ChallengeVerifier', () => {
   const challengeSecret = 'theSecret'
   const challengeExpirationTimeInSeconds = 100
 
