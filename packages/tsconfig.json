@@ -4,6 +4,7 @@
       { "path": "rif-id-core" },
       { "path": "rif-id-daf" },
       { "path": "rif-id-ethr-did" },
-      { "path": "rif-id-mnemonic" }
+      { "path": "rif-id-mnemonic" },
+      { "path": "express-did-auth" },
   ]
 }
