@@ -1,4 +1,4 @@
-import SessionManager from '../src/session-manager'
+import SessionManager from '../src/classes/session-manager'
 import MockDate from 'mockdate'
 import { ErrorCodes } from '../src/errors'
 

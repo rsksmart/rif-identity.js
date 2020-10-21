@@ -1,6 +1,7 @@
-import { SessionManager, UserSessionConfig } from './types'
+import { SessionManager, UserSessionConfig } from '../types'
 import { randomBytes } from 'crypto'
-import { ErrorCodes } from './errors'
+import { ErrorCodes } from '../errors'
+import { DEFAULT_USER_SESSION_DURATION } from '../constants'
 
 export interface UserSessionInfo {
   did: string
@@ -22,7 +23,7 @@ export default class implements SessionManager {
   private didRefreshTokenMapping: DidRefreshTokenMapping
 
   constructor ({ userSessionDurationInHours }: UserSessionConfig) {
-    this.sessionDurationInHours = userSessionDurationInHours || 7 * 24
+    this.sessionDurationInHours = userSessionDurationInHours || DEFAULT_USER_SESSION_DURATION
     this.userSessions = {}
     this.didRefreshTokenMapping = {}
   }

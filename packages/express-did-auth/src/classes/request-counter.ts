@@ -1,5 +1,6 @@
-import { ErrorCodes } from './errors'
-import { RequestCounter, RequestCounterConfig } from './types'
+import { DEFAULT_MAX_REQUESTS_PER_TIME_SLOT, DEFAULT_REQUEST_COUNTER_TIME_SLOT } from '../constants'
+import { ErrorCodes } from '../errors'
+import { RequestCounter, RequestCounterConfig } from '../types'
 
 type Timestamp = number
 
@@ -14,8 +15,8 @@ export default class implements RequestCounter {
 
   constructor({ maxRequestsPerTimeSlot, timeSlotInSeconds }: RequestCounterConfig) {
     this.accesses = { }
-    this.maxRequests = maxRequestsPerTimeSlot || 20
-    this.timeSlotInSeconds = timeSlotInSeconds || 10 * 60
+    this.maxRequests = maxRequestsPerTimeSlot || DEFAULT_MAX_REQUESTS_PER_TIME_SLOT
+    this.timeSlotInSeconds = timeSlotInSeconds || DEFAULT_REQUEST_COUNTER_TIME_SLOT
   }
 
   count(did: string) {

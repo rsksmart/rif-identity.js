@@ -1,5 +1,5 @@
 import { ErrorCodes } from '../src/errors'
-import RequestCounter from '../src/request-counter'
+import RequestCounter from '../src/classes/request-counter'
 import MockDate from 'mockdate'
 
 describe('RequestCounter', () => {

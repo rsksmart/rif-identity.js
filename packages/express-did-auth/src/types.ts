@@ -82,11 +82,12 @@ export interface AccessTokenOptions extends TokenConfig {
 
 export interface ChallengeResponsePayload extends JWTPayload {
   challenge: string
-  sdr?: SelectiveDisclosureResponse
 }
 
-export type InternalBusinessLogic = (payload: ChallengeResponsePayload) => Promise<boolean>
+export interface SignupChallengeResponsePayload extends ChallengeResponsePayload {
+  sdr?: SelectiveDisclosureResponse  
+}
 
-export type AuthenticationBusinessLogic = (did: string) => Promise<boolean>
+export type AuthenticationBusinessLogic = (payload: ChallengeResponsePayload) => Promise<boolean>
 
-export type SignupBusinessLogic = (did: string, sdr?: SelectiveDisclosureResponse) => Promise<boolean>
+export type SignupBusinessLogic = (payload: SignupChallengeResponsePayload) => Promise<boolean>

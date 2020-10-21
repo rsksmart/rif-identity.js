@@ -1,5 +1,5 @@
 import { ErrorCodes } from '../src/errors'
-import ChallengeVerifier from '../src/challenge-verifier'
+import ChallengeVerifier from '../src/classes/challenge-verifier'
 import MockDate from 'mockdate'
 import { keccak256 } from 'js-sha3';
 

@@ -1,13 +1,14 @@
-import { ErrorCodes } from './errors';
-import { ChallengeConfig, ChallengeVerifier } from './types';
+import { ErrorCodes } from '../errors';
+import { ChallengeConfig, ChallengeVerifier } from '../types';
 import { keccak256 } from 'js-sha3';
+import { DEFAULT_CHALLENGE_EXPIRATION_TIME } from '../constants';
 
 export default class implements ChallengeVerifier {
   private expirationTimeInSeconds: number
   private secret: string
 
   constructor({ challengeExpirationTimeInSeconds, challengeSecret }: ChallengeConfig) {
-    this.expirationTimeInSeconds = challengeExpirationTimeInSeconds || 5 * 60
+    this.expirationTimeInSeconds = challengeExpirationTimeInSeconds || DEFAULT_CHALLENGE_EXPIRATION_TIME
     this.secret = challengeSecret
   }
 
