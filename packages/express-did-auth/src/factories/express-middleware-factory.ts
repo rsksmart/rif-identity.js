@@ -15,7 +15,6 @@ export default function expressMiddlewareFactory (requestCounter: RequestCounter
         if (!header) return res.status(401).send(ErrorCodes.NO_ACCESS_TOKEN)
 
         const splitted = header.split(' ')
-
         if (splitted.length !== 2 || splitted[0] !== DID_AUTH_SCHEME) {
           return res.status(401).send(ErrorCodes.INVALID_HEADER)
         }

@@ -4,7 +4,7 @@ import { createJWT, Signer } from 'did-jwt'
 import { ChallengeResponsePayload, SelectiveDisclosureResponse } from '../src/types'
 
 export interface Identity {
-  issuer: string
+  did: string
   signer: Signer
 }
 
@@ -34,14 +34,12 @@ export const identityFactory = async (): Promise<Identity> => {
   const hdKey = seedToRSKHDKey(seed)
 
   const privateKey = hdKey.derive(0).privateKey.toString('hex')
-  const identity = rskDIDFromPrivateKey()(privateKey)
-
-  return { issuer: identity.did, signer: identity.signer }
+  return rskDIDFromPrivateKey()(privateKey)
 }
 
 export const challengeResponseFactory = async (
   challenge: string,
-  issuerIdentity: Identity,
+  issuer: Identity,
   serviceUrl: string,
   sdr?: SelectiveDisclosureResponse
 ): Promise<string> => {
@@ -55,5 +53,5 @@ export const challengeResponseFactory = async (
     sdr
   }
 
-  return createJWT(payload, issuerIdentity, { typ: 'JWT', alg: 'ES256K' })
+  return createJWT(payload, { issuer: issuer.did, signer: issuer.signer }, { typ: 'JWT', alg: 'ES256K' })
 }

@@ -20,7 +20,7 @@ describe('requestSignupFactory', () => {
   
   beforeAll(async () => {
     const serviceIdentity = await identityFactory()
-    serviceDid = serviceIdentity.issuer
+    serviceDid = serviceIdentity.did
     serviceSigner = serviceIdentity.signer
   })
   

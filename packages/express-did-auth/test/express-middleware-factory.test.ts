@@ -16,7 +16,7 @@ describe('ExpressMiddlewareFactory', () => {
   beforeAll(async () => {
     const serviceIdentity = await identityFactory()
     authConfig = {
-      serviceDid: serviceIdentity.issuer,
+      serviceDid: serviceIdentity.did,
       serviceSigner: serviceIdentity.signer,
       serviceUrl
     }
@@ -42,7 +42,7 @@ describe('ExpressMiddlewareFactory', () => {
 
   describe('no cookies', () => {
     it('should call next if valid JWT', async () => {
-      const accessToken = await generateAccessToken(userIdentity.issuer, authConfig)
+      const accessToken = await generateAccessToken(userIdentity.did, authConfig)
 
       const req = { headers: { Authorization: `DIDAuth ${accessToken}` } }
       const res = { }

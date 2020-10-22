@@ -15,7 +15,7 @@ describe('RefreshTokenFactory', () => {
   beforeAll(async () => {
     const serviceIdentity = await identityFactory()
     accessTokenConfig = {
-      serviceDid: serviceIdentity.issuer,
+      serviceDid: serviceIdentity.did,
       serviceSigner: serviceIdentity.signer,
       serviceUrl
     }
@@ -41,7 +41,7 @@ describe('RefreshTokenFactory', () => {
 
   describe('no cookies', () => {
     it('should refresh if valid existing session', async () => {
-      const refreshToken = sessionManager.create(userIdentity.issuer)
+      const refreshToken = sessionManager.create(userIdentity.did)
 
       const req = { body: { refreshToken } }
       const expectedAssertion = (response: MockedResponse) => {

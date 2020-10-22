@@ -28,7 +28,6 @@ export default function requestSignupFactory (challengeVerifier: ChallengeVerifi
 
       return res.status(200).send({ challenge, sdr })
     }
-
     return res.status(200).send({ challenge })
   }
 }

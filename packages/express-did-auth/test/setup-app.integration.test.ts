@@ -20,10 +20,10 @@ describe('Express app tests', () => {
 
   beforeAll(async () => {
     userIdentity = await identityFactory()
-    userDid = userIdentity.issuer
+    userDid = userIdentity.did
     const serviceIdentity = await identityFactory()
     const serviceSigner = serviceIdentity.signer
-    const serviceDid = serviceIdentity.issuer
+    const serviceDid = serviceIdentity.did
     await setupApp({ challengeSecret, serviceUrl, serviceDid, serviceSigner, includeSignup: true })(app)
   })
 

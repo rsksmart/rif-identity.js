@@ -23,7 +23,7 @@ describe('authenticationFactory', () => {
   beforeAll(async () => {
     const serviceIdentity = await identityFactory()
     config = {
-      serviceDid: serviceIdentity.issuer,
+      serviceDid: serviceIdentity.did,
       serviceSigner: serviceIdentity.signer,
       serviceUrl: 'https://the.service.com'
     }
@@ -41,7 +41,7 @@ describe('authenticationFactory', () => {
   it('should return 401 if extra business logic that returns false ', async () => {
     MockDate.set(modulo0Timestamp)
 
-    const challenge = challengeVerifier.get(userIdentity.issuer)
+    const challenge = challengeVerifier.get(userIdentity.did)
     const challengeResponseJwt = await challengeResponseFactory(challenge, userIdentity, config.serviceUrl)
 
     const req = { body: { response: challengeResponseJwt } }
@@ -54,7 +54,7 @@ describe('authenticationFactory', () => {
   it('should return 401 if invalid challenge', async () => {
     MockDate.set(modulo0Timestamp)
 
-    const challenge = challengeVerifier.get(userIdentity.issuer)
+    const challenge = challengeVerifier.get(userIdentity.did)
     const challengeResponseJwt = await challengeResponseFactory(challenge, userIdentity, config.serviceUrl)
 
     const req = { body: { response: challengeResponseJwt } }
@@ -70,7 +70,7 @@ describe('authenticationFactory', () => {
     beforeEach(async () => {
       MockDate.set(modulo0Timestamp)
 
-      const challenge = challengeVerifier.get(userIdentity.issuer)
+      const challenge = challengeVerifier.get(userIdentity.did)
       const challengeResponseJwt = await challengeResponseFactory(challenge, userIdentity, config.serviceUrl)
       
       req = { body: { response: challengeResponseJwt } }
