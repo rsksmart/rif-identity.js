@@ -24,8 +24,16 @@ describe('ExpressMiddlewareFactory', () => {
     userIdentity = await identityFactory()
   })
 
-  it.each([[''], ['invalid scheme']])('should return 401 if invalid header: %s', async (token: string) => {
-    const req = { headers: { Authorization: token } }
+  it('should return 401 if empty header', async () => {
+    const req = { headers: { Authorization: '' } }
+
+    const res = mockedResFactory(401, ErrorCodes.NO_ACCESS_TOKEN)
+
+    await expressMiddlewareFactory(counter, { serviceUrl })(req, res, next)
+  })
+
+  it('should return 401 if invalid header', async () => {
+    const req = { headers: { Authorization: 'invalid scheme' } }
 
     const res = mockedResFactory(401, ErrorCodes.INVALID_HEADER)
 

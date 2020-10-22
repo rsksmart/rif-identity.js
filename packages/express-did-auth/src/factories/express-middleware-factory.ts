@@ -11,7 +11,9 @@ export default function expressMiddlewareFactory (requestCounter: RequestCounter
       if (config.useCookies) {
         jwt = req.cookies[ACCESS_TOKEN_COOKIE_NAME]
       } else {
-        const header = req.headers[ACCESS_TOKEN_HEADER_NAME]
+        const header = req.headers[ACCESS_TOKEN_HEADER_NAME] || req.headers[ACCESS_TOKEN_HEADER_NAME.toLowerCase()]
+        if (!header) return res.status(401).send(ErrorCodes.NO_ACCESS_TOKEN)
+
         const splitted = header.split(' ')
 
         if (splitted.length !== 2 || splitted[0] !== DID_AUTH_SCHEME) {
