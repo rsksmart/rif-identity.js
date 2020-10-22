@@ -52,9 +52,9 @@ From base repo directory run `npm test` or any of the described [test script var
 
 ## References
 
-[Decentralized Identifiers (DIDs) v1.0](https://w3c.github.io/did-core/)
-[Verifiable Credentials Data Model 1.0](https://www.w3.org/TR/vc-data-model/)
-[RFC-1994 - PPP Challenge Handshake Authentication Protocol (CHAP)](https://tools.ietf.org/html/rfc1994)
-[Verifiable Credentials JSON Schema Specification](https://w3c-ccg.github.io/vc-json-schemas/)
-[The OAuth 2.0 Authorization Framework](https://tools.ietf.org/html/rfc6749)
-[uPort selective disclosure implementation](https://developer.uport.me/flows/selectivedisclosure)
+- [Decentralized Identifiers (DIDs) v1.0](https://w3c.github.io/did-core/)
+- [Verifiable Credentials Data Model 1.0](https://www.w3.org/TR/vc-data-model/)
+- [RFC-1994 - PPP Challenge Handshake Authentication Protocol (CHAP)](https://tools.ietf.org/html/rfc1994)
+- [Verifiable Credentials JSON Schema Specification](https://w3c-ccg.github.io/vc-json-schemas/)
+- [The OAuth 2.0 Authorization Framework](https://tools.ietf.org/html/rfc6749)
+- [uPort selective disclosure implementation](https://developer.uport.me/flows/selectivedisclosure)
