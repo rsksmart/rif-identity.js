@@ -66,8 +66,6 @@ export default class implements SessionManager {
         delete this.userSessions[refreshToken]
       }
     }
-
-    return null
   }
 
   delete (did: string) {

@@ -28,12 +28,12 @@ describe('SessionManager', () => {
       expect(() => manager.renew(undefined)).toThrow(ErrorCodes.INVALID_REFRESH_TOKEN)
     })
 
-    it('should return null if refresh token not exists', () => {
+    it('should return undefined if refresh token not exists', () => {
       const manager = new SessionManager({})
 
       const renewed = manager.renew('invalid')
 
-      expect(renewed).toBe(null)
+      expect(renewed).toBe(undefined)
     })
 
     it('should allow to refresh a just created token', () => {
@@ -57,7 +57,7 @@ describe('SessionManager', () => {
       const secondToken = manager.create(did)
 
       // should not allow to renew the first token
-      expect(manager.renew(firstToken)).toBe(null)
+      expect(manager.renew(firstToken)).toBe(undefined)
 
       expect(manager.renew(secondToken)).toBeTruthy()
     })
@@ -77,7 +77,7 @@ describe('SessionManager', () => {
       
       const renewed = manager.renew(token)
 
-      expect(renewed).toBe(null)
+      expect(renewed).toBe(undefined)
     })
 
     it('should allow to create a new refresh token even if the old one has expired', () => {
@@ -94,7 +94,7 @@ describe('SessionManager', () => {
       MockDate.set(afterExpirationTimestamp)
       
       const renewed = manager.renew(token)
-      expect(renewed).toBe(null)
+      expect(renewed).toBe(undefined)
 
       const newToken = manager.create(did)
       expect(newToken).toBeTruthy()
@@ -114,7 +114,7 @@ describe('SessionManager', () => {
       const token = manager.create(did)
       manager.delete(did)
       
-      expect(manager.renew(token)).toBe(null)
+      expect(manager.renew(token)).toBe(undefined)
     })
 
     it('should not fail if did not exists', () => {

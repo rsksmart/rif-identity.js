@@ -4,7 +4,7 @@ import { generateAccessToken } from '../jwt-helpers'
 import { AuthenticationConfig, SessionManager } from '../types'
 
 export default function refreshTokenFactory (sessionManager: SessionManager, accessTokenConfig: AuthenticationConfig) {
-  return function (req, res) {
+  return async function (req, res) {
     let currentRefreshToken: string
     if (accessTokenConfig.useCookies) {
       currentRefreshToken = req.cookies[REFRESH_TOKEN_COOKIE_NAME]
@@ -17,11 +17,11 @@ export default function refreshTokenFactory (sessionManager: SessionManager, acc
     const newUserSession = sessionManager.renew(currentRefreshToken)
 
     if (!newUserSession) {
-      res.status(401).send(ErrorCodes.INVALID_OR_EXPIRED_SESSION)
+      return res.status(401).send(ErrorCodes.INVALID_OR_EXPIRED_SESSION)
     }
 
     const { refreshToken, did, metadata } = newUserSession
-    const accessToken = generateAccessToken(did, accessTokenConfig, metadata)
+    const accessToken = await generateAccessToken(did, accessTokenConfig, metadata)
 
     if (accessTokenConfig.useCookies) {
       const cookiesAttributes = { httpOnly: true, sameSite: 'Strict', secure: true }
