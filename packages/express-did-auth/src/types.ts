@@ -38,7 +38,7 @@ export interface SelectiveDisclosureResponse {
   credentials: VerifiableCredential[]
 }
 
-export interface ExpressDidAuthConfig extends TokenConfig, ChallengeConfig, RequestCounterConfig, SignupConfig, AccessTokenConfig, UserSessionConfig, DidResolverConfig {
+export interface ExpressDidAuthConfig extends ChallengeConfig, RequestCounterConfig, SignupConfig, AuthenticationConfig, UserSessionConfig {
   includeSignup?: boolean
   requestSignupPath?: string
   signupPath?: string
@@ -46,17 +46,10 @@ export interface ExpressDidAuthConfig extends TokenConfig, ChallengeConfig, Requ
   authPath?: string
   logoutPath?: string
   refreshTokenPath?: string
-  authenticationBusinessLogic?: AuthenticationBusinessLogic
 }
 
 export interface UserSessionConfig {
   userSessionDurationInHours?: number
-}
-
-export interface SignupConfig extends TokenConfig {
-  requiredCredentials?: string[] 
-  requiredClaims?: Claim[]
-  signupBusinessLogic?: SignupBusinessLogic
 }
 
 export interface RequestCounterConfig {
@@ -69,21 +62,31 @@ export interface ChallengeConfig {
   challengeSecret: string
 }
 
-export interface TokenConfig {
-  useCookies?: boolean
-  serviceDid: string
-  serviceUrl: string
-  serviceSigner: Signer
-}
-
 export interface DidResolverConfig {
   rpcUrl?: string
   networkName?: string
   registry?: string
 }
 
-export interface AccessTokenConfig extends TokenConfig {
+export interface TokenValidationConfig extends DidResolverConfig {
+  serviceUrl: string
+  useCookies?: boolean
+}
+
+export interface TokenConfig extends TokenValidationConfig {
+  serviceDid: string
+  serviceSigner: Signer
+}
+
+export interface AuthenticationConfig extends TokenConfig {
   accessTokenExpirationTimeInSeconds?: number
+  authenticationBusinessLogic?: AuthenticationBusinessLogic
+}
+
+export interface SignupConfig extends TokenConfig {
+  requiredCredentials?: string[] 
+  requiredClaims?: Claim[]
+  signupBusinessLogic?: SignupBusinessLogic
 }
 
 export interface ChallengeResponsePayload extends JWTPayload {

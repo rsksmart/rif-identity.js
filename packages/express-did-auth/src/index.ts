@@ -15,7 +15,7 @@ import {
   DEFAULT_AUTH, DEFAULT_LOGOUT, DEFAULT_REFRESH_TOKEN,
   DEFAULT_REQUEST_AUTH, DEFAULT_REQUEST_SIGNUP, DEFAULT_SIGNUP
 } from './constants'
-import generateAccessToken from './generate-access-token'
+import { generateAccessToken } from './jwt-helpers'
 
 export default function setupAppFactory(config: ExpressDidAuthConfig) {
   const { requestAuthPath, authPath, requestSignupPath, signupPath, refreshTokenPath, logoutPath } = config
@@ -43,7 +43,7 @@ export default function setupAppFactory(config: ExpressDidAuthConfig) {
 
     app.post(refreshTokenPath || DEFAULT_REFRESH_TOKEN, refreshTokenFactory(sessionManager, config))
 
-    app.use(expressMiddlewareFactory(config, requestCounter))
+    app.use(expressMiddlewareFactory(requestCounter, config))
 
     app.post(logoutPath || DEFAULT_LOGOUT, logoutFactory(sessionManager))
   }

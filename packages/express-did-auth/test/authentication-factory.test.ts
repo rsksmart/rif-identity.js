@@ -5,15 +5,15 @@ import { challengeResponseFactory, Identity, identityFactory, mockedResFactory, 
 import MockDate from 'mockdate'
 import { ErrorCodes } from '../src/errors'
 import { TokenConfig } from '../src/types'
-import { Signer } from 'did-jwt'
 
 describe('authenticationFactory', () => {
-  
+  const mockBusinessLogicFactory = (result: boolean) => async () => result
   const challengeSecret = 'theSecret'
   const challengeExpirationTimeInSeconds = 60
 
   const modulo0Timestamp = 1603300440000
-  
+  const otherSlotTimestamp = modulo0Timestamp + challengeExpirationTimeInSeconds * 1000 * 2
+
   const challengeVerifier = new ChallengeVerifier({ challengeSecret, challengeExpirationTimeInSeconds })
   const sessionManager = new SessionManager({})
   
@@ -38,22 +38,57 @@ describe('authenticationFactory', () => {
     await authenticationFactory(challengeVerifier, sessionManager, config)(req, res)
   })
 
-  it('no cookies no extra business logic', async () => {
+  it('should return 401 if extra business logic that returns false ', async () => {
     MockDate.set(modulo0Timestamp)
 
     const challenge = challengeVerifier.get(userIdentity.issuer)
-    const challengeResponseJwt = await challengeResponseFactory(challenge, userIdentity, config.serviceUrl, modulo0Timestamp)
-    
+    const challengeResponseJwt = await challengeResponseFactory(challenge, userIdentity, config.serviceUrl)
+
     const req = { body: { response: challengeResponseJwt } }
+    const res = mockedResFactory(401, ErrorCodes.UNAUTHORIZED_USER)
 
-    const expectedAssertion = (response: MockedResponse) => {
-      expect(response['accessToken']).toBeTruthy()
-      expect(response['refreshToken']).toBeTruthy()
-    }
-    const res = mockedResFactory(200, undefined, expectedAssertion)
+    const logic = mockBusinessLogicFactory(false)
+    await authenticationFactory(challengeVerifier, sessionManager, config, logic)(req, res)
+  })
 
+  it('should return 401 if invalid challenge', async () => {
+    MockDate.set(modulo0Timestamp)
+
+    const challenge = challengeVerifier.get(userIdentity.issuer)
+    const challengeResponseJwt = await challengeResponseFactory(challenge, userIdentity, config.serviceUrl)
+
+    const req = { body: { response: challengeResponseJwt } }
+    const res = mockedResFactory(401, ErrorCodes.INVALID_CHALLENGE)
+
+    MockDate.set(otherSlotTimestamp)
     await authenticationFactory(challengeVerifier, sessionManager, config)(req, res)
   })
 
-  
+  describe('no cookies', () => {
+    let req, res
+
+    beforeEach(async () => {
+      MockDate.set(modulo0Timestamp)
+
+      const challenge = challengeVerifier.get(userIdentity.issuer)
+      const challengeResponseJwt = await challengeResponseFactory(challenge, userIdentity, config.serviceUrl)
+      
+      req = { body: { response: challengeResponseJwt } }
+
+      const expectedAssertion = (response: MockedResponse) => {
+        expect(response['accessToken']).toBeTruthy()
+        expect(response['refreshToken']).toBeTruthy()
+      }
+      res = mockedResFactory(200, undefined, expectedAssertion)
+    })
+
+    it('no extra business logic', async () => {
+      await authenticationFactory(challengeVerifier, sessionManager, config)(req, res)
+    })
+
+    it('extra business logic that returns true', async () => {
+      const logic = mockBusinessLogicFactory(true)
+      await authenticationFactory(challengeVerifier, sessionManager, config, logic)(req, res)
+    })
+  })
 })

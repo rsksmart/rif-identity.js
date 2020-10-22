@@ -1,30 +1,12 @@
-import { verifyJWT } from 'did-jwt'
-import {
-  ACCESS_TOKEN_COOKIE_NAME, DEFAULT_REGISTRY_ADDRESS, DEFAULT_RSK_MAINNET_RPC_URL,
-  DEFAULT_RSK_TESTNET_RPC_URL, REFRESH_TOKEN_COOKIE_NAME, RSK_MAINNET_NETWORK_NAME, RSK_TESTNET_NETWORK_NAME
-} from '../constants'
+import { ACCESS_TOKEN_COOKIE_NAME, REFRESH_TOKEN_COOKIE_NAME } from '../constants'
 import { ErrorCodes } from '../errors'
 import {
   ChallengeVerifier, SessionManager, AuthenticationBusinessLogic,
   SignupBusinessLogic, TokenConfig, ChallengeResponsePayload, DidResolverConfig
 } from '../types'
-import generateAccessToken from '../generate-access-token'
-import { Resolver } from 'did-resolver'
-import { getResolver } from 'ethr-did-resolver'
+import { generateAccessToken, verifyAccessToken } from '../jwt-helpers'
 
 interface AuthFactoryConfig extends TokenConfig, DidResolverConfig { }
-
-const getDidResolver = (config: DidResolverConfig) => {
-  const registry = config.registry || DEFAULT_REGISTRY_ADDRESS
-  const networks = config.rpcUrl ? [
-    { name: config.networkName || RSK_MAINNET_NETWORK_NAME, registry, rpcUrl: config.rpcUrl }
-  ] : [
-    { name: RSK_TESTNET_NETWORK_NAME, registry, rpcUrl: DEFAULT_RSK_TESTNET_RPC_URL },
-    { name: RSK_MAINNET_NETWORK_NAME, registry, rpcUrl: DEFAULT_RSK_MAINNET_RPC_URL }
-  ]
-  const ethrDidResolver = getResolver({ networks })
-  return new Resolver(ethrDidResolver)
-}
 
 export default function authenticationFactory (
   challengeVerifier: ChallengeVerifier,
@@ -37,8 +19,7 @@ export default function authenticationFactory (
 
     if (!response) return res.status(401).send(ErrorCodes.NO_RESPONSE)
 
-    const resolver = getDidResolver(config)
-    const verified = await verifyJWT(response, { audience: config.serviceUrl, resolver })
+    const verified = await verifyAccessToken(response, config)
 
     const payload = verified.payload as ChallengeResponsePayload
 
@@ -62,10 +43,8 @@ export default function authenticationFactory (
 
         return res.status(200).json({ accessToken, refreshToken })
       }
-
       return res.status(401).send(ErrorCodes.UNAUTHORIZED_USER)
     }
-
     return res.status(401).send(ErrorCodes.INVALID_CHALLENGE)
   }
 }

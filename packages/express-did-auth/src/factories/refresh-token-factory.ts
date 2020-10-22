@@ -1,12 +1,12 @@
 import { REFRESH_TOKEN_COOKIE_NAME, ACCESS_TOKEN_COOKIE_NAME } from '../constants'
 import { ErrorCodes } from '../errors'
-import generateAccessToken from '../generate-access-token'
-import { AccessTokenConfig, SessionManager } from '../types'
+import { generateAccessToken } from '../jwt-helpers'
+import { AuthenticationConfig, SessionManager } from '../types'
 
-export default function refreshTokenFactory (sessionManager: SessionManager, accessTokenOptions: AccessTokenConfig) {
+export default function refreshTokenFactory (sessionManager: SessionManager, accessTokenConfig: AuthenticationConfig) {
   return function (req, res) {
     let currentRefreshToken: string
-    if (accessTokenOptions.useCookies) {
+    if (accessTokenConfig.useCookies) {
       currentRefreshToken = req.cookies[REFRESH_TOKEN_COOKIE_NAME]
     } else {
       currentRefreshToken = req.body.refreshToken
@@ -21,9 +21,9 @@ export default function refreshTokenFactory (sessionManager: SessionManager, acc
     }
 
     const { refreshToken, did, metadata } = newUserSession
-    const accessToken = generateAccessToken(did, accessTokenOptions, metadata)
+    const accessToken = generateAccessToken(did, accessTokenConfig, metadata)
 
-    if (accessTokenOptions.useCookies) {
+    if (accessTokenConfig.useCookies) {
       const cookiesAttributes = { httpOnly: true, sameSite: 'Strict', secure: true }
 
       res.cookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, cookiesAttributes)
