@@ -35,7 +35,7 @@ export default function expressMiddlewareFactory (requestCounter: RequestCounter
       next()
     } catch (err) {
       if (err?.message) {
-        res.status(401).send(err.message)
+        res.status(401).send(escape(err.message))
       } else {
         res.status(500).send(ErrorCodes.UNHANDLED_ERROR)
       }
