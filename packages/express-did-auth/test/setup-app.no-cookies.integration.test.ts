@@ -3,8 +3,6 @@ import setupApp from '../src'
 import { challengeResponseFactory, Identity, identityFactory } from './utils'
 import request from 'supertest'
 import { ErrorCodes } from '../src/errors'
-import { ExpressDidAuthConfig } from '../src/types'
-import MockDate from 'mockdate'
 
 describe('Express app tests', () => {
   let userDid: string
@@ -16,7 +14,7 @@ describe('Express app tests', () => {
 
   const challengeSecret = 'theSecret'
   const serviceUrl = 'https://service.com'
-  
+
   const app = express()
   const agent = request.agent(app)
 
@@ -39,7 +37,7 @@ describe('Express app tests', () => {
 
   it('2. POST /signup', async () => {
     const challengeResponse = await challengeResponseFactory(challenge, userIdentity, serviceUrl)
-    const response = await agent.post(`/signup`).send({ response: challengeResponse }).expect(200)
+    const response = await agent.post('/signup').send({ response: challengeResponse }).expect(200)
 
     accessToken = response.body.accessToken
     expect(accessToken).toBeTruthy()
@@ -60,7 +58,7 @@ describe('Express app tests', () => {
 
   it('4. POST /auth', async () => {
     const challengeResponse = await challengeResponseFactory(challenge, userIdentity, serviceUrl)
-    const response = await agent.post(`/auth`).send({ response: challengeResponse }).expect(200)
+    const response = await agent.post('/auth').send({ response: challengeResponse }).expect(200)
 
     accessToken = response.body.accessToken
     expect(accessToken).toBeTruthy()
@@ -70,7 +68,7 @@ describe('Express app tests', () => {
   })
 
   it('5. POST /refresh-token', async () => {
-    const response = await agent.post(`/refresh-token`).send({ refreshToken }).expect(200)
+    const response = await agent.post('/refresh-token').send({ refreshToken }).expect(200)
 
     accessToken = response.body.accessToken
     expect(accessToken).toBeTruthy()
@@ -81,26 +79,26 @@ describe('Express app tests', () => {
   })
 
   it('5b. POST /refresh-token with old one should fail', async () => {
-    const response = await agent.post(`/refresh-token`).send({ refreshToken: oldRefreshToken }).expect(401)
+    const response = await agent.post('/refresh-token').send({ refreshToken: oldRefreshToken }).expect(401)
 
     expect(response.text).toEqual(ErrorCodes.INVALID_OR_EXPIRED_SESSION)
   })
 
   it('6. POST /logout with no access token should fail', async () => {
-    const response = await agent.post(`/logout`).expect(401)
+    const response = await agent.post('/logout').expect(401)
 
     expect(response.text).toEqual(ErrorCodes.NO_ACCESS_TOKEN)
   })
 
   it('6b. POST /logout with proper access token', async () => {
     await agent
-      .post(`/logout`)
+      .post('/logout')
       .set('Authorization', `DIDAuth ${accessToken}`)
       .expect(200)
   })
 
   it('7. POST /refresh-token with logged out session one should fail', async () => {
-    const response = await agent.post(`/refresh-token`).send({ refreshToken }).expect(401)
+    const response = await agent.post('/refresh-token').send({ refreshToken }).expect(401)
 
     expect(response.text).toEqual(ErrorCodes.INVALID_OR_EXPIRED_SESSION)
   })

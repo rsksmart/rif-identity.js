@@ -18,14 +18,14 @@ import {
 } from './constants'
 import { generateAccessToken, verifyAccessToken } from './jwt-utils'
 
-export default function setupAppFactory(config: ExpressDidAuthConfig) {
+export default function setupAppFactory (config: ExpressDidAuthConfig) {
   const { requestAuthPath, authPath, requestSignupPath, signupPath, refreshTokenPath, logoutPath } = config
 
   const challengeVerifier = new ChallengeVerifierImplementation(config)
   const requestCounter = new RequestCounterImplementation(config)
   const sessionManager = new SessionManagerImplementation(config)
 
-  return function setupApp(app: Express) {
+  return function setupApp (app: Express) {
     app.use(bodyParser.json())
 
     if (config.useCookies) {

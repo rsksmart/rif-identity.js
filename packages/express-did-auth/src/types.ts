@@ -84,7 +84,7 @@ export interface AuthenticationConfig extends TokenConfig {
 }
 
 export interface SignupConfig extends TokenConfig {
-  requiredCredentials?: string[] 
+  requiredCredentials?: string[]
   requiredClaims?: Claim[]
   signupBusinessLogic?: SignupBusinessLogic
 }
@@ -94,7 +94,7 @@ export interface ChallengeResponsePayload extends JWTPayload {
 }
 
 export interface SignupChallengeResponsePayload extends ChallengeResponsePayload {
-  sdr?: SelectiveDisclosureResponse  
+  sdr?: SelectiveDisclosureResponse
 }
 
 export type AuthenticationBusinessLogic = (payload: ChallengeResponsePayload) => Promise<boolean>

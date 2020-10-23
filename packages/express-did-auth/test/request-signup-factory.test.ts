@@ -8,7 +8,7 @@ import { Claim, SelectiveDisclosureRequest, SignupConfig } from '../src/types'
 
 describe('requestSignupFactory', () => {
   const userDid = 'did:ethr:rsk:testnet:0xd69ced736454347be68aead53fcc1678cb9a70ef'
-  
+
   const challengeSecret = 'theSecret'
   const challengeExpirationTimeInSeconds = 60
   const challengeVerifier = new ChallengeVerifier({ challengeSecret, challengeExpirationTimeInSeconds })
@@ -16,7 +16,7 @@ describe('requestSignupFactory', () => {
   let serviceDid: string
   let serviceSigner: Signer
   const serviceUrl = 'https://the.service.com'
-  
+
   beforeAll(async () => {
     const serviceIdentity = await identityFactory()
     serviceDid = serviceIdentity.did
@@ -24,7 +24,7 @@ describe('requestSignupFactory', () => {
   })
 
   afterEach(() => MockDate.reset())
-  
+
   it('should return a 200 with the created challenge if no sdr', async () => {
     MockDate.set(modulo0Timestamp)
 
@@ -33,18 +33,18 @@ describe('requestSignupFactory', () => {
     const res = mockedResFactory(200, { challenge })
     const req = { params: { did: userDid } }
 
-    await requestSignupFactory(challengeVerifier, { serviceSigner, serviceDid, serviceUrl } )(req, res)
+    await requestSignupFactory(challengeVerifier, { serviceSigner, serviceDid, serviceUrl })(req, res)
   })
 
   it('should return a 200 with a the created challenge and sdr when sdr present in the config', async () => {
     MockDate.set(modulo0Timestamp)
-    
+
     const requiredCredentials = ['EmailCredential']
     const requiredClaims: Claim[] = [{ claimType: 'name' }]
 
     const sdrData: SelectiveDisclosureRequest = {
       subject: userDid,
-      issuer: serviceDid, 
+      issuer: serviceDid,
       credentials: requiredCredentials,
       claims: requiredClaims
     }

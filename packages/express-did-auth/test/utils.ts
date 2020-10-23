@@ -17,9 +17,9 @@ export const modulo59Timestamp = 1603300499000 // modulo59Timestamp % (challenge
 export const otherSlotTimestamp = modulo8Timestamp + 60 * 1000
 
 export const mockedResFactory = (expectedStatusCode: 200 | 401 | 500, expectedResponse?: MockedResponse, expectedAssertion?: (response: MockedResponse) => void) => {
-  function sendOrJson(response: string | object) {
+  function sendOrJson (response: string | object) {
     if (expectedResponse) expect(response).toEqual(expectedResponse)
-  
+
     if (expectedAssertion) expectedAssertion(response)
   }
 

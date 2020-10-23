@@ -67,7 +67,7 @@ describe('SessionManager', () => {
     it('should do not allow to refresh an expired refresh token', () => {
       const userSessionDurationInHours = 1
       const manager = new SessionManager({ userSessionDurationInHours })
-      
+
       const createTokenTimestamp = 1603300440000
       MockDate.set(createTokenTimestamp)
 
@@ -76,7 +76,7 @@ describe('SessionManager', () => {
       // mock date to two hours later
       const afterExpirationTimestamp = createTokenTimestamp + 2 * 60 * 60 * 1000
       MockDate.set(afterExpirationTimestamp)
-      
+
       const renewed = manager.renew(token)
 
       expect(renewed).toBe(undefined)
@@ -85,7 +85,7 @@ describe('SessionManager', () => {
     it('should allow to create a new refresh token even if the old one has expired', () => {
       const userSessionDurationInHours = 1
       const manager = new SessionManager({ userSessionDurationInHours })
-      
+
       const createTokenTimestamp = 1603300440000
       MockDate.set(createTokenTimestamp)
 
@@ -94,7 +94,7 @@ describe('SessionManager', () => {
       // mock date to two hours later
       const afterExpirationTimestamp = createTokenTimestamp + 2 * 60 * 60 * 1000
       MockDate.set(afterExpirationTimestamp)
-      
+
       const renewed = manager.renew(token)
       expect(renewed).toBe(undefined)
 
@@ -115,7 +115,7 @@ describe('SessionManager', () => {
 
       const token = manager.create(did)
       manager.delete(did)
-      
+
       expect(manager.renew(token)).toBe(undefined)
     })
 

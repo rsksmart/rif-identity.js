@@ -44,11 +44,13 @@ describe('RefreshTokenFactory', () => {
 
       const req = { body: { refreshToken } }
       const expectedAssertion = (response: MockedResponse) => {
+        // eslint-disable-next-line dot-notation
         expect(response['accessToken']).toBeTruthy()
+        // eslint-disable-next-line dot-notation
         expect(response['refreshToken']).toBeTruthy()
       }
       const res = mockedResFactory(200, undefined, expectedAssertion)
-  
+
       await refreshTokenFactory(sessionManager, accessTokenConfig)(req, res)
     })
   })

@@ -1,10 +1,10 @@
 import { ErrorCodes } from '../src/errors'
 import ChallengeVerifier from '../src/classes/challenge-verifier'
 import MockDate from 'mockdate'
-import { keccak256 } from 'js-sha3';
+import { keccak256 } from 'js-sha3'
 import {
   modulo0Timestamp, modulo8Timestamp, otherSlotTimestamp, modulo59Timestamp
-} from './utils';
+} from './utils'
 
 describe('ChallengeVerifier', () => {
   const challengeSecret = 'theSecret'
@@ -32,7 +32,7 @@ describe('ChallengeVerifier', () => {
 
       const actual = verifier.get(did)
       expect(actual).toBeTruthy()
-  
+
       const expected = calculateExpectedChallenge(did, challengeExpirationTimeInSeconds, challengeSecret)
       expect(actual).toEqual(expected)
     })
@@ -40,7 +40,7 @@ describe('ChallengeVerifier', () => {
     it('should get the same challenge when invoking it within the same timeslot', () => {
       const verifier = new ChallengeVerifier({ challengeSecret, challengeExpirationTimeInSeconds })
 
-      const firstChallengeTime = modulo0Timestamp 
+      const firstChallengeTime = modulo0Timestamp
       MockDate.set(firstChallengeTime)
 
       const firstChallenge = verifier.get(did)
@@ -53,7 +53,7 @@ describe('ChallengeVerifier', () => {
       expect(secondChallenge).toBeTruthy()
 
       expect(firstChallenge).toEqual(secondChallenge)
-  
+
       MockDate.reset()
       const expected = calculateExpectedChallenge(did, challengeExpirationTimeInSeconds, challengeSecret, firstChallengeTime)
       expect(firstChallenge).toEqual(expected)
@@ -62,7 +62,7 @@ describe('ChallengeVerifier', () => {
     it('should get different challenge when invoking it twice in differents timeslots', () => {
       const verifier = new ChallengeVerifier({ challengeSecret, challengeExpirationTimeInSeconds })
 
-      const firstChallengeTime = modulo0Timestamp 
+      const firstChallengeTime = modulo0Timestamp
       MockDate.set(firstChallengeTime)
 
       const firstChallenge = verifier.get(did)
@@ -75,7 +75,7 @@ describe('ChallengeVerifier', () => {
       expect(secondChallenge).toBeTruthy()
 
       expect(firstChallenge).not.toEqual(secondChallenge)
-  
+
       MockDate.reset()
 
       const expectedFirstChallenge = calculateExpectedChallenge(did, challengeExpirationTimeInSeconds, challengeSecret, firstChallengeTime)

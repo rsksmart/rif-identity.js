@@ -35,7 +35,7 @@ describe('RequestCounter', () => {
       for (let i = 0; i < 5; i++) counter.count(did)
 
       const milisecondsOffset = 150
-      MockDate.set(Date.now() + 100 * 1000 + milisecondsOffset) 
+      MockDate.set(Date.now() + 100 * 1000 + milisecondsOffset)
 
       // should be able to count until maxRequests again
       for (let i = 0; i < 5; i++) counter.count(did)
@@ -49,7 +49,7 @@ describe('RequestCounter', () => {
       for (let i = 0; i < 5; i++) counter.count(did)
 
       const milisecondsOffset = 150
-      MockDate.set(Date.now() + 100 * 1000 + milisecondsOffset) 
+      MockDate.set(Date.now() + 100 * 1000 + milisecondsOffset)
 
       // should be able to count maxLimit again
       for (let i = 0; i < 5; i++) counter.count(did)

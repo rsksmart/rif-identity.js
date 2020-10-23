@@ -1,5 +1,5 @@
 import { ErrorCodes } from '../src/errors'
-import { Identity, identityFactory, mockedResFactory, modulo0Timestamp, modulo8Timestamp } from './utils'
+import { Identity, identityFactory, modulo0Timestamp, modulo8Timestamp } from './utils'
 import { generateAccessToken, getDidResolver, verifyAccessToken } from '../src/jwt-utils'
 import { AuthenticationConfig } from '../src/types'
 import { decodeJWT, verifyJWT } from 'did-jwt'
@@ -10,7 +10,7 @@ describe('JWT Utils', () => {
   let issuerIdentity: Identity
   let subjectIdentity: Identity
   let config: AuthenticationConfig
-  
+
   const serviceUrl = 'https://service.com'
   const resolver = getDidResolver({ serviceUrl })
 
@@ -30,7 +30,7 @@ describe('JWT Utils', () => {
   describe('generateAccessToken', () => {
     it('should create a jwt without metadata', async () => {
       MockDate.set(modulo0Timestamp)
-      
+
       const jwt = await generateAccessToken(subjectIdentity.did, config)
 
       const { payload } = await decodeJWT(jwt)
@@ -47,12 +47,14 @@ describe('JWT Utils', () => {
 
     it('should sign with the expected alg', async () => {
       MockDate.set(modulo0Timestamp)
-      
+
       const jwt = await generateAccessToken(subjectIdentity.did, config)
 
       const { signer, issuer } = await verifyJWT(jwt, { resolver, audience: serviceUrl })
 
+      // eslint-disable-next-line dot-notation
       expect(signer['type']).toEqual('Secp256k1VerificationKey2018')
+      // eslint-disable-next-line dot-notation
       expect(signer['controller']).toEqual(issuerIdentity.did)
 
       expect(issuer).toEqual(issuerIdentity.did)
@@ -73,7 +75,7 @@ describe('JWT Utils', () => {
   describe('verifyAccessToken', () => {
     it('should verify a valid jwt', async () => {
       MockDate.set(modulo0Timestamp)
-      
+
       const jwt = await generateAccessToken(subjectIdentity.did, config)
 
       const { payload } = await verifyAccessToken(jwt, config)

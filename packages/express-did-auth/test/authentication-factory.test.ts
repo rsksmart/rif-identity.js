@@ -1,7 +1,7 @@
 import authenticationFactory from '../src/factories/authentication-factory'
 import ChallengeVerifier from '../src/classes/challenge-verifier'
 import SessionManager from '../src/classes/session-manager'
-import { 
+import {
   challengeResponseFactory, Identity, identityFactory, mockedResFactory,
   MockedResponse, modulo0Timestamp, otherSlotTimestamp
 } from './utils'
@@ -16,7 +16,7 @@ describe('authenticationFactory', () => {
 
   const challengeVerifier = new ChallengeVerifier({ challengeSecret, challengeExpirationTimeInSeconds })
   const sessionManager = new SessionManager({})
-  
+
   let config: TokenConfig
   let userIdentity: Identity
 
@@ -74,11 +74,13 @@ describe('authenticationFactory', () => {
 
       const challenge = challengeVerifier.get(userIdentity.did)
       const challengeResponseJwt = await challengeResponseFactory(challenge, userIdentity, config.serviceUrl)
-      
+
       req = { body: { response: challengeResponseJwt } }
 
       const expectedAssertion = (response: MockedResponse) => {
+        // eslint-disable-next-line dot-notation
         expect(response['accessToken']).toBeTruthy()
+        // eslint-disable-next-line dot-notation
         expect(response['refreshToken']).toBeTruthy()
       }
       res = mockedResFactory(200, undefined, expectedAssertion)

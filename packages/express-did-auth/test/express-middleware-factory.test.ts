@@ -46,7 +46,7 @@ describe('ExpressMiddlewareFactory', () => {
 
       const req = { headers: { Authorization: `DIDAuth ${accessToken}` } }
       const res = { }
-  
+
       await expressMiddlewareFactory(counter, { serviceUrl })(req, res, next)
 
       expect(next.mock.calls).toHaveLength(1)

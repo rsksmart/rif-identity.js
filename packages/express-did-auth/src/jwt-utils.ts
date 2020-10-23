@@ -8,7 +8,7 @@ import {
 import { ErrorCodes } from './errors'
 import { AuthenticationConfig, TokenValidationConfig } from './types'
 
-export function generateAccessToken(
+export function generateAccessToken (
   subjectDid: string,
   config: AuthenticationConfig,
   metadata?: any
@@ -23,13 +23,13 @@ export function generateAccessToken(
     sub: subjectDid,
     exp: `${now + (accessTokenExpirationTimeInSeconds || DEFAULT_ACCESS_TOKEN_EXPIRATION)}`,
     nbf: `${now}`,
-    iat: `${now}`,
+    iat: `${now}`
   }
 
   return createJWT(payload, { issuer: serviceDid, signer }, { typ: 'JWT', alg: 'ES256K' })
 }
 
-export function getDidResolver(config: TokenValidationConfig) {
+export function getDidResolver (config: TokenValidationConfig) {
   const registry = config.registry || DEFAULT_REGISTRY_ADDRESS
 
   const networks = config.rpcUrl ? [
@@ -43,7 +43,7 @@ export function getDidResolver(config: TokenValidationConfig) {
   return new Resolver(ethrDidResolver)
 }
 
-export async function verifyAccessToken(
+export async function verifyAccessToken (
   token: string, config: TokenValidationConfig
 ): Promise<JWTVerified> {
   const resolver = getDidResolver(config)
