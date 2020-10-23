@@ -25,10 +25,10 @@ export default function setupAppFactory(config: ExpressDidAuthConfig) {
   const sessionManager = new SessionManagerImplementation(config)
 
   return function setupApp(app: Express) {
+    app.use(bodyParser.json())
+
     if (config.useCookies) {
       app.use(cookieParser())
-    } else {
-      app.use(bodyParser.json())
     }
 
     if (config.includeSignup) {
