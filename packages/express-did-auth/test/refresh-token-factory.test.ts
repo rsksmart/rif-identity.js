@@ -3,7 +3,6 @@ import refreshTokenFactory from '../src/factories/refresh-token-factory'
 import { ErrorCodes } from '../src/errors'
 import { Identity, identityFactory, mockedResFactory, MockedResponse } from './utils'
 import { AuthenticationConfig } from '../src/types'
-import { generateAccessToken } from '../src/jwt-helpers'
 
 describe('RefreshTokenFactory', () => {
   const sessionManager = new SessionManager({})

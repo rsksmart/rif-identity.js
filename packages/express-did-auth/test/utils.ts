@@ -10,6 +10,11 @@ export interface Identity {
 
 export type MockedResponse = string | object
 
+// NOTE: this timestamps have modulo 0 when challengeExpirationTimeInSeconds is set to 60
+export const modulo0Timestamp = 1603300440000 // modulo0Timestamp % (challengeExpirationTimeInSeconds * 1000) = 0 secs
+export const modulo8Timestamp = 1603300448000 // modulo8Timestamp % (challengeExpirationTimeInSeconds * 1000) = 8 secs
+export const modulo59Timestamp = 1603300499000 // modulo59Timestamp % (challengeExpirationTimeInSeconds * 1000) = 59 secs
+export const otherSlotTimestamp = modulo8Timestamp + 60 * 1000
 
 export const mockedResFactory = (expectedStatusCode: 200 | 401 | 500, expectedResponse?: MockedResponse, expectedAssertion?: (response: MockedResponse) => void) => {
   function sendOrJson(response: string | object) {

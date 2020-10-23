@@ -2,15 +2,13 @@ import { ErrorCodes } from '../src/errors'
 import ChallengeVerifier from '../src/classes/challenge-verifier'
 import MockDate from 'mockdate'
 import { keccak256 } from 'js-sha3';
+import {
+  modulo0Timestamp, modulo8Timestamp, otherSlotTimestamp, modulo59Timestamp
+} from './utils';
 
 describe('ChallengeVerifier', () => {
   const challengeSecret = 'theSecret'
   const challengeExpirationTimeInSeconds = 60
-
-  const modulo0Timestamp = 1603300440000 // modulo0Timestamp % (challengeExpirationTimeInSeconds * 1000) = 0 secs
-  const modulo8Timestamp = 1603300448000 // modulo8Timestamp % (challengeExpirationTimeInSeconds * 1000) = 8 secs
-  const modulo59Timestamp = 1603300499000 // modulo59Timestamp % (challengeExpirationTimeInSeconds * 1000) = 59 secs
-  const otherSlotTimestamp = modulo8Timestamp + challengeExpirationTimeInSeconds * 1000
 
   const did = 'did:ethr:rsk:testnet:0xce83da2a364f37e44ec1a17f7f453a5e24395c70'
 

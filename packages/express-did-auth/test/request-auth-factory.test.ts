@@ -1,6 +1,6 @@
 import requestAuthFactory from '../src/factories/request-auth-factory'
 import ChallengeVerifier from '../src/classes/challenge-verifier'
-import { mockedResFactory } from './utils'
+import { mockedResFactory, modulo0Timestamp } from './utils'
 import MockDate from 'mockdate'
 import { ErrorCodes } from '../src/errors'
 
@@ -9,8 +9,6 @@ describe('requestAuthFactory', () => {
   const challengeSecret = 'theSecret'
   const challengeExpirationTimeInSeconds = 60
 
-  const modulo0Timestamp = 1603300440000
-  
   const challengeVerifier = new ChallengeVerifier({ challengeSecret, challengeExpirationTimeInSeconds })
 
   it('should return a 200 with the created challenge', () => {

@@ -1,6 +1,6 @@
 import requestSignupFactory from '../src/factories/request-signup-factory'
 import ChallengeVerifier from '../src/classes/challenge-verifier'
-import { identityFactory, mockedResFactory } from './utils'
+import { identityFactory, mockedResFactory, modulo0Timestamp } from './utils'
 import MockDate from 'mockdate'
 import { ErrorCodes } from '../src/errors'
 import { createJWT, Signer } from 'did-jwt'
@@ -11,7 +11,6 @@ describe('requestSignupFactory', () => {
   
   const challengeSecret = 'theSecret'
   const challengeExpirationTimeInSeconds = 60
-  const modulo0Timestamp = 1603300440000
   const challengeVerifier = new ChallengeVerifier({ challengeSecret, challengeExpirationTimeInSeconds })
 
   let serviceDid: string

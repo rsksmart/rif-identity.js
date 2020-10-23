@@ -1,7 +1,10 @@
 import authenticationFactory from '../src/factories/authentication-factory'
 import ChallengeVerifier from '../src/classes/challenge-verifier'
 import SessionManager from '../src/classes/session-manager'
-import { challengeResponseFactory, Identity, identityFactory, mockedResFactory, MockedResponse } from './utils'
+import { 
+  challengeResponseFactory, Identity, identityFactory, mockedResFactory,
+  MockedResponse, modulo0Timestamp, otherSlotTimestamp
+} from './utils'
 import MockDate from 'mockdate'
 import { ErrorCodes } from '../src/errors'
 import { TokenConfig } from '../src/types'
@@ -10,9 +13,6 @@ describe('authenticationFactory', () => {
   const mockBusinessLogicFactory = (result: boolean) => async () => result
   const challengeSecret = 'theSecret'
   const challengeExpirationTimeInSeconds = 60
-
-  const modulo0Timestamp = 1603300440000
-  const otherSlotTimestamp = modulo0Timestamp + challengeExpirationTimeInSeconds * 1000 * 2
 
   const challengeVerifier = new ChallengeVerifier({ challengeSecret, challengeExpirationTimeInSeconds })
   const sessionManager = new SessionManager({})

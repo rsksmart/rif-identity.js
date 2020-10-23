@@ -1,6 +1,6 @@
 import { REFRESH_TOKEN_COOKIE_NAME, ACCESS_TOKEN_COOKIE_NAME } from '../constants'
 import { ErrorCodes } from '../errors'
-import { generateAccessToken } from '../jwt-helpers'
+import { generateAccessToken } from '../jwt-utils'
 import { AuthenticationConfig, SessionManager } from '../types'
 
 export default function refreshTokenFactory (sessionManager: SessionManager, accessTokenConfig: AuthenticationConfig) {

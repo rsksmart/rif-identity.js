@@ -10,27 +10,26 @@ import { AuthenticationConfig, TokenValidationConfig } from './types'
 
 export function generateAccessToken(
   subjectDid: string,
-  opts: AuthenticationConfig,
+  config: AuthenticationConfig,
   metadata?: any
 ): Promise<string> {
   const now = Math.floor(Date.now() / 1000) // must be in seconds
 
-  const { serviceUrl, serviceDid, accessTokenExpirationTimeInSeconds, serviceSigner: signer } = opts
+  const { serviceUrl, serviceDid, accessTokenExpirationTimeInSeconds, serviceSigner: signer } = config
+
   const payload = {
+    ...metadata,
     aud: serviceUrl,
     sub: subjectDid,
     exp: `${now + (accessTokenExpirationTimeInSeconds || DEFAULT_ACCESS_TOKEN_EXPIRATION)}`,
     nbf: `${now}`,
     iat: `${now}`,
-    ...metadata
   }
 
   return createJWT(payload, { issuer: serviceDid, signer }, { typ: 'JWT', alg: 'ES256K' })
 }
 
-export async function verifyAccessToken(
-  token: string, config: TokenValidationConfig
-): Promise<JWTVerified> {
+export function getDidResolver(config: TokenValidationConfig) {
   const registry = config.registry || DEFAULT_REGISTRY_ADDRESS
 
   const networks = config.rpcUrl ? [
@@ -41,7 +40,13 @@ export async function verifyAccessToken(
   ]
 
   const ethrDidResolver = getResolver({ networks })
-  const resolver = new Resolver(ethrDidResolver)
+  return new Resolver(ethrDidResolver)
+}
+
+export async function verifyAccessToken(
+  token: string, config: TokenValidationConfig
+): Promise<JWTVerified> {
+  const resolver = getDidResolver(config)
 
   const verified = await verifyJWT(token, { audience: config.serviceUrl, resolver })
 

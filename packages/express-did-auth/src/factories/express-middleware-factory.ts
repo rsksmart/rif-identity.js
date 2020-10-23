@@ -1,7 +1,7 @@
 import { JWTPayload } from 'did-jwt'
 import { ACCESS_TOKEN_COOKIE_NAME, ACCESS_TOKEN_HEADER_NAME, DID_AUTH_SCHEME } from '../constants'
 import { ErrorCodes } from '../errors'
-import { verifyAccessToken } from '../jwt-helpers'
+import { verifyAccessToken } from '../jwt-utils'
 import { TokenValidationConfig, RequestCounter } from '../types'
 
 export default function expressMiddlewareFactory (requestCounter: RequestCounter, config: TokenValidationConfig) {

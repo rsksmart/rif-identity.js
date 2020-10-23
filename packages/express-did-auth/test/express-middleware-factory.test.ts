@@ -3,7 +3,7 @@ import expressMiddlewareFactory from '../src/factories/express-middleware-factor
 import { ErrorCodes } from '../src/errors'
 import { Identity, identityFactory, mockedResFactory } from './utils'
 import { AuthenticationConfig } from '../src/types'
-import { generateAccessToken } from '../src/jwt-helpers'
+import { generateAccessToken } from '../src/jwt-utils'
 
 describe('ExpressMiddlewareFactory', () => {
   const counter = new RequestCounter({})

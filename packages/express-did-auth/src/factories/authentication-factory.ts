@@ -4,7 +4,7 @@ import {
   ChallengeVerifier, SessionManager, AuthenticationBusinessLogic,
   SignupBusinessLogic, TokenConfig, ChallengeResponsePayload, DidResolverConfig
 } from '../types'
-import { generateAccessToken, verifyAccessToken } from '../jwt-helpers'
+import { generateAccessToken, verifyAccessToken } from '../jwt-utils'
 
 interface AuthFactoryConfig extends TokenConfig, DidResolverConfig { }
 
