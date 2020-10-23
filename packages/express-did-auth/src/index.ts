@@ -1,6 +1,7 @@
 import { Express } from 'express'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
+import csrf from 'csurf'
 import { ExpressDidAuthConfig } from './types'
 import ChallengeVerifierImplementation from './classes/challenge-verifier'
 import RequestCounterImplementation from './classes/request-counter'
@@ -29,6 +30,7 @@ export default function setupAppFactory(config: ExpressDidAuthConfig) {
 
     if (config.useCookies) {
       app.use(cookieParser())
+      app.use(csrf({ cookie: true }))
     }
 
     if (config.includeSignup) {
