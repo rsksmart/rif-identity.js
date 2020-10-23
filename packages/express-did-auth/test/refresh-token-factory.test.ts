@@ -22,7 +22,7 @@ describe('RefreshTokenFactory', () => {
     userIdentity = await identityFactory()
   })
 
-  it('should return 401 if no refresh token', async () => {
+  test('should respond with 401 if no refresh token', async () => {
     const req = { body: { } }
 
     const res = mockedResFactory(401, ErrorCodes.NO_REFRESH_TOKEN)
@@ -30,7 +30,7 @@ describe('RefreshTokenFactory', () => {
     await refreshTokenFactory(sessionManager, accessTokenConfig)(req, res)
   })
 
-  it('should return 401 if invalid refresh token', async () => {
+  test('should respond with 401 if invalid refresh token', async () => {
     const req = { body: { refreshToken: 'invalid' } }
 
     const res = mockedResFactory(401, ErrorCodes.INVALID_OR_EXPIRED_SESSION)
@@ -39,7 +39,7 @@ describe('RefreshTokenFactory', () => {
   })
 
   describe('no cookies', () => {
-    it('should refresh if valid existing session', async () => {
+    test('should refresh if valid existing session', async () => {
       const refreshToken = sessionManager.create(userIdentity.did)
 
       const req = { body: { refreshToken } }

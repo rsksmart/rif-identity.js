@@ -1,5 +1,5 @@
+import { ChallengeVerifier } from '../classes/challenge-verifier'
 import { ErrorCodes } from '../errors'
-import { ChallengeVerifier } from '../types'
 
 export default function requestAuthFactory (challengeVerifier: ChallengeVerifier) {
   return function (req, res) {

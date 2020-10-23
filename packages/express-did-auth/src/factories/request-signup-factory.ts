@@ -1,6 +1,7 @@
 import { createJWT } from 'did-jwt'
+import { ChallengeVerifier } from '../classes/challenge-verifier'
 import { ErrorCodes } from '../errors'
-import { ChallengeVerifier, SignupConfig, SelectiveDisclosureRequest } from '../types'
+import { SignupConfig, SelectiveDisclosureRequest } from '../types'
 
 export default function requestSignupFactory (challengeVerifier: ChallengeVerifier, signupConfig: SignupConfig) {
   return async function (req, res) {

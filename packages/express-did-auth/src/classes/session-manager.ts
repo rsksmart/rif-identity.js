@@ -1,7 +1,16 @@
-import { SessionManager, UserSessionConfig } from '../types'
 import { randomBytes } from 'crypto'
 import { ErrorCodes } from '../errors'
-import { DEFAULT_USER_SESSION_DURATION } from '../constants'
+import { USER_SESSION_DURATION } from '../defaults'
+
+export interface UserSessionConfig {
+  userSessionDurationInHours?: number
+}
+
+export interface SessionManager {
+  create(did: string): string
+  renew(oldToken: string): { refreshToken: string, did: string, metadata: any }
+  delete(did: string): void
+}
 
 export interface UserSessionInfo {
   did: string
@@ -9,7 +18,7 @@ export interface UserSessionInfo {
   metadata: any
 }
 
-export interface UserSessionDictionary {
+export interface RefreshTokenSessionMapping {
   [refreshToken: string]: UserSessionInfo
 }
 
@@ -19,12 +28,12 @@ export interface DidRefreshTokenMapping {
 
 export default class implements SessionManager {
   private sessionDurationInHours: number
-  private userSessions: UserSessionDictionary
+  private refreshTokenSessionMapping: RefreshTokenSessionMapping
   private didRefreshTokenMapping: DidRefreshTokenMapping
 
   constructor ({ userSessionDurationInHours }: UserSessionConfig) {
-    this.sessionDurationInHours = userSessionDurationInHours || DEFAULT_USER_SESSION_DURATION
-    this.userSessions = {}
+    this.sessionDurationInHours = userSessionDurationInHours || USER_SESSION_DURATION
+    this.refreshTokenSessionMapping = {}
     this.didRefreshTokenMapping = {}
   }
 
@@ -33,11 +42,11 @@ export default class implements SessionManager {
 
     // invalidates prior token
     const oldRefreshToken = this.didRefreshTokenMapping[did]
-    if (oldRefreshToken) delete this.userSessions[oldRefreshToken]
+    if (oldRefreshToken) delete this.refreshTokenSessionMapping[oldRefreshToken]
 
     const refreshToken = randomBytes(64).toString('hex')
 
-    this.userSessions[refreshToken] = {
+    this.refreshTokenSessionMapping[refreshToken] = {
       did,
       expirationDate: Date.now() + this.sessionDurationInHours * 60 * 60 * 1000,
       metadata
@@ -50,22 +59,24 @@ export default class implements SessionManager {
   renew (refreshToken: string): { refreshToken: string, did: string, metadata: any } {
     if (!refreshToken) throw new Error(ErrorCodes.INVALID_REFRESH_TOKEN)
 
-    const userInfo = this.userSessions[refreshToken]
+    const userInfo = this.refreshTokenSessionMapping[refreshToken]
 
     if (userInfo) {
       if (userInfo.expirationDate >= Date.now()) {
         const { did, metadata } = userInfo
 
-        delete this.userSessions[refreshToken]
+        delete this.refreshTokenSessionMapping[refreshToken]
 
         const newToken = this.create(did, metadata)
         this.didRefreshTokenMapping[did] = newToken
 
         return { refreshToken: newToken, metadata, did }
       } else {
-        delete this.userSessions[refreshToken]
+        delete this.refreshTokenSessionMapping[refreshToken]
       }
     }
+
+    return undefined
   }
 
   delete (did: string) {
@@ -75,7 +86,7 @@ export default class implements SessionManager {
 
     if (token) {
       delete this.didRefreshTokenMapping[did]
-      delete this.userSessions[token]
+      delete this.refreshTokenSessionMapping[token]
     }
   }
 }

@@ -25,17 +25,17 @@ describe('Express app tests', () => {
     const serviceSigner = serviceIdentity.signer
     const serviceDid = serviceIdentity.did
 
-    await setupApp({ challengeSecret, serviceUrl, serviceDid, serviceSigner, includeSignup: true })(app)
+    setupApp({ challengeSecret, serviceUrl, serviceDid, serviceSigner, includeSignup: true })(app)
   })
 
-  it('1. GET /request-signup', async () => {
+  test('1. GET /request-signup', async () => {
     const response = await agent.get(`/request-signup/${userDid}`).expect(200)
 
     challenge = response.body.challenge
     expect(challenge).toBeTruthy()
   })
 
-  it('2. POST /signup', async () => {
+  test('2. POST /signup', async () => {
     const challengeResponse = await challengeResponseFactory(challenge, userIdentity, serviceUrl)
     const response = await agent.post('/signup').send({ response: challengeResponse }).expect(200)
 
@@ -49,14 +49,14 @@ describe('Express app tests', () => {
     expect(response.header['set-cookie']).toBeFalsy()
   })
 
-  it('3. GET /request-auth', async () => {
+  test('3. GET /request-auth', async () => {
     const response = await agent.get(`/request-auth/${userDid}`).expect(200)
 
     challenge = response.body.challenge
     expect(challenge).toBeTruthy()
   })
 
-  it('4. POST /auth', async () => {
+  test('4. POST /auth', async () => {
     const challengeResponse = await challengeResponseFactory(challenge, userIdentity, serviceUrl)
     const response = await agent.post('/auth').send({ response: challengeResponse }).expect(200)
 
@@ -67,7 +67,7 @@ describe('Express app tests', () => {
     expect(refreshToken).toBeTruthy()
   })
 
-  it('5. POST /refresh-token', async () => {
+  test('5. POST /refresh-token', async () => {
     const response = await agent.post('/refresh-token').send({ refreshToken }).expect(200)
 
     accessToken = response.body.accessToken
@@ -78,26 +78,26 @@ describe('Express app tests', () => {
     expect(refreshToken).toBeTruthy()
   })
 
-  it('5b. POST /refresh-token with old one should fail', async () => {
+  test('5b. POST /refresh-token with old one should fail', async () => {
     const response = await agent.post('/refresh-token').send({ refreshToken: oldRefreshToken }).expect(401)
 
     expect(response.text).toEqual(ErrorCodes.INVALID_OR_EXPIRED_SESSION)
   })
 
-  it('6. POST /logout with no access token should fail', async () => {
+  test('6. POST /logout with no access token should fail', async () => {
     const response = await agent.post('/logout').expect(401)
 
     expect(response.text).toEqual(ErrorCodes.NO_ACCESS_TOKEN)
   })
 
-  it('6b. POST /logout with proper access token', async () => {
+  test('6b. POST /logout with proper access token', async () => {
     await agent
       .post('/logout')
       .set('Authorization', `DIDAuth ${accessToken}`)
       .expect(200)
   })
 
-  it('7. POST /refresh-token with logged out session one should fail', async () => {
+  test('7. POST /refresh-token with logged out session one should fail', async () => {
     const response = await agent.post('/refresh-token').send({ refreshToken }).expect(401)
 
     expect(response.text).toEqual(ErrorCodes.INVALID_OR_EXPIRED_SESSION)

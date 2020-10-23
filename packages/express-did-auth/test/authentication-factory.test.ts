@@ -33,14 +33,14 @@ describe('authenticationFactory', () => {
 
   afterEach(() => MockDate.reset())
 
-  it('should return 401 if no response', async () => {
+  test('should respond with 401 if no response', async () => {
     const res = mockedResFactory(401, ErrorCodes.NO_RESPONSE)
     const req = { body: { } }
 
     await authenticationFactory(challengeVerifier, sessionManager, config)(req, res)
   })
 
-  it('should return 401 if extra business logic that returns false ', async () => {
+  test('should respond with 401 if extra business logic that returns false ', async () => {
     MockDate.set(modulo0Timestamp)
 
     const challenge = challengeVerifier.get(userIdentity.did)
@@ -53,7 +53,21 @@ describe('authenticationFactory', () => {
     await authenticationFactory(challengeVerifier, sessionManager, config, logic)(req, res)
   })
 
-  it('should return 401 if invalid challenge', async () => {
+  test('should respond with 401 if extra business logic that returns false ', async () => {
+    MockDate.set(modulo0Timestamp)
+
+    const challenge = challengeVerifier.get(userIdentity.did)
+    const challengeResponseJwt = await challengeResponseFactory(challenge, userIdentity, config.serviceUrl)
+
+    const errorMessage = 'This is an error'
+    const req = { body: { response: challengeResponseJwt } }
+    const res = mockedResFactory(401, escape(errorMessage))
+
+    const logic = () => { throw new Error(errorMessage) }
+    await authenticationFactory(challengeVerifier, sessionManager, config, logic)(req, res)
+  })
+
+  test('should respond with 401 if invalid challenge', async () => {
     MockDate.set(modulo0Timestamp)
 
     const challenge = challengeVerifier.get(userIdentity.did)
@@ -86,11 +100,11 @@ describe('authenticationFactory', () => {
       res = mockedResFactory(200, undefined, expectedAssertion)
     })
 
-    it('no extra business logic', async () => {
+    test('no extra business logic', async () => {
       await authenticationFactory(challengeVerifier, sessionManager, config)(req, res)
     })
 
-    it('extra business logic that returns true', async () => {
+    test('extra business logic that returns true', async () => {
       const logic = mockBusinessLogicFactory(true)
       await authenticationFactory(challengeVerifier, sessionManager, config, logic)(req, res)
     })

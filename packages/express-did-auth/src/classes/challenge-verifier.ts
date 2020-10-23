@@ -1,14 +1,23 @@
 import { ErrorCodes } from '../errors'
-import { ChallengeConfig, ChallengeVerifier } from '../types'
 import { keccak256 } from 'js-sha3'
-import { DEFAULT_CHALLENGE_EXPIRATION_TIME } from '../constants'
+import { CHALLENGE_EXPIRATION_TIME } from '../defaults'
+
+export interface ChallengeConfig {
+  challengeExpirationTimeInSeconds?: number
+  challengeSecret: string
+}
+
+export interface ChallengeVerifier {
+  get(did: string): string
+  verify(did: string, challenge: string): boolean
+}
 
 export default class implements ChallengeVerifier {
   private expirationTimeInSeconds: number
   private secret: string
 
   constructor ({ challengeExpirationTimeInSeconds, challengeSecret }: ChallengeConfig) {
-    this.expirationTimeInSeconds = challengeExpirationTimeInSeconds || DEFAULT_CHALLENGE_EXPIRATION_TIME
+    this.expirationTimeInSeconds = challengeExpirationTimeInSeconds || CHALLENGE_EXPIRATION_TIME
     this.secret = challengeSecret
   }
 

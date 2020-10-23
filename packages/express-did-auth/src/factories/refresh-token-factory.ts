@@ -1,16 +1,12 @@
+import { SessionManager } from '../classes/session-manager'
 import { REFRESH_TOKEN_COOKIE_NAME, ACCESS_TOKEN_COOKIE_NAME } from '../constants'
 import { ErrorCodes } from '../errors'
 import { generateAccessToken } from '../jwt-utils'
-import { AuthenticationConfig, SessionManager } from '../types'
+import { AuthenticationConfig } from '../types'
 
 export default function refreshTokenFactory (sessionManager: SessionManager, accessTokenConfig: AuthenticationConfig) {
   return async function (req, res) {
-    let currentRefreshToken: string
-    if (accessTokenConfig.useCookies) {
-      currentRefreshToken = req.cookies[REFRESH_TOKEN_COOKIE_NAME]
-    } else {
-      currentRefreshToken = req.body.refreshToken
-    }
+    const currentRefreshToken = accessTokenConfig.useCookies ? req.cookies[REFRESH_TOKEN_COOKIE_NAME] : req.body.refreshToken
 
     if (!currentRefreshToken) return res.status(401).send(ErrorCodes.NO_REFRESH_TOKEN)
 

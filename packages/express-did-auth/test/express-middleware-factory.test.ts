@@ -24,7 +24,7 @@ describe('ExpressMiddlewareFactory', () => {
     userIdentity = await identityFactory()
   })
 
-  it('should return 401 if empty header', async () => {
+  test('should respond with 401 if empty header', async () => {
     const req = { headers: { Authorization: '' } }
 
     const res = mockedResFactory(401, ErrorCodes.NO_ACCESS_TOKEN)
@@ -32,7 +32,7 @@ describe('ExpressMiddlewareFactory', () => {
     await expressMiddlewareFactory(counter, { serviceUrl })(req, res, next)
   })
 
-  it('should return 401 if invalid header', async () => {
+  test('should respond with 401 if invalid header', async () => {
     const req = { headers: { Authorization: 'invalid scheme' } }
 
     const res = mockedResFactory(401, ErrorCodes.INVALID_HEADER)
@@ -41,7 +41,7 @@ describe('ExpressMiddlewareFactory', () => {
   })
 
   describe('no cookies', () => {
-    it('should call next if valid JWT', async () => {
+    test('should call next if valid JWT', async () => {
       const accessToken = await generateAccessToken(userIdentity.did, authConfig)
 
       const req = { headers: { Authorization: `DIDAuth ${accessToken}` } }

@@ -2,9 +2,10 @@ import { createJWT, JWTVerified, verifyJWT } from 'did-jwt'
 import { Resolver } from 'did-resolver'
 import { getResolver } from 'ethr-did-resolver'
 import {
-  DEFAULT_REGISTRY_ADDRESS, RSK_MAINNET_NETWORK_NAME, RSK_TESTNET_NETWORK_NAME,
-  DEFAULT_RSK_TESTNET_RPC_URL, DEFAULT_RSK_MAINNET_RPC_URL, DEFAULT_ACCESS_TOKEN_EXPIRATION
+  REGISTRY_ADDRESS, RSK_MAINNET_NETWORK_NAME, RSK_MAINNET_RPC_URL,
+  RSK_TESTNET_NETWORK_NAME, RSK_TESTNET_RPC_URL
 } from './constants'
+import { ACCESS_TOKEN_EXPIRATION } from './defaults'
 import { ErrorCodes } from './errors'
 import { AuthenticationConfig, TokenValidationConfig } from './types'
 
@@ -21,7 +22,7 @@ export function generateAccessToken (
     ...metadata,
     aud: serviceUrl,
     sub: subjectDid,
-    exp: `${now + (accessTokenExpirationTimeInSeconds || DEFAULT_ACCESS_TOKEN_EXPIRATION)}`,
+    exp: `${now + (accessTokenExpirationTimeInSeconds || ACCESS_TOKEN_EXPIRATION)}`,
     nbf: `${now}`,
     iat: `${now}`
   }
@@ -30,13 +31,13 @@ export function generateAccessToken (
 }
 
 export function getDidResolver (config: TokenValidationConfig) {
-  const registry = config.registry || DEFAULT_REGISTRY_ADDRESS
+  const registry = config.registry || REGISTRY_ADDRESS
 
   const networks = config.rpcUrl ? [
     { name: config.networkName || RSK_MAINNET_NETWORK_NAME, registry, rpcUrl: config.rpcUrl }
   ] : [
-    { name: RSK_TESTNET_NETWORK_NAME, registry, rpcUrl: DEFAULT_RSK_TESTNET_RPC_URL },
-    { name: RSK_MAINNET_NETWORK_NAME, registry, rpcUrl: DEFAULT_RSK_MAINNET_RPC_URL }
+    { name: RSK_TESTNET_NETWORK_NAME, registry, rpcUrl: RSK_TESTNET_RPC_URL },
+    { name: RSK_MAINNET_NETWORK_NAME, registry, rpcUrl: RSK_MAINNET_RPC_URL }
   ]
 
   const ethrDidResolver = getResolver({ networks })

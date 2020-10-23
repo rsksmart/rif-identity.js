@@ -11,7 +11,7 @@ describe('requestAuthFactory', () => {
 
   const challengeVerifier = new ChallengeVerifier({ challengeSecret, challengeExpirationTimeInSeconds })
 
-  it('should return a 200 with the created challenge', () => {
+  test('should respond with a 200 with the created challenge', () => {
     MockDate.set(modulo0Timestamp)
 
     const challenge = challengeVerifier.get(did)
@@ -24,7 +24,7 @@ describe('requestAuthFactory', () => {
     MockDate.reset()
   })
 
-  it('should return a 401 if no did', () => {
+  test('should respond with a 401 if no did', () => {
     const res = mockedResFactory(401, ErrorCodes.INVALID_DID)
     const req = { params: { } }
 

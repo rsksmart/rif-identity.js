@@ -5,7 +5,7 @@ import request from 'supertest'
 import { ErrorCodes } from '../src/errors'
 import MockDate from 'mockdate'
 
-describe('Express app tests', () => {
+describe.skip('Express app tests', () => {
   let userDid: string
   let userIdentity: Identity
   let accessTokenCookie: string

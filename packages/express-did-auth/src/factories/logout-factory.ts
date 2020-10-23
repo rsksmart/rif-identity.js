@@ -1,4 +1,4 @@
-import { SessionManager } from '../types'
+import { SessionManager } from '../classes/session-manager'
 
 export default function logoutFactory (sessionManager: SessionManager) {
   // this function assumes it is invoked after a middleware that injects the user did in the request object

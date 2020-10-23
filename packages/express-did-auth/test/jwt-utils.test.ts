@@ -4,7 +4,7 @@ import { generateAccessToken, getDidResolver, verifyReceivedJwt } from '../src/j
 import { AuthenticationConfig } from '../src/types'
 import { decodeJWT, verifyJWT } from 'did-jwt'
 import MockDate from 'mockdate'
-import { DEFAULT_ACCESS_TOKEN_EXPIRATION } from '../src/constants'
+import { ACCESS_TOKEN_EXPIRATION } from '../src/defaults'
 
 describe('JWT Utils', () => {
   let issuerIdentity: Identity
@@ -28,7 +28,7 @@ describe('JWT Utils', () => {
   afterEach(() => MockDate.reset())
 
   describe('generateAccessToken', () => {
-    it('should create a jwt without metadata', async () => {
+    test('should create a jwt without metadata', async () => {
       MockDate.set(modulo0Timestamp)
 
       const jwt = await generateAccessToken(subjectIdentity.did, config)
@@ -41,11 +41,11 @@ describe('JWT Utils', () => {
       expect(payload.aud).toEqual(serviceUrl)
       expect(payload.sub).toEqual(subjectIdentity.did)
       expect(payload.iss).toEqual(issuerIdentity.did)
-      expect(payload.exp).toEqual(`${modulo0Timestamp / 1000 + DEFAULT_ACCESS_TOKEN_EXPIRATION}`)
+      expect(payload.exp).toEqual(`${modulo0Timestamp / 1000 + ACCESS_TOKEN_EXPIRATION}`)
       expect(payload.metada).toBeFalsy()
     })
 
-    it('should sign with the expected alg', async () => {
+    test('should sign with the expected alg', async () => {
       MockDate.set(modulo0Timestamp)
 
       const jwt = await generateAccessToken(subjectIdentity.did, config)
@@ -60,7 +60,7 @@ describe('JWT Utils', () => {
       expect(issuer).toEqual(issuerIdentity.did)
     })
 
-    it('should create a jwt with metadata', async () => {
+    test('should create a jwt with metadata', async () => {
       MockDate.set(modulo0Timestamp)
 
       const metadata = { username: 'alice' }
@@ -73,7 +73,7 @@ describe('JWT Utils', () => {
   })
 
   describe('verifyReceivedJwt', () => {
-    it('should verify a valid jwt', async () => {
+    test('should verify a valid jwt', async () => {
       MockDate.set(modulo0Timestamp)
 
       const jwt = await generateAccessToken(subjectIdentity.did, config)
@@ -86,10 +86,10 @@ describe('JWT Utils', () => {
       expect(payload.aud).toEqual(serviceUrl)
       expect(payload.sub).toEqual(subjectIdentity.did)
       expect(payload.iss).toEqual(issuerIdentity.did)
-      expect(payload.exp).toEqual(`${modulo0Timestamp / 1000 + DEFAULT_ACCESS_TOKEN_EXPIRATION}`)
+      expect(payload.exp).toEqual(`${modulo0Timestamp / 1000 + ACCESS_TOKEN_EXPIRATION}`)
     })
 
-    it('should throw an error if nbf > now', async () => {
+    test('should throw an error if nbf > now', async () => {
       MockDate.set(modulo8Timestamp) // create the token in the future (8 seconds)
       const jwt = await generateAccessToken(subjectIdentity.did, config)
 
@@ -97,7 +97,7 @@ describe('JWT Utils', () => {
       await expect(verifyReceivedJwt(jwt, config)).rejects.toThrow(ErrorCodes.INVALID_ACCESS_TOKEN)
     })
 
-    it('should throw an error if exp < now', async () => {
+    test('should throw an error if exp < now', async () => {
       MockDate.set(modulo0Timestamp)
       const jwt = await generateAccessToken(subjectIdentity.did, { ...config, accessTokenExpirationTimeInSeconds: 5 })
 

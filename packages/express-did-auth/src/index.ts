@@ -6,17 +6,15 @@ import { ExpressDidAuthConfig } from './types'
 import ChallengeVerifierImplementation from './classes/challenge-verifier'
 import RequestCounterImplementation from './classes/request-counter'
 import SessionManagerImplementation from './classes/session-manager'
-import authenticationFactory from './factories/authentication-factory'
-import expressMiddlewareFactory from './factories/express-middleware-factory'
-import logoutFactory from './factories/logout-factory'
-import refreshTokenFactory from './factories/refresh-token-factory'
-import requestAuthFactory from './factories/request-auth-factory'
-import requestSignupFactory from './factories/request-signup-factory'
-import {
-  DEFAULT_AUTH, DEFAULT_LOGOUT, DEFAULT_REFRESH_TOKEN,
-  DEFAULT_REQUEST_AUTH, DEFAULT_REQUEST_SIGNUP, DEFAULT_SIGNUP
-} from './constants'
 import { generateAccessToken, verifyReceivedJwt } from './jwt-utils'
+import {
+  REQUEST_SIGNUP_PATH, SIGNUP_PATH, REQUEST_AUTH_PATH,
+  AUTH_PATH, REFRESH_TOKEN_PATH, LOGOUT_PATH
+} from './defaults'
+import {
+  requestSignupFactory, authenticationFactory, requestAuthFactory,
+  refreshTokenFactory, expressMiddlewareFactory, logoutFactory
+} from './factories'
 
 export default function setupAppFactory (config: ExpressDidAuthConfig) {
   const { requestAuthPath, authPath, requestSignupPath, signupPath, refreshTokenPath, logoutPath } = config
@@ -34,20 +32,20 @@ export default function setupAppFactory (config: ExpressDidAuthConfig) {
     }
 
     if (config.includeSignup) {
-      app.get(requestSignupPath || DEFAULT_REQUEST_SIGNUP, requestSignupFactory(challengeVerifier, config))
+      app.get(requestSignupPath || REQUEST_SIGNUP_PATH, requestSignupFactory(challengeVerifier, config))
 
-      app.post(signupPath || DEFAULT_SIGNUP, authenticationFactory(challengeVerifier, sessionManager, config, config.signupBusinessLogic))
+      app.post(signupPath || SIGNUP_PATH, authenticationFactory(challengeVerifier, sessionManager, config, config.signupBusinessLogic))
     }
 
-    app.get(requestAuthPath || DEFAULT_REQUEST_AUTH, requestAuthFactory(challengeVerifier))
+    app.get(requestAuthPath || REQUEST_AUTH_PATH, requestAuthFactory(challengeVerifier))
 
-    app.post(authPath || DEFAULT_AUTH, authenticationFactory(challengeVerifier, sessionManager, config, config.authenticationBusinessLogic))
+    app.post(authPath || AUTH_PATH, authenticationFactory(challengeVerifier, sessionManager, config, config.authenticationBusinessLogic))
 
-    app.post(refreshTokenPath || DEFAULT_REFRESH_TOKEN, refreshTokenFactory(sessionManager, config))
+    app.post(refreshTokenPath || REFRESH_TOKEN_PATH, refreshTokenFactory(sessionManager, config))
 
     app.use(expressMiddlewareFactory(requestCounter, config))
 
-    app.post(logoutPath || DEFAULT_LOGOUT, logoutFactory(sessionManager))
+    app.post(logoutPath || LOGOUT_PATH, logoutFactory(sessionManager))
   }
 }
 
@@ -59,5 +57,5 @@ export {
   requestAuthFactory,
   requestSignupFactory,
   generateAccessToken,
-  verifyReceivedJwt as verifyReceivedJwt
+  verifyReceivedJwt
 }

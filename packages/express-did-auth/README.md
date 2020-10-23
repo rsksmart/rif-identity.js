@@ -36,14 +36,18 @@ const serviceUrl = 'https://service.com'
 const app = express()
 
 app.get('/not-protected', function (req, res) {
-  res.send('This endpoint is not authenticated')
+  res.send('This endpoint is not authenticating')
 })
 
-await setupApp({ challengeSecret, serviceUrl, serviceDid, serviceSigner })(app)
+setupApp({ challengeSecret, serviceUrl, serviceDid, serviceSigner })(app)
 
 app.get('/protected', function (req, res) {
-  res.send('This endpoint is authenticated')
+  res.send('This endpoint is authenticating')
 })
+
+const port = process.env.PORT || 5000
+
+app.listen(port, () => logger.info(`My express API with did-auth running in ${port}`))
 ```
 
 ## Test

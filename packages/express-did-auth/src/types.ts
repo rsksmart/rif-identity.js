@@ -1,20 +1,8 @@
 import { JWTPayload, Signer } from 'did-jwt'
 import { VerifiableCredential } from 'did-jwt-vc'
-
-export interface ChallengeVerifier {
-  get(did: string): string
-  verify(did: string, challenge: string): boolean
-}
-
-export interface RequestCounter {
-  count(did): void
-}
-
-export interface SessionManager {
-  create(did: string): string
-  renew(oldToken: string): { refreshToken: string, did: string, metadata: any }
-  delete(did: string): void
-}
+import { ChallengeConfig } from './classes/challenge-verifier'
+import { RequestCounterConfig } from './classes/request-counter'
+import { UserSessionConfig } from './classes/session-manager'
 
 export interface Claim {
   claimType: string
@@ -46,20 +34,6 @@ export interface ExpressDidAuthConfig extends ChallengeConfig, RequestCounterCon
   authPath?: string
   logoutPath?: string
   refreshTokenPath?: string
-}
-
-export interface UserSessionConfig {
-  userSessionDurationInHours?: number
-}
-
-export interface RequestCounterConfig {
-  maxRequestsPerTimeSlot?: number
-  timeSlotInSeconds?: number
-}
-
-export interface ChallengeConfig {
-  challengeExpirationTimeInSeconds?: number
-  challengeSecret: string
 }
 
 export interface DidResolverConfig {

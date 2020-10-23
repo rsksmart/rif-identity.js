@@ -8,19 +8,19 @@ describe('RequestCounter', () => {
   describe('count', () => {
     const did = 'did:ethr:rsk:testnet:0xd69ced736454347be68aead53fcc1678cb9a70ef'
 
-    it('should throw an error if no did', () => {
+    test('should throw an error if no did', () => {
       const counter = new RequestCounter({})
 
       expect(() => counter.count(undefined)).toThrow(ErrorCodes.INVALID_DID)
     })
 
-    it('should count for the first time with a valid did', () => {
+    test('should count for the first time with a valid did', () => {
       const counter = new RequestCounter({})
 
       counter.count(did)
     })
 
-    it('should not allow to count more than the limit', () => {
+    test('should not allow to count more than the limit', () => {
       const counter = new RequestCounter({ maxRequestsPerTimeSlot: 5, timeSlotInSeconds: 100 })
 
       for (let i = 0; i < 5; i++) counter.count(did)
@@ -29,7 +29,7 @@ describe('RequestCounter', () => {
       expect(() => counter.count(did)).toThrow(ErrorCodes.MAX_REQUESTS_REACHED)
     })
 
-    it('should allow to count more than the limit if the requests are divided in different timeslots', () => {
+    test('should allow to count more than the limit if the requests are divided in different timeslots', () => {
       const counter = new RequestCounter({ maxRequestsPerTimeSlot: 5, timeSlotInSeconds: 100 })
 
       for (let i = 0; i < 5; i++) counter.count(did)
@@ -43,7 +43,7 @@ describe('RequestCounter', () => {
       MockDate.reset()
     })
 
-    it('should not allow to count more than the limit when reaching the second timeslot', () => {
+    test('should not allow to count more than the limit when reaching the second timeslot', () => {
       const counter = new RequestCounter({ maxRequestsPerTimeSlot: 5, timeSlotInSeconds: 100 })
 
       for (let i = 0; i < 5; i++) counter.count(did)

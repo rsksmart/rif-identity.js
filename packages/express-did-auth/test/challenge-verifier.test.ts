@@ -21,13 +21,13 @@ describe('ChallengeVerifier', () => {
   afterEach(() => MockDate.reset())
 
   describe('get', () => {
-    it('should throw an error if no did', () => {
+    test('should throw an error if no did', () => {
       const verifier = new ChallengeVerifier({ challengeSecret })
 
       expect(() => verifier.get(undefined)).toThrow(ErrorCodes.INVALID_DID)
     })
 
-    it('should get a challenge', () => {
+    test('should get a challenge', () => {
       const verifier = new ChallengeVerifier({ challengeSecret, challengeExpirationTimeInSeconds })
 
       const actual = verifier.get(did)
@@ -37,7 +37,7 @@ describe('ChallengeVerifier', () => {
       expect(actual).toEqual(expected)
     })
 
-    it('should get the same challenge when invoking it within the same timeslot', () => {
+    test('should get the same challenge when invoking it within the same timeslot', () => {
       const verifier = new ChallengeVerifier({ challengeSecret, challengeExpirationTimeInSeconds })
 
       const firstChallengeTime = modulo0Timestamp
@@ -59,7 +59,7 @@ describe('ChallengeVerifier', () => {
       expect(firstChallenge).toEqual(expected)
     })
 
-    it('should get different challenge when invoking it twice in differents timeslots', () => {
+    test('should get different challenge when invoking it twice in differents timeslots', () => {
       const verifier = new ChallengeVerifier({ challengeSecret, challengeExpirationTimeInSeconds })
 
       const firstChallengeTime = modulo0Timestamp
@@ -87,20 +87,20 @@ describe('ChallengeVerifier', () => {
   })
 
   describe('verify', () => {
-    it('should throw an error if no did', () => {
+    test('should throw an error if no did', () => {
       const verifier = new ChallengeVerifier({ challengeSecret })
 
       expect(() => verifier.verify(undefined, 'theChallenge')).toThrow(ErrorCodes.INVALID_DID)
     })
 
-    it('should return false if no challenge', () => {
+    test('should respond with false if no challenge', () => {
       const verifier = new ChallengeVerifier({ challengeSecret })
 
       expect(verifier.verify(did, undefined)).toBe(false)
       expect(verifier.verify(did, '')).toBe(false)
     })
 
-    it('should return true if valid challenge in the same time slot', () => {
+    test('should respond with true if valid challenge in the same time slot', () => {
       const verifier = new ChallengeVerifier({ challengeSecret, challengeExpirationTimeInSeconds })
 
       const challengeTime = modulo0Timestamp
@@ -114,7 +114,7 @@ describe('ChallengeVerifier', () => {
       expect(valid).toBe(true)
     })
 
-    it('should return true twice if verifying twice in the same time slot', () => {
+    test('should respond with true twice if verifying twice in the same time slot', () => {
       const verifier = new ChallengeVerifier({ challengeSecret, challengeExpirationTimeInSeconds })
 
       const challengeTime = modulo0Timestamp
@@ -132,7 +132,7 @@ describe('ChallengeVerifier', () => {
       expect(verifier.verify(did, challenge)).toBe(true)
     })
 
-    it('should return false if verifying the received challenge in other timeslot', () => {
+    test('should respond with false if verifying the received challenge in other timeslot', () => {
       const verifier = new ChallengeVerifier({ challengeSecret, challengeExpirationTimeInSeconds })
 
       const challengeTime = modulo0Timestamp

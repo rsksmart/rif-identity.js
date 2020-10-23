@@ -5,7 +5,7 @@ import { mockedResFactory } from './utils'
 describe('logoutFactory', () => {
   const did = 'did:ethr:rsk:testnet:0xd69ced736454347be68aead53fcc1678cb9a70ef'
 
-  it('should return a 200', () => {
+  test('should respond with a 200', () => {
     const res = mockedResFactory(200)
     const req = { user: { did } }
 
@@ -14,7 +14,7 @@ describe('logoutFactory', () => {
     logoutFactory(sessionManager)(req, res)
   })
 
-  it('should not allow a user to renew the token after logout', () => {
+  test('should not allow a user to renew the token after logout', () => {
     const res = mockedResFactory(200)
     const req = { user: { did } }
 

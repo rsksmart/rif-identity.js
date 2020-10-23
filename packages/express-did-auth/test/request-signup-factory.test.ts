@@ -25,7 +25,7 @@ describe('requestSignupFactory', () => {
 
   afterEach(() => MockDate.reset())
 
-  it('should return a 200 with the created challenge if no sdr', async () => {
+  test('should respond with a 200 with the created challenge if no sdr', async () => {
     MockDate.set(modulo0Timestamp)
 
     const challenge = challengeVerifier.get(userDid)
@@ -36,7 +36,7 @@ describe('requestSignupFactory', () => {
     await requestSignupFactory(challengeVerifier, { serviceSigner, serviceDid, serviceUrl })(req, res)
   })
 
-  it('should return a 200 with a the created challenge and sdr when sdr present in the config', async () => {
+  test('should respond with a 200 with a the created challenge and sdr when sdr present in the config', async () => {
     MockDate.set(modulo0Timestamp)
 
     const requiredCredentials = ['EmailCredential']
@@ -66,7 +66,7 @@ describe('requestSignupFactory', () => {
     await requestSignupFactory(challengeVerifier, config)(req, res)
   })
 
-  it('should return a 401 if no did', async () => {
+  test('should respond with a 401 if no did', async () => {
     const res = mockedResFactory(401, ErrorCodes.INVALID_DID)
     const req = { params: { } }
 

@@ -1,8 +1,9 @@
 import { JWTPayload } from 'did-jwt'
+import { RequestCounter } from '../classes/request-counter'
 import { ACCESS_TOKEN_COOKIE_NAME, ACCESS_TOKEN_HEADER_NAME, DID_AUTH_SCHEME } from '../constants'
 import { ErrorCodes } from '../errors'
 import { verifyReceivedJwt } from '../jwt-utils'
-import { TokenValidationConfig, RequestCounter } from '../types'
+import { TokenValidationConfig } from '../types'
 
 export default function expressMiddlewareFactory (requestCounter: RequestCounter, config: TokenValidationConfig) {
   return async function (req, res, next) {
@@ -14,12 +15,12 @@ export default function expressMiddlewareFactory (requestCounter: RequestCounter
         const header = req.headers[ACCESS_TOKEN_HEADER_NAME] || req.headers[ACCESS_TOKEN_HEADER_NAME.toLowerCase()]
         if (!header) return res.status(401).send(ErrorCodes.NO_ACCESS_TOKEN)
 
-        const splitted = header.split(' ')
-        if (splitted.length !== 2 || splitted[0] !== DID_AUTH_SCHEME) {
+        const [scheme, token] = header.split(' ')
+        if (scheme !== DID_AUTH_SCHEME) {
           return res.status(401).send(ErrorCodes.INVALID_HEADER)
         }
 
-        jwt = splitted[1]
+        jwt = token
       }
 
       if (!jwt) return res.status(401).send(ErrorCodes.NO_ACCESS_TOKEN)
@@ -34,11 +35,8 @@ export default function expressMiddlewareFactory (requestCounter: RequestCounter
 
       next()
     } catch (err) {
-      if (err?.message) {
-        res.status(401).send(escape(err.message))
-      } else {
-        res.status(500).send(ErrorCodes.UNHANDLED_ERROR)
-      }
+      if (err?.message) return res.status(401).send(escape(err.message))
+      return res.status(500).send(ErrorCodes.UNHANDLED_ERROR)
     }
   }
 }
