@@ -25,6 +25,8 @@ describe('JWT Utils', () => {
     }
   })
 
+  afterEach(() => MockDate.reset())
+
   describe('generateAccessToken', () => {
     it('should create a jwt without metadata', async () => {
       MockDate.set(modulo0Timestamp)

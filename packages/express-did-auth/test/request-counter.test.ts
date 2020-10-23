@@ -3,6 +3,8 @@ import RequestCounter from '../src/classes/request-counter'
 import MockDate from 'mockdate'
 
 describe('RequestCounter', () => {
+  afterEach(() => MockDate.reset())
+
   describe('count', () => {
     const did = 'did:ethr:rsk:testnet:0xd69ced736454347be68aead53fcc1678cb9a70ef'
 

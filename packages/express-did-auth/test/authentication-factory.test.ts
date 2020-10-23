@@ -31,6 +31,8 @@ describe('authenticationFactory', () => {
     userIdentity = await identityFactory()
   })
 
+  afterEach(() => MockDate.reset())
+
   it('should return 401 if no response', async () => {
     const res = mockedResFactory(401, ErrorCodes.NO_RESPONSE)
     const req = { body: { } }

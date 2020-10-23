@@ -20,6 +20,8 @@ describe('requestAuthFactory', () => {
     const req = { params: { did } }
 
     requestAuthFactory(challengeVerifier)(req, res)
+
+    MockDate.reset()
   })
 
   it('should return a 401 if no did', () => {

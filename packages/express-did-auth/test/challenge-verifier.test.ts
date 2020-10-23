@@ -18,6 +18,8 @@ describe('ChallengeVerifier', () => {
     return keccak256(`${did}-${secret}-${timestamp}`)
   }
 
+  afterEach(() => MockDate.reset())
+
   describe('get', () => {
     it('should throw an error if no did', () => {
       const verifier = new ChallengeVerifier({ challengeSecret })

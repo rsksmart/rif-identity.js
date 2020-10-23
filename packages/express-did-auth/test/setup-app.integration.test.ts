@@ -177,6 +177,8 @@ describe('Express app tests', () => {
 
       oldRefreshTokenCookie = refreshTokenCookie;
       [accessTokenCookie, refreshTokenCookie] = cookies
+
+      MockDate.reset()
     })
 
     it('5b. POST /refresh-token with old one should fail', async () => {
@@ -192,10 +194,14 @@ describe('Express app tests', () => {
     })
 
     it('6b. POST /logout with proper access token', async () => {
+      MockDate.set(Date.now() + 20000) // move the clock after the time set in 5. POST /refresh-token'
+      
       await cookieAgent
         .post(`/logout`)
         .set('Cookie', accessTokenCookie)
         .expect(200)
+        
+      MockDate.reset()
     })
 
     it('7. POST /refresh-token with logged out session one should fail', async () => {

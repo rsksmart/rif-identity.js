@@ -5,6 +5,8 @@ import { ErrorCodes } from '../src/errors'
 describe('SessionManager', () => {
   const did = 'did:ethr:rsk:testnet:0x52a98e388cc04b123968bdc55d145edb617efc72'
 
+  afterEach(() => MockDate.reset())
+
   describe('create', () => {
     it('should throw an error if no did', () => {
       const manager = new SessionManager({})

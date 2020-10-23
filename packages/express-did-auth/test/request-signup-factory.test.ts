@@ -22,6 +22,8 @@ describe('requestSignupFactory', () => {
     serviceDid = serviceIdentity.did
     serviceSigner = serviceIdentity.signer
   })
+
+  afterEach(() => MockDate.reset())
   
   it('should return a 200 with the created challenge if no sdr', async () => {
     MockDate.set(modulo0Timestamp)
