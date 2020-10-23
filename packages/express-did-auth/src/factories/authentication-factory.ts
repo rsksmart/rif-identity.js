@@ -4,7 +4,7 @@ import {
   ChallengeVerifier, SessionManager, AuthenticationBusinessLogic,
   SignupBusinessLogic, TokenConfig, ChallengeResponsePayload, DidResolverConfig
 } from '../types'
-import { generateAccessToken, verifyAccessToken } from '../jwt-utils'
+import { generateAccessToken, verifyReceivedJwt } from '../jwt-utils'
 
 interface AuthFactoryConfig extends TokenConfig, DidResolverConfig { }
 
@@ -19,7 +19,7 @@ export default function authenticationFactory (
 
     if (!response) return res.status(401).send(ErrorCodes.NO_RESPONSE)
 
-    const verified = await verifyAccessToken(response, config)
+    const verified = await verifyReceivedJwt(response, config)
 
     const payload = verified.payload as ChallengeResponsePayload
 

@@ -16,7 +16,7 @@ import {
   DEFAULT_AUTH, DEFAULT_LOGOUT, DEFAULT_REFRESH_TOKEN,
   DEFAULT_REQUEST_AUTH, DEFAULT_REQUEST_SIGNUP, DEFAULT_SIGNUP
 } from './constants'
-import { generateAccessToken, verifyAccessToken } from './jwt-utils'
+import { generateAccessToken, verifyReceivedJwt } from './jwt-utils'
 
 export default function setupAppFactory (config: ExpressDidAuthConfig) {
   const { requestAuthPath, authPath, requestSignupPath, signupPath, refreshTokenPath, logoutPath } = config
@@ -59,5 +59,5 @@ export {
   requestAuthFactory,
   requestSignupFactory,
   generateAccessToken,
-  verifyAccessToken
+  verifyReceivedJwt as verifyReceivedJwt
 }

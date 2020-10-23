@@ -48,7 +48,8 @@ export const challengeResponseFactory = async (
   serviceUrl: string,
   sdr?: SelectiveDisclosureResponse
 ): Promise<string> => {
-  const now = Date.now() / 1000
+  const now = Math.floor(Date.now() / 1000)
+
   const payload: ChallengeResponsePayload = {
     challenge,
     aud: serviceUrl,

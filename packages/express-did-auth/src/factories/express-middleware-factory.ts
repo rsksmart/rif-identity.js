@@ -1,7 +1,7 @@
 import { JWTPayload } from 'did-jwt'
 import { ACCESS_TOKEN_COOKIE_NAME, ACCESS_TOKEN_HEADER_NAME, DID_AUTH_SCHEME } from '../constants'
 import { ErrorCodes } from '../errors'
-import { verifyAccessToken } from '../jwt-utils'
+import { verifyReceivedJwt } from '../jwt-utils'
 import { TokenValidationConfig, RequestCounter } from '../types'
 
 export default function expressMiddlewareFactory (requestCounter: RequestCounter, config: TokenValidationConfig) {
@@ -24,7 +24,7 @@ export default function expressMiddlewareFactory (requestCounter: RequestCounter
 
       if (!jwt) return res.status(401).send(ErrorCodes.NO_ACCESS_TOKEN)
 
-      const verified = await verifyAccessToken(jwt, config)
+      const verified = await verifyReceivedJwt(jwt, config)
       const payload = verified.payload as JWTPayload
       const did = payload.sub
 

@@ -43,7 +43,7 @@ export function getDidResolver (config: TokenValidationConfig) {
   return new Resolver(ethrDidResolver)
 }
 
-export async function verifyAccessToken (
+export async function verifyReceivedJwt (
   token: string, config: TokenValidationConfig
 ): Promise<JWTVerified> {
   const resolver = getDidResolver(config)

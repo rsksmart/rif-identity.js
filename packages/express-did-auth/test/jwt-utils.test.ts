@@ -1,6 +1,6 @@
 import { ErrorCodes } from '../src/errors'
 import { Identity, identityFactory, modulo0Timestamp, modulo8Timestamp } from './utils'
-import { generateAccessToken, getDidResolver, verifyAccessToken } from '../src/jwt-utils'
+import { generateAccessToken, getDidResolver, verifyReceivedJwt } from '../src/jwt-utils'
 import { AuthenticationConfig } from '../src/types'
 import { decodeJWT, verifyJWT } from 'did-jwt'
 import MockDate from 'mockdate'
@@ -72,13 +72,13 @@ describe('JWT Utils', () => {
     })
   })
 
-  describe('verifyAccessToken', () => {
+  describe('verifyReceivedJwt', () => {
     it('should verify a valid jwt', async () => {
       MockDate.set(modulo0Timestamp)
 
       const jwt = await generateAccessToken(subjectIdentity.did, config)
 
-      const { payload } = await verifyAccessToken(jwt, config)
+      const { payload } = await verifyReceivedJwt(jwt, config)
 
       // payload verification
       expect(payload.iat).toEqual(`${modulo0Timestamp / 1000}`)
@@ -94,7 +94,7 @@ describe('JWT Utils', () => {
       const jwt = await generateAccessToken(subjectIdentity.did, config)
 
       MockDate.set(modulo0Timestamp)
-      await expect(verifyAccessToken(jwt, config)).rejects.toThrow(ErrorCodes.INVALID_ACCESS_TOKEN)
+      await expect(verifyReceivedJwt(jwt, config)).rejects.toThrow(ErrorCodes.INVALID_ACCESS_TOKEN)
     })
 
     it('should throw an error if exp < now', async () => {
@@ -102,7 +102,7 @@ describe('JWT Utils', () => {
       const jwt = await generateAccessToken(subjectIdentity.did, { ...config, accessTokenExpirationTimeInSeconds: 5 })
 
       MockDate.set(modulo8Timestamp) // move 8 seconds to the future
-      await expect(verifyAccessToken(jwt, config)).rejects.toThrow(ErrorCodes.EXPIRED_ACCESS_TOKEN)
+      await expect(verifyReceivedJwt(jwt, config)).rejects.toThrow(ErrorCodes.EXPIRED_ACCESS_TOKEN)
     })
   })
 })
