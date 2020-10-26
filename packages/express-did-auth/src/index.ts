@@ -31,11 +31,9 @@ export default function setupAppFactory (config: ExpressDidAuthConfig) {
       app.use(csrf({ cookie: true }))
     }
 
-    if (config.includeSignup) {
-      app.get(requestSignupPath || REQUEST_SIGNUP_PATH, requestSignupFactory(challengeVerifier, config))
+    app.get(requestSignupPath || REQUEST_SIGNUP_PATH, requestSignupFactory(challengeVerifier, config))
 
-      app.post(signupPath || SIGNUP_PATH, authenticationFactory(challengeVerifier, sessionManager, config, config.signupBusinessLogic))
-    }
+    app.post(signupPath || SIGNUP_PATH, authenticationFactory(challengeVerifier, sessionManager, config, config.signupBusinessLogic))
 
     app.get(requestAuthPath || REQUEST_AUTH_PATH, requestAuthFactory(challengeVerifier))
 
@@ -59,3 +57,5 @@ export {
   generateAccessToken,
   verifyReceivedJwt
 }
+
+export * from './types'

@@ -27,7 +27,6 @@ export interface SelectiveDisclosureResponse {
 }
 
 export interface ExpressDidAuthConfig extends ChallengeConfig, RequestCounterConfig, SignupConfig, AuthenticationConfig, UserSessionConfig {
-  includeSignup?: boolean
   requestSignupPath?: string
   signupPath?: string
   requestAuthPath?: string

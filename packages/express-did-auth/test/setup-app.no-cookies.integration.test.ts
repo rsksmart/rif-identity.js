@@ -25,7 +25,7 @@ describe('Express app tests', () => {
     const serviceSigner = serviceIdentity.signer
     const serviceDid = serviceIdentity.did
 
-    setupApp({ challengeSecret, serviceUrl, serviceDid, serviceSigner, includeSignup: true })(app)
+    setupApp({ challengeSecret, serviceUrl, serviceDid, serviceSigner })(app)
   })
 
   test('1. GET /request-signup', async () => {

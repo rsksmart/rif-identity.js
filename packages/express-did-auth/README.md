@@ -14,22 +14,24 @@ This module includes a plug and play authentication framework to be used in Expr
 
 ## Usage
 
-### Plug and play
-
 This approach will add the following endpoints to your app:
+- GET `/request-signup/:did`
+- POST `/signup`
 - GET `/request-auth/:did`
 - POST `/auth`
 - POST `/refresh-token`
 - POST `/logout`
 
-Signup endpoints can also be added seamlessly, just need to add the following config: `{ includeSignup: true }`, by doing so, it will add the following:
-- GET `/request-signup/:did`
-- POST `/signup`
 
 ```typescript
 import express from 'express'
 import setupApp from '@rsksmart/express-did-auth'
+import { SimpleSigner } from 'did-jwt'
 
+const privateKey = 'c9000722b8ead4ad9d7ea7ef49f2f3c1d82110238822b7191152fbc4849e1891'
+
+const serviceDid = 'did:ethr:rsk:0x8f4438b78c56B48d9f47c6Ca1be9B69B6fAF9dDa'
+const serviceSigner = SimpleSigner(privateKey)
 const challengeSecret = 'theSuperSecret'
 const serviceUrl = 'https://service.com'
 
@@ -49,6 +51,8 @@ const port = process.env.PORT || 5000
 
 app.listen(port, () => logger.info(`My express API with did-auth running in ${port}`))
 ```
+
+Check out more configuration options and usage details in our [RSK Developers Portal](https://developers.rsk.co/rif/identity/).
 
 ## Test
 
