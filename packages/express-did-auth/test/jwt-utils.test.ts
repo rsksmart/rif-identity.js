@@ -1,4 +1,4 @@
-import { ErrorCodes } from '../src/errors'
+import { EXPIRED_ACCESS_TOKEN, INVALID_ACCESS_TOKEN } from '../src/errors'
 import { Identity, identityFactory, modulo0Timestamp, modulo8Timestamp } from './utils'
 import { generateAccessToken, getDidResolver, verifyReceivedJwt } from '../src/jwt-utils'
 import { AuthenticationConfig } from '../src/types'
@@ -94,7 +94,7 @@ describe('JWT Utils', () => {
       const jwt = await generateAccessToken(subjectIdentity.did, config)
 
       MockDate.set(modulo0Timestamp)
-      await expect(verifyReceivedJwt(jwt, config)).rejects.toThrow(ErrorCodes.INVALID_ACCESS_TOKEN)
+      await expect(verifyReceivedJwt(jwt, config)).rejects.toThrow(INVALID_ACCESS_TOKEN)
     })
 
     test('should throw an error if exp < now', async () => {
@@ -102,7 +102,7 @@ describe('JWT Utils', () => {
       const jwt = await generateAccessToken(subjectIdentity.did, { ...config, accessTokenExpirationTimeInSeconds: 5 })
 
       MockDate.set(modulo8Timestamp) // move 8 seconds to the future
-      await expect(verifyReceivedJwt(jwt, config)).rejects.toThrow(ErrorCodes.EXPIRED_ACCESS_TOKEN)
+      await expect(verifyReceivedJwt(jwt, config)).rejects.toThrow(EXPIRED_ACCESS_TOKEN)
     })
   })
 })

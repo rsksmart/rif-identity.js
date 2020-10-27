@@ -6,7 +6,7 @@ import {
   MockedResponse, modulo0Timestamp, otherSlotTimestamp
 } from './utils'
 import MockDate from 'mockdate'
-import { ErrorCodes } from '../src/errors'
+import { INVALID_CHALLENGE, NO_RESPONSE, UNAUTHORIZED_USER } from '../src/errors'
 import { TokenConfig } from '../src/types'
 
 describe('authenticationFactory', () => {
@@ -34,7 +34,7 @@ describe('authenticationFactory', () => {
   afterEach(() => MockDate.reset())
 
   test('should respond with 401 if no response', async () => {
-    const res = mockedResFactory(401, ErrorCodes.NO_RESPONSE)
+    const res = mockedResFactory(401, NO_RESPONSE)
     const req = { body: { } }
 
     await authenticationFactory(challengeVerifier, sessionManager, config)(req, res)
@@ -47,7 +47,7 @@ describe('authenticationFactory', () => {
     const challengeResponseJwt = await challengeResponseFactory(challenge, userIdentity, config.serviceUrl)
 
     const req = { body: { response: challengeResponseJwt } }
-    const res = mockedResFactory(401, ErrorCodes.UNAUTHORIZED_USER)
+    const res = mockedResFactory(401, UNAUTHORIZED_USER)
 
     const logic = mockBusinessLogicFactory(false)
     await authenticationFactory(challengeVerifier, sessionManager, config, logic)(req, res)
@@ -74,7 +74,7 @@ describe('authenticationFactory', () => {
     const challengeResponseJwt = await challengeResponseFactory(challenge, userIdentity, config.serviceUrl)
 
     const req = { body: { response: challengeResponseJwt } }
-    const res = mockedResFactory(401, ErrorCodes.INVALID_CHALLENGE)
+    const res = mockedResFactory(401, INVALID_CHALLENGE)
 
     MockDate.set(otherSlotTimestamp)
     await authenticationFactory(challengeVerifier, sessionManager, config)(req, res)

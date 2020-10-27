@@ -1,6 +1,6 @@
 import SessionManager from '../src/classes/session-manager'
 import MockDate from 'mockdate'
-import { ErrorCodes } from '../src/errors'
+import { INVALID_DID, INVALID_REFRESH_TOKEN } from '../src/errors'
 
 describe('SessionManager', () => {
   const did = 'did:ethr:rsk:testnet:0x52a98e388cc04b123968bdc55d145edb617efc72'
@@ -11,7 +11,7 @@ describe('SessionManager', () => {
     test('should throw an error if no did', () => {
       const manager = new SessionManager({})
 
-      expect(() => manager.create(undefined)).toThrow(ErrorCodes.INVALID_DID)
+      expect(() => manager.create(undefined)).toThrow(INVALID_DID)
     })
 
     test('should create a refresh token', () => {
@@ -27,7 +27,7 @@ describe('SessionManager', () => {
     test('should throw an error if no refresh token', () => {
       const manager = new SessionManager({})
 
-      expect(() => manager.renew(undefined)).toThrow(ErrorCodes.INVALID_REFRESH_TOKEN)
+      expect(() => manager.renew(undefined)).toThrow(INVALID_REFRESH_TOKEN)
     })
 
     test('should respond with undefined if refresh token not exists', () => {
@@ -107,7 +107,7 @@ describe('SessionManager', () => {
     test('should throw an error if no did', () => {
       const manager = new SessionManager({})
 
-      expect(() => manager.delete(undefined)).toThrow(ErrorCodes.INVALID_DID)
+      expect(() => manager.delete(undefined)).toThrow(INVALID_DID)
     })
 
     test('should not allow to renew after deleting', () => {

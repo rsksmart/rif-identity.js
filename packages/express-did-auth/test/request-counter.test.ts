@@ -1,4 +1,4 @@
-import { ErrorCodes } from '../src/errors'
+import { INVALID_DID, MAX_REQUESTS_REACHED } from '../src/errors'
 import RequestCounter from '../src/classes/request-counter'
 import MockDate from 'mockdate'
 
@@ -11,7 +11,7 @@ describe('RequestCounter', () => {
     test('should throw an error if no did', () => {
       const counter = new RequestCounter({})
 
-      expect(() => counter.count(undefined)).toThrow(ErrorCodes.INVALID_DID)
+      expect(() => counter.count(undefined)).toThrow(INVALID_DID)
     })
 
     test('should count for the first time with a valid did', () => {
@@ -26,7 +26,7 @@ describe('RequestCounter', () => {
       for (let i = 0; i < 5; i++) counter.count(did)
 
       // 6th time should throw an error
-      expect(() => counter.count(did)).toThrow(ErrorCodes.MAX_REQUESTS_REACHED)
+      expect(() => counter.count(did)).toThrow(MAX_REQUESTS_REACHED)
     })
 
     test('should allow to count more than the limit if the requests are divided in different timeslots', () => {
@@ -55,7 +55,7 @@ describe('RequestCounter', () => {
       for (let i = 0; i < 5; i++) counter.count(did)
 
       // 11th time should throw an error
-      expect(() => counter.count(did)).toThrow(ErrorCodes.MAX_REQUESTS_REACHED)
+      expect(() => counter.count(did)).toThrow(MAX_REQUESTS_REACHED)
 
       MockDate.reset()
     })

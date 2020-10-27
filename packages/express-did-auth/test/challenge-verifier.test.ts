@@ -1,4 +1,4 @@
-import { ErrorCodes } from '../src/errors'
+import { INVALID_DID } from '../src/errors'
 import ChallengeVerifier from '../src/classes/challenge-verifier'
 import MockDate from 'mockdate'
 import { keccak256 } from 'js-sha3'
@@ -24,7 +24,7 @@ describe('ChallengeVerifier', () => {
     test('should throw an error if no did', () => {
       const verifier = new ChallengeVerifier({ challengeSecret })
 
-      expect(() => verifier.get(undefined)).toThrow(ErrorCodes.INVALID_DID)
+      expect(() => verifier.get(undefined)).toThrow(INVALID_DID)
     })
 
     test('should get a challenge', () => {
@@ -90,7 +90,7 @@ describe('ChallengeVerifier', () => {
     test('should throw an error if no did', () => {
       const verifier = new ChallengeVerifier({ challengeSecret })
 
-      expect(() => verifier.verify(undefined, 'theChallenge')).toThrow(ErrorCodes.INVALID_DID)
+      expect(() => verifier.verify(undefined, 'theChallenge')).toThrow(INVALID_DID)
     })
 
     test('should respond with false if no challenge', () => {

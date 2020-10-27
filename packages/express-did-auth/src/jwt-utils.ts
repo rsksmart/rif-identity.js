@@ -6,7 +6,7 @@ import {
   RSK_TESTNET_NETWORK_NAME, RSK_TESTNET_RPC_URL
 } from './constants'
 import { ACCESS_TOKEN_EXPIRATION } from './defaults'
-import { ErrorCodes } from './errors'
+import { EXPIRED_ACCESS_TOKEN, INVALID_ACCESS_TOKEN } from './errors'
 import { AuthenticationConfig, TokenValidationConfig } from './types'
 
 export function generateAccessToken (
@@ -53,8 +53,8 @@ export async function verifyReceivedJwt (
 
   const now = Math.floor(Date.now() / 1000)
 
-  if (verified.payload.exp < now) throw new Error(ErrorCodes.EXPIRED_ACCESS_TOKEN)
-  if (verified.payload.nbf > now) throw new Error(ErrorCodes.INVALID_ACCESS_TOKEN)
+  if (verified.payload.exp < now) throw new Error(EXPIRED_ACCESS_TOKEN)
+  if (verified.payload.nbf > now) throw new Error(INVALID_ACCESS_TOKEN)
 
   return verified
 }

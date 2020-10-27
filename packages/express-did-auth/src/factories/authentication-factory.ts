@@ -1,5 +1,5 @@
 import { ACCESS_TOKEN_COOKIE_NAME, COOKIES_ATTRIBUTES, REFRESH_TOKEN_COOKIE_NAME } from '../constants'
-import { ErrorCodes } from '../errors'
+import { INVALID_CHALLENGE, NO_RESPONSE, UNAUTHORIZED_USER } from '../errors'
 import {
   AuthenticationBusinessLogic, SignupBusinessLogic, TokenConfig,
   ChallengeResponsePayload, DidResolverConfig
@@ -20,19 +20,19 @@ export function authenticationFactory (
     try {
       const { response } = req.body
 
-      if (!response) return res.status(401).send(ErrorCodes.NO_RESPONSE)
+      if (!response) return res.status(401).send(NO_RESPONSE)
 
       const verified = await verifyReceivedJwt(response, config)
 
       const payload = verified.payload as ChallengeResponsePayload
 
       if (!challengeVerifier.verify(payload.iss!, payload.challenge)) {
-        return res.status(401).send(ErrorCodes.INVALID_CHALLENGE)
+        return res.status(401).send(INVALID_CHALLENGE)
       }
 
       const isValid = businessLogic ? await businessLogic(payload) : true
 
-      if (!isValid) return res.status(401).send(ErrorCodes.UNAUTHORIZED_USER)
+      if (!isValid) return res.status(401).send(UNAUTHORIZED_USER)
 
       const userDid = payload.iss
 

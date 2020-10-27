@@ -2,7 +2,7 @@ import { requestSignupFactory } from '../src/factories/request-signup-factory'
 import ChallengeVerifier from '../src/classes/challenge-verifier'
 import { identityFactory, mockedResFactory, modulo0Timestamp } from './utils'
 import MockDate from 'mockdate'
-import { ErrorCodes } from '../src/errors'
+import { INVALID_DID } from '../src/errors'
 import { createJWT, Signer } from 'did-jwt'
 import { Claim, SelectiveDisclosureRequest, SignupConfig } from '../src/types'
 
@@ -67,7 +67,7 @@ describe('requestSignupFactory', () => {
   })
 
   test('should respond with a 401 if no did', async () => {
-    const res = mockedResFactory(401, ErrorCodes.INVALID_DID)
+    const res = mockedResFactory(401, INVALID_DID)
     const req = { params: { } }
 
     await requestSignupFactory(challengeVerifier, { serviceSigner, serviceDid, serviceUrl })(req, res)

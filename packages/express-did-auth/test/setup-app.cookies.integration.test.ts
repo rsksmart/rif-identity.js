@@ -2,7 +2,7 @@ import express from 'express'
 import setupApp from '../src'
 import { challengeResponseFactory, Identity, identityFactory } from './utils'
 import request from 'supertest'
-import { ErrorCodes } from '../src/errors'
+import { INVALID_OR_EXPIRED_SESSION, NO_ACCESS_TOKEN } from '../src/errors'
 import MockDate from 'mockdate'
 
 // skipped because there are some issue to fix related to csurf middleware
@@ -86,13 +86,13 @@ describe.skip('Express app tests (using cookies)', () => {
   it('5b. POST /refresh-token with old one should fail', async () => {
     const response = await cookieAgent.post('/refresh-token').set('Cookie', oldRefreshTokenCookie).expect(401)
 
-    expect(response.text).toEqual(ErrorCodes.INVALID_OR_EXPIRED_SESSION)
+    expect(response.text).toEqual(INVALID_OR_EXPIRED_SESSION)
   })
 
   it('6. POST /logout with no access token should fail', async () => {
     const response = await cookieAgent.post('/logout').expect(401)
 
-    expect(response.text).toEqual(ErrorCodes.NO_ACCESS_TOKEN)
+    expect(response.text).toEqual(NO_ACCESS_TOKEN)
   })
 
   it('6b. POST /logout with proper access token', async () => {
@@ -109,6 +109,6 @@ describe.skip('Express app tests (using cookies)', () => {
   it('7. POST /refresh-token with logged out session one should fail', async () => {
     const response = await cookieAgent.post('/refresh-token').set('Cookie', refreshTokenCookie).expect(401)
 
-    expect(response.text).toEqual(ErrorCodes.INVALID_OR_EXPIRED_SESSION)
+    expect(response.text).toEqual(INVALID_OR_EXPIRED_SESSION)
   })
 })

@@ -1,13 +1,13 @@
 import { createJWT } from 'did-jwt'
 import { ChallengeVerifier } from '../classes/challenge-verifier'
-import { ErrorCodes } from '../errors'
+import { INVALID_DID } from '../errors'
 import { SignupConfig, SelectiveDisclosureRequest } from '../types'
 
 export function requestSignupFactory (challengeVerifier: ChallengeVerifier, signupConfig: SignupConfig) {
   return async function (req, res) {
     const { did } = req.params
 
-    if (!did) return res.status(401).send(ErrorCodes.INVALID_DID)
+    if (!did) return res.status(401).send(INVALID_DID)
 
     const challenge = challengeVerifier.get(did)
 

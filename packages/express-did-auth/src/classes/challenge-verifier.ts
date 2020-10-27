@@ -1,4 +1,4 @@
-import { ErrorCodes } from '../errors'
+import { INVALID_DID } from '../errors'
 import { keccak256 } from 'js-sha3'
 import { CHALLENGE_EXPIRATION_TIME } from '../defaults'
 
@@ -22,13 +22,13 @@ export default class implements ChallengeVerifier {
   }
 
   get (did: string): string {
-    if (!did) throw new Error(ErrorCodes.INVALID_DID)
+    if (!did) throw new Error(INVALID_DID)
 
     return this.calculateChallenge(did)
   }
 
   verify (did: string, challenge: string): boolean {
-    if (!did) throw new Error(ErrorCodes.INVALID_DID)
+    if (!did) throw new Error(INVALID_DID)
 
     const expected = this.calculateChallenge(did)
 

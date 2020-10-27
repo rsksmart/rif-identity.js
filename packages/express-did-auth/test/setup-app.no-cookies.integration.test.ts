@@ -2,7 +2,7 @@ import express from 'express'
 import setupApp from '../src'
 import { challengeResponseFactory, Identity, identityFactory } from './utils'
 import request from 'supertest'
-import { ErrorCodes } from '../src/errors'
+import { INVALID_OR_EXPIRED_SESSION, NO_ACCESS_TOKEN } from '../src/errors'
 
 describe('Express app tests', () => {
   let userDid: string
@@ -81,13 +81,13 @@ describe('Express app tests', () => {
   test('5b. POST /refresh-token with old one should fail', async () => {
     const response = await agent.post('/refresh-token').send({ refreshToken: oldRefreshToken }).expect(401)
 
-    expect(response.text).toEqual(ErrorCodes.INVALID_OR_EXPIRED_SESSION)
+    expect(response.text).toEqual(INVALID_OR_EXPIRED_SESSION)
   })
 
   test('6. POST /logout with no access token should fail', async () => {
     const response = await agent.post('/logout').expect(401)
 
-    expect(response.text).toEqual(ErrorCodes.NO_ACCESS_TOKEN)
+    expect(response.text).toEqual(NO_ACCESS_TOKEN)
   })
 
   test('6b. POST /logout with proper access token', async () => {
@@ -100,6 +100,6 @@ describe('Express app tests', () => {
   test('7. POST /refresh-token with logged out session one should fail', async () => {
     const response = await agent.post('/refresh-token').send({ refreshToken }).expect(401)
 
-    expect(response.text).toEqual(ErrorCodes.INVALID_OR_EXPIRED_SESSION)
+    expect(response.text).toEqual(INVALID_OR_EXPIRED_SESSION)
   })
 })

@@ -1,5 +1,5 @@
 import { randomBytes } from 'crypto'
-import { ErrorCodes } from '../errors'
+import { INVALID_DID, INVALID_REFRESH_TOKEN } from '../errors'
 import { USER_SESSION_DURATION } from '../defaults'
 
 export interface UserSessionConfig {
@@ -38,7 +38,7 @@ export default class implements SessionManager {
   }
 
   create (did: string, metadata?: any): string {
-    if (!did) throw new Error(ErrorCodes.INVALID_DID)
+    if (!did) throw new Error(INVALID_DID)
 
     // invalidates prior token
     const oldRefreshToken = this.didRefreshTokenMapping[did]
@@ -57,7 +57,7 @@ export default class implements SessionManager {
   }
 
   renew (refreshToken: string): { refreshToken: string, did: string, metadata: any } {
-    if (!refreshToken) throw new Error(ErrorCodes.INVALID_REFRESH_TOKEN)
+    if (!refreshToken) throw new Error(INVALID_REFRESH_TOKEN)
 
     const userInfo = this.refreshTokenSessionMapping[refreshToken]
 
@@ -76,7 +76,7 @@ export default class implements SessionManager {
   }
 
   delete (did: string) {
-    if (!did) throw new Error(ErrorCodes.INVALID_DID)
+    if (!did) throw new Error(INVALID_DID)
 
     const token = this.didRefreshTokenMapping[did]
 

@@ -1,5 +1,5 @@
 import { MAX_REQUESTS_PER_TIME_SLOT, REQUEST_COUNTER_TIME_SLOT } from '../defaults'
-import { ErrorCodes } from '../errors'
+import { INVALID_DID, MAX_REQUESTS_REACHED } from '../errors'
 
 type Timestamp = number
 
@@ -28,7 +28,7 @@ export default class implements RequestCounter {
   }
 
   count (did: string) {
-    if (!did) throw new Error(ErrorCodes.INVALID_DID)
+    if (!did) throw new Error(INVALID_DID)
 
     const now = Date.now()
 
@@ -37,6 +37,6 @@ export default class implements RequestCounter {
     else if (now - this.accesses[did][0] > (this.timeSlotInSeconds * 1000)) {
       this.accesses[did].shift()
       this.accesses[did].push(now)
-    } else throw new Error(ErrorCodes.MAX_REQUESTS_REACHED)
+    } else throw new Error(MAX_REQUESTS_REACHED)
   }
 }

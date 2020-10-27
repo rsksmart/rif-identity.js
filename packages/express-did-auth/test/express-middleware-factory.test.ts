@@ -1,6 +1,6 @@
 import RequestCounter from '../src/classes/request-counter'
 import { expressMiddlewareFactory } from '../src/factories/express-middleware-factory'
-import { ErrorCodes } from '../src/errors'
+import { INVALID_HEADER, NO_ACCESS_TOKEN } from '../src/errors'
 import { Identity, identityFactory, mockedResFactory } from './utils'
 import { AuthenticationConfig } from '../src/types'
 import { generateAccessToken } from '../src/jwt-utils'
@@ -27,7 +27,7 @@ describe('ExpressMiddlewareFactory', () => {
   test('should respond with 401 if empty header', async () => {
     const req = { headers: { Authorization: '' } }
 
-    const res = mockedResFactory(401, ErrorCodes.NO_ACCESS_TOKEN)
+    const res = mockedResFactory(401, NO_ACCESS_TOKEN)
 
     await expressMiddlewareFactory(counter, { serviceUrl })(req, res, next)
   })
@@ -35,7 +35,7 @@ describe('ExpressMiddlewareFactory', () => {
   test('should respond with 401 if invalid header', async () => {
     const req = { headers: { Authorization: 'invalid scheme' } }
 
-    const res = mockedResFactory(401, ErrorCodes.INVALID_HEADER)
+    const res = mockedResFactory(401, INVALID_HEADER)
 
     await expressMiddlewareFactory(counter, { serviceUrl })(req, res, next)
   })

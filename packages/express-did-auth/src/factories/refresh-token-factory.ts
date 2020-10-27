@@ -1,6 +1,6 @@
 import { SessionManager } from '../classes/session-manager'
 import { REFRESH_TOKEN_COOKIE_NAME, ACCESS_TOKEN_COOKIE_NAME, COOKIES_ATTRIBUTES } from '../constants'
-import { ErrorCodes } from '../errors'
+import { INVALID_OR_EXPIRED_SESSION, NO_REFRESH_TOKEN } from '../errors'
 import { generateAccessToken } from '../jwt-utils'
 import { AuthenticationConfig } from '../types'
 
@@ -8,11 +8,11 @@ export function refreshTokenFactory (sessionManager: SessionManager, accessToken
   return async function (req, res) {
     const currentRefreshToken = accessTokenConfig.useCookies ? req.cookies[REFRESH_TOKEN_COOKIE_NAME] : req.body.refreshToken
 
-    if (!currentRefreshToken) return res.status(401).send(ErrorCodes.NO_REFRESH_TOKEN)
+    if (!currentRefreshToken) return res.status(401).send(NO_REFRESH_TOKEN)
 
     const newUserSession = sessionManager.renew(currentRefreshToken)
 
-    if (!newUserSession) return res.status(401).send(ErrorCodes.INVALID_OR_EXPIRED_SESSION)
+    if (!newUserSession) return res.status(401).send(INVALID_OR_EXPIRED_SESSION)
 
     const { refreshToken, did, metadata } = newUserSession
     const accessToken = await generateAccessToken(did, accessTokenConfig, metadata)

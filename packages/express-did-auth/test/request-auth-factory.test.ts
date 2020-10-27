@@ -2,7 +2,7 @@ import { requestAuthFactory } from '../src/factories/request-auth-factory'
 import ChallengeVerifier from '../src/classes/challenge-verifier'
 import { mockedResFactory, modulo0Timestamp } from './utils'
 import MockDate from 'mockdate'
-import { ErrorCodes } from '../src/errors'
+import { INVALID_DID } from '../src/errors'
 
 describe('requestAuthFactory', () => {
   const did = 'did:ethr:rsk:testnet:0xd69ced736454347be68aead53fcc1678cb9a70ef'
@@ -25,7 +25,7 @@ describe('requestAuthFactory', () => {
   })
 
   test('should respond with a 401 if no did', () => {
-    const res = mockedResFactory(401, ErrorCodes.INVALID_DID)
+    const res = mockedResFactory(401, INVALID_DID)
     const req = { params: { } }
 
     requestAuthFactory(challengeVerifier)(req, res)
