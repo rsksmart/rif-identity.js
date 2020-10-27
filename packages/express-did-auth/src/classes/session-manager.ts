@@ -71,12 +71,8 @@ export default class implements SessionManager {
         this.didRefreshTokenMapping[did] = newToken
 
         return { refreshToken: newToken, metadata, did }
-      } else {
-        delete this.refreshTokenSessionMapping[refreshToken]
-      }
+      } else delete this.refreshTokenSessionMapping[refreshToken]
     }
-
-    return undefined
   }
 
   delete (did: string) {

@@ -5,6 +5,6 @@ export function logoutFactory (sessionManager: SessionManager) {
   return function (req, res) {
     sessionManager.delete(req.user.did)
 
-    res.status(200).send()
+    return res.status(200).send()
   }
 }

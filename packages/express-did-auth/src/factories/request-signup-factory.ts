@@ -13,22 +13,21 @@ export function requestSignupFactory (challengeVerifier: ChallengeVerifier, sign
 
     const { requiredClaims, requiredCredentials, serviceDid, serviceSigner: signer } = signupConfig
 
-    if (requiredClaims || requiredCredentials) {
-      const sdrData: SelectiveDisclosureRequest = {
-        subject: did,
-        issuer: serviceDid,
-        credentials: requiredCredentials,
-        claims: requiredClaims
-      }
+    if (!requiredClaims && !requiredCredentials) return res.status(200).send({ challenge })
 
-      const sdr = await createJWT(
-        { type: 'sdr', ...sdrData },
-        { signer, issuer: serviceDid },
-        { typ: 'JWT', alg: 'ES256K' }
-      )
-
-      return res.status(200).send({ challenge, sdr })
+    const sdrData: SelectiveDisclosureRequest = {
+      subject: did,
+      issuer: serviceDid,
+      credentials: requiredCredentials,
+      claims: requiredClaims
     }
-    return res.status(200).send({ challenge })
+
+    const sdr = await createJWT(
+      { type: 'sdr', ...sdrData },
+      { signer, issuer: serviceDid },
+      { typ: 'JWT', alg: 'ES256K' }
+    )
+
+    return res.status(200).send({ challenge, sdr })
   }
 }

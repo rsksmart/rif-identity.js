@@ -9,6 +9,6 @@ export function requestAuthFactory (challengeVerifier: ChallengeVerifier) {
 
     const challenge = challengeVerifier.get(did)
 
-    res.status(200).send({ challenge })
+    return res.status(200).send({ challenge })
   }
 }

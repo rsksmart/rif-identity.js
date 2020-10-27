@@ -1,4 +1,4 @@
-import { ACCESS_TOKEN_COOKIE_NAME, REFRESH_TOKEN_COOKIE_NAME } from '../constants'
+import { ACCESS_TOKEN_COOKIE_NAME, COOKIES_ATTRIBUTES, REFRESH_TOKEN_COOKIE_NAME } from '../constants'
 import { ErrorCodes } from '../errors'
 import {
   AuthenticationBusinessLogic, SignupBusinessLogic, TokenConfig,
@@ -26,30 +26,25 @@ export function authenticationFactory (
 
       const payload = verified.payload as ChallengeResponsePayload
 
-      if (challengeVerifier.verify(payload.iss!, payload.challenge)) {
-        const isValid = businessLogic ? await businessLogic(payload) : true
-
-        if (isValid) {
-          const userDid = payload.iss
-
-          const accessToken = await generateAccessToken(userDid, config)
-          const refreshToken = sessionManager.create(userDid)
-
-          if (config.useCookies) {
-            const cookiesAttributes = { httpOnly: true, sameSite: 'Strict' } //, secure: true }
-
-            res.cookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, cookiesAttributes)
-            res.cookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken, cookiesAttributes)
-
-            return res.status(200).send()
-          }
-
-          return res.status(200).json({ accessToken, refreshToken })
-        }
-        return res.status(401).send(ErrorCodes.UNAUTHORIZED_USER)
+      if (!challengeVerifier.verify(payload.iss!, payload.challenge)) {
+        return res.status(401).send(ErrorCodes.INVALID_CHALLENGE)
       }
 
-      return res.status(401).send(ErrorCodes.INVALID_CHALLENGE)
+      const isValid = businessLogic ? await businessLogic(payload) : true
+
+      if (!isValid) return res.status(401).send(ErrorCodes.UNAUTHORIZED_USER)
+
+      const userDid = payload.iss
+
+      const accessToken = await generateAccessToken(userDid, config)
+      const refreshToken = sessionManager.create(userDid)
+
+      if (!config.useCookies) return res.status(200).json({ accessToken, refreshToken })
+
+      res.cookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, COOKIES_ATTRIBUTES)
+      res.cookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken, COOKIES_ATTRIBUTES)
+
+      return res.status(200).send()
     } catch (err) {
       if (err.message) return res.status(401).send(escape(err.message))
       return res.status(401).send('Unhandled error')
