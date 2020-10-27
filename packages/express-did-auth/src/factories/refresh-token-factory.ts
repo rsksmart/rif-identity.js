@@ -4,7 +4,7 @@ import { ErrorCodes } from '../errors'
 import { generateAccessToken } from '../jwt-utils'
 import { AuthenticationConfig } from '../types'
 
-export default function refreshTokenFactory (sessionManager: SessionManager, accessTokenConfig: AuthenticationConfig) {
+export function refreshTokenFactory (sessionManager: SessionManager, accessTokenConfig: AuthenticationConfig) {
   return async function (req, res) {
     const currentRefreshToken = accessTokenConfig.useCookies ? req.cookies[REFRESH_TOKEN_COOKIE_NAME] : req.body.refreshToken
 

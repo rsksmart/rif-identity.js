@@ -3,7 +3,7 @@ import { ChallengeVerifier } from '../classes/challenge-verifier'
 import { ErrorCodes } from '../errors'
 import { SignupConfig, SelectiveDisclosureRequest } from '../types'
 
-export default function requestSignupFactory (challengeVerifier: ChallengeVerifier, signupConfig: SignupConfig) {
+export function requestSignupFactory (challengeVerifier: ChallengeVerifier, signupConfig: SignupConfig) {
   return async function (req, res) {
     const { did } = req.params
 

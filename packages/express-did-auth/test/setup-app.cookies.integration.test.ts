@@ -5,7 +5,8 @@ import request from 'supertest'
 import { ErrorCodes } from '../src/errors'
 import MockDate from 'mockdate'
 
-describe.skip('Express app tests', () => {
+// skipped because there are some issue to fix related to csurf middleware
+describe.skip('Express app tests (using cookies)', () => {
   let userDid: string
   let userIdentity: Identity
   let accessTokenCookie: string

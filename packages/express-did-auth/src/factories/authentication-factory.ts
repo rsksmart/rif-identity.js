@@ -10,7 +10,7 @@ import { SessionManager } from '../classes/session-manager'
 
 interface AuthFactoryConfig extends TokenConfig, DidResolverConfig { }
 
-export default function authenticationFactory (
+export function authenticationFactory (
   challengeVerifier: ChallengeVerifier,
   sessionManager: SessionManager,
   config: AuthFactoryConfig,

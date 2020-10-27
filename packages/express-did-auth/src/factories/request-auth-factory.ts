@@ -1,7 +1,7 @@
 import { ChallengeVerifier } from '../classes/challenge-verifier'
 import { ErrorCodes } from '../errors'
 
-export default function requestAuthFactory (challengeVerifier: ChallengeVerifier) {
+export function requestAuthFactory (challengeVerifier: ChallengeVerifier) {
   return function (req, res) {
     const { did } = req.params
 

@@ -1,5 +1,5 @@
 import SessionManager from '../src/classes/session-manager'
-import refreshTokenFactory from '../src/factories/refresh-token-factory'
+import { refreshTokenFactory } from '../src/factories/refresh-token-factory'
 import { ErrorCodes } from '../src/errors'
 import { Identity, identityFactory, mockedResFactory, MockedResponse } from './utils'
 import { AuthenticationConfig } from '../src/types'

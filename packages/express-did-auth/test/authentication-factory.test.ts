@@ -1,4 +1,4 @@
-import authenticationFactory from '../src/factories/authentication-factory'
+import { authenticationFactory } from '../src/factories/authentication-factory'
 import ChallengeVerifier from '../src/classes/challenge-verifier'
 import SessionManager from '../src/classes/session-manager'
 import {

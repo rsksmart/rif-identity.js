@@ -1,4 +1,4 @@
-import logoutFactory from '../src/factories/logout-factory'
+import { logoutFactory } from '../src/factories/logout-factory'
 import SessionManager from '../src/classes/session-manager'
 import { mockedResFactory } from './utils'
 

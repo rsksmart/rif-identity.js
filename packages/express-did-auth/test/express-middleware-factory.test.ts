@@ -1,5 +1,5 @@
 import RequestCounter from '../src/classes/request-counter'
-import expressMiddlewareFactory from '../src/factories/express-middleware-factory'
+import { expressMiddlewareFactory } from '../src/factories/express-middleware-factory'
 import { ErrorCodes } from '../src/errors'
 import { Identity, identityFactory, mockedResFactory } from './utils'
 import { AuthenticationConfig } from '../src/types'

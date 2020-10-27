@@ -5,7 +5,7 @@ import { ErrorCodes } from '../errors'
 import { verifyReceivedJwt } from '../jwt-utils'
 import { TokenValidationConfig } from '../types'
 
-export default function expressMiddlewareFactory (requestCounter: RequestCounter, config: TokenValidationConfig) {
+export function expressMiddlewareFactory (requestCounter: RequestCounter, config: TokenValidationConfig) {
   return async function (req, res, next) {
     try {
       let jwt: string

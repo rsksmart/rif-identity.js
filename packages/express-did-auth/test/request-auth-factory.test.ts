@@ -1,4 +1,4 @@
-import requestAuthFactory from '../src/factories/request-auth-factory'
+import { requestAuthFactory } from '../src/factories/request-auth-factory'
 import ChallengeVerifier from '../src/classes/challenge-verifier'
 import { mockedResFactory, modulo0Timestamp } from './utils'
 import MockDate from 'mockdate'
