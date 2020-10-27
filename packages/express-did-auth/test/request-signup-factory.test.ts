@@ -4,7 +4,8 @@ import { identityFactory, mockedResFactory, modulo0Timestamp } from './utils'
 import MockDate from 'mockdate'
 import { INVALID_DID } from '../src/errors'
 import { createJWT, Signer } from 'did-jwt'
-import { Claim, SelectiveDisclosureRequest, SignupConfig } from '../src/types'
+import { CredentialRequestInput, SelectiveDisclosureRequest } from 'daf-selective-disclosure'
+import { SignupConfig } from '../src/types'
 
 describe('requestSignupFactory', () => {
   const userDid = 'did:ethr:rsk:testnet:0xd69ced736454347be68aead53fcc1678cb9a70ef'
@@ -40,7 +41,7 @@ describe('requestSignupFactory', () => {
     MockDate.set(modulo0Timestamp)
 
     const requiredCredentials = ['EmailCredential']
-    const requiredClaims: Claim[] = [{ claimType: 'name' }]
+    const requiredClaims: CredentialRequestInput[] = [{ claimType: 'name' }]
 
     const sdrData: SelectiveDisclosureRequest = {
       subject: userDid,

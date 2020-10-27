@@ -1,28 +1,14 @@
 import { JWTPayload, Signer } from 'did-jwt'
 import { VerifiableCredential } from 'did-jwt-vc'
+import { CredentialRequestInput } from 'daf-selective-disclosure'
 import { ChallengeConfig } from './classes/challenge-verifier'
 import { RequestCounterConfig } from './classes/request-counter'
 import { UserSessionConfig } from './classes/session-manager'
 
-export interface Claim {
-  claimType: string
-  claimValue?: string
-  reason?: string
-  essential?: boolean
-}
-
-export interface SelectiveDisclosureRequest {
-  issuer: string
-  subject: string
-  replyUrl?: string
-  claims?: Claim[]
-  credentials?: string[]
-}
-
 export interface SelectiveDisclosureResponse {
   issuer: string
   subject: string
-  claims?: Claim[]
+  claims?: CredentialRequestInput[]
   credentials: VerifiableCredential[]
 }
 
@@ -58,7 +44,7 @@ export interface AuthenticationConfig extends TokenConfig {
 
 export interface SignupConfig extends TokenConfig {
   requiredCredentials?: string[]
-  requiredClaims?: Claim[]
+  requiredClaims?: CredentialRequestInput[]
   signupBusinessLogic?: SignupBusinessLogic
 }
 
