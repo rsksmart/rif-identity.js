@@ -26,7 +26,7 @@ describe.skip('Express app tests (using cookies)', () => {
     const serviceSigner = serviceIdentity.signer
     const serviceDid = serviceIdentity.did
 
-    await setupApp({ challengeSecret, serviceUrl, serviceDid, serviceSigner, useCookies: true })(cookieApp)
+    setupApp({ challengeSecret, serviceUrl, serviceDid, serviceSigner, useCookies: true })(cookieApp)
   })
 
   it('1. GET /request-signup', async () => {

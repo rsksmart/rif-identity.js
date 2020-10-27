@@ -31,6 +31,8 @@ export default function setupAppFactory (config: ExpressDidAuthConfig) {
       app.use(csrf({ cookie: true }))
     }
 
+    const authMiddleware = expressMiddlewareFactory(requestCounter, config)
+
     app.get(requestSignupPath || REQUEST_SIGNUP_PATH, requestSignupFactory(challengeVerifier, config))
 
     app.post(signupPath || SIGNUP_PATH, authenticationFactory(challengeVerifier, sessionManager, config, config.signupBusinessLogic))
@@ -41,9 +43,9 @@ export default function setupAppFactory (config: ExpressDidAuthConfig) {
 
     app.post(refreshTokenPath || REFRESH_TOKEN_PATH, refreshTokenFactory(sessionManager, config))
 
-    app.use(expressMiddlewareFactory(requestCounter, config))
+    app.post(logoutPath || LOGOUT_PATH, authMiddleware, logoutFactory(sessionManager))
 
-    app.post(logoutPath || LOGOUT_PATH, logoutFactory(sessionManager))
+    return authMiddleware
   }
 }
 

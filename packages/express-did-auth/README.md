@@ -37,13 +37,13 @@ const serviceUrl = 'https://service.com'
 
 const app = express()
 
+const authMiddleware = setupApp({ challengeSecret, serviceUrl, serviceDid, serviceSigner })(app)
+
 app.get('/not-protected', function (req, res) {
   res.send('This endpoint is not authenticating')
 })
 
-setupApp({ challengeSecret, serviceUrl, serviceDid, serviceSigner })(app)
-
-app.get('/protected', function (req, res) {
+app.get('/protected', authMiddleware, function (req, res) {
   res.send('This endpoint is authenticating')
 })
 
