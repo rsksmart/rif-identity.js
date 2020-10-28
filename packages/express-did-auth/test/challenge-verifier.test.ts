@@ -8,13 +8,13 @@ import {
 
 describe('ChallengeVerifier', () => {
   const challengeSecret = 'theSecret'
-  const challengeExpirationTimeInSeconds = 60
+  const challengeExpirationTime = 60000
 
   const did = 'did:ethr:rsk:testnet:0xce83da2a364f37e44ec1a17f7f453a5e24395c70'
 
-  const calculateExpectedChallenge = (did: string, expirationTimeInSeconds: number, secret: string, currentTimestamp?: number) => {
+  const calculateExpectedChallenge = (did: string, expirationTime: number, secret: string, currentTimestamp?: number) => {
     const now = currentTimestamp || Date.now()
-    const timestamp = Math.floor(now / (expirationTimeInSeconds * 1000))
+    const timestamp = Math.floor(now / expirationTime)
     return keccak256(`${did}-${secret}-${timestamp}`)
   }
 
@@ -28,17 +28,17 @@ describe('ChallengeVerifier', () => {
     })
 
     test('should get a challenge', () => {
-      const verifier = new ChallengeVerifier({ challengeSecret, challengeExpirationTimeInSeconds })
+      const verifier = new ChallengeVerifier({ challengeSecret, challengeExpirationTime })
 
       const actual = verifier.get(did)
       expect(actual).toBeTruthy()
 
-      const expected = calculateExpectedChallenge(did, challengeExpirationTimeInSeconds, challengeSecret)
+      const expected = calculateExpectedChallenge(did, challengeExpirationTime, challengeSecret)
       expect(actual).toEqual(expected)
     })
 
     test('should get the same challenge when invoking it within the same timeslot', () => {
-      const verifier = new ChallengeVerifier({ challengeSecret, challengeExpirationTimeInSeconds })
+      const verifier = new ChallengeVerifier({ challengeSecret, challengeExpirationTime })
 
       const firstChallengeTime = modulo0Timestamp
       MockDate.set(firstChallengeTime)
@@ -55,12 +55,12 @@ describe('ChallengeVerifier', () => {
       expect(firstChallenge).toEqual(secondChallenge)
 
       MockDate.reset()
-      const expected = calculateExpectedChallenge(did, challengeExpirationTimeInSeconds, challengeSecret, firstChallengeTime)
+      const expected = calculateExpectedChallenge(did, challengeExpirationTime, challengeSecret, firstChallengeTime)
       expect(firstChallenge).toEqual(expected)
     })
 
     test('should get different challenge when invoking it twice in differents timeslots', () => {
-      const verifier = new ChallengeVerifier({ challengeSecret, challengeExpirationTimeInSeconds })
+      const verifier = new ChallengeVerifier({ challengeSecret, challengeExpirationTime })
 
       const firstChallengeTime = modulo0Timestamp
       MockDate.set(firstChallengeTime)
@@ -78,10 +78,10 @@ describe('ChallengeVerifier', () => {
 
       MockDate.reset()
 
-      const expectedFirstChallenge = calculateExpectedChallenge(did, challengeExpirationTimeInSeconds, challengeSecret, firstChallengeTime)
+      const expectedFirstChallenge = calculateExpectedChallenge(did, challengeExpirationTime, challengeSecret, firstChallengeTime)
       expect(firstChallenge).toEqual(expectedFirstChallenge)
 
-      const expectedSecondChallenge = calculateExpectedChallenge(did, challengeExpirationTimeInSeconds, challengeSecret, secondChallengeTime)
+      const expectedSecondChallenge = calculateExpectedChallenge(did, challengeExpirationTime, challengeSecret, secondChallengeTime)
       expect(secondChallenge).toEqual(expectedSecondChallenge)
     })
   })
@@ -101,7 +101,7 @@ describe('ChallengeVerifier', () => {
     })
 
     test('should respond with true if valid challenge in the same time slot', () => {
-      const verifier = new ChallengeVerifier({ challengeSecret, challengeExpirationTimeInSeconds })
+      const verifier = new ChallengeVerifier({ challengeSecret, challengeExpirationTime })
 
       const challengeTime = modulo0Timestamp
       MockDate.set(challengeTime)
@@ -115,7 +115,7 @@ describe('ChallengeVerifier', () => {
     })
 
     test('should respond with true twice if verifying twice in the same time slot', () => {
-      const verifier = new ChallengeVerifier({ challengeSecret, challengeExpirationTimeInSeconds })
+      const verifier = new ChallengeVerifier({ challengeSecret, challengeExpirationTime })
 
       const challengeTime = modulo0Timestamp
       MockDate.set(challengeTime)
@@ -133,7 +133,7 @@ describe('ChallengeVerifier', () => {
     })
 
     test('should respond with false if verifying the received challenge in other timeslot', () => {
-      const verifier = new ChallengeVerifier({ challengeSecret, challengeExpirationTimeInSeconds })
+      const verifier = new ChallengeVerifier({ challengeSecret, challengeExpirationTime })
 
       const challengeTime = modulo0Timestamp
       MockDate.set(challengeTime)

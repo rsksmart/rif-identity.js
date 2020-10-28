@@ -41,7 +41,7 @@ describe('JWT Utils', () => {
       expect(payload.aud).toEqual(serviceUrl)
       expect(payload.sub).toEqual(subjectIdentity.did)
       expect(payload.iss).toEqual(issuerIdentity.did)
-      expect(payload.exp).toEqual(`${modulo0Timestamp / 1000 + ACCESS_TOKEN_EXPIRATION}`)
+      expect(payload.exp).toEqual(`${(modulo0Timestamp + ACCESS_TOKEN_EXPIRATION) / 1000}`)
       expect(payload.metada).toBeFalsy()
     })
 
@@ -86,7 +86,7 @@ describe('JWT Utils', () => {
       expect(payload.aud).toEqual(serviceUrl)
       expect(payload.sub).toEqual(subjectIdentity.did)
       expect(payload.iss).toEqual(issuerIdentity.did)
-      expect(payload.exp).toEqual(`${modulo0Timestamp / 1000 + ACCESS_TOKEN_EXPIRATION}`)
+      expect(payload.exp).toEqual(`${(modulo0Timestamp + ACCESS_TOKEN_EXPIRATION) / 1000}`)
     })
 
     test('should throw an error if nbf > now', async () => {
@@ -99,7 +99,7 @@ describe('JWT Utils', () => {
 
     test('should throw an error if exp < now', async () => {
       MockDate.set(modulo0Timestamp)
-      const jwt = await generateAccessToken(subjectIdentity.did, { ...config, accessTokenExpirationTimeInSeconds: 5 })
+      const jwt = await generateAccessToken(subjectIdentity.did, { ...config, accessTokenExpirationTime: 5000 })
 
       MockDate.set(modulo8Timestamp) // move 8 seconds to the future
       await expect(verifyReceivedJwt(jwt, config)).rejects.toThrow(EXPIRED_ACCESS_TOKEN)

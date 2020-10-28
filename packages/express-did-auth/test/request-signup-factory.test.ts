@@ -11,8 +11,8 @@ describe('requestSignupFactory', () => {
   const userDid = 'did:ethr:rsk:testnet:0xd69ced736454347be68aead53fcc1678cb9a70ef'
 
   const challengeSecret = 'theSecret'
-  const challengeExpirationTimeInSeconds = 60
-  const challengeVerifier = new ChallengeVerifier({ challengeSecret, challengeExpirationTimeInSeconds })
+  const challengeExpirationTime = 60000
+  const challengeVerifier = new ChallengeVerifier({ challengeSecret, challengeExpirationTime })
 
   let serviceDid: string
   let serviceSigner: Signer

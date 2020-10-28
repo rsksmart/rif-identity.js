@@ -1,22 +1,20 @@
 import { ACCESS_TOKEN_COOKIE_NAME, COOKIES_ATTRIBUTES, REFRESH_TOKEN_COOKIE_NAME } from '../constants'
 import { INVALID_CHALLENGE, NO_RESPONSE, UNAUTHORIZED_USER } from '../errors'
 import {
-  AuthenticationBusinessLogic, SignupBusinessLogic, TokenConfig,
-  ChallengeResponsePayload, DidResolverConfig, AppState
+  AuthenticationBusinessLogic, SignupBusinessLogic,
+  ChallengeResponsePayload, AppState, AuthenticationConfig
 } from '../types'
 import { generateAccessToken, verifyReceivedJwt } from '../jwt-utils'
 import { ChallengeVerifier } from '../classes/challenge-verifier'
 import { SessionManagerFactory } from '../classes/session-manager'
 import { RequestCounterFactory } from '../classes/request-counter'
 
-interface AuthFactoryConfig extends TokenConfig, DidResolverConfig { }
-
 export function authenticationFactory (
   challengeVerifier: ChallengeVerifier,
   state: AppState,
   sessionManagerFactory: SessionManagerFactory,
   requestCounterFactory: RequestCounterFactory,
-  config: AuthFactoryConfig,
+  config: AuthenticationConfig,
   businessLogic?: AuthenticationBusinessLogic | SignupBusinessLogic
 ) {
   return async function (req, res) {

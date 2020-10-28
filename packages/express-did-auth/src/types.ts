@@ -1,11 +1,8 @@
 import { JWTPayload, Signer } from 'did-jwt'
 import { VerifiableCredential } from 'did-jwt-vc'
 import { CredentialRequestInput } from 'daf-selective-disclosure'
-import { ChallengeConfig } from './classes/challenge-verifier'
-import { RequestCounter, RequestCounterConfig } from './classes/request-counter'
-import { SessionManager, UserSessionConfig } from './classes/session-manager'
-
-export type Timestamp = number
+import { RequestCounter } from './classes/request-counter'
+import { SessionManager } from './classes/session-manager'
 
 export interface AppState {
   sessions: DidSessionStateMapping
@@ -32,13 +29,20 @@ export interface SelectiveDisclosureResponse {
   credentials: VerifiableCredential[]
 }
 
-export interface ExpressDidAuthConfig extends ChallengeConfig, RequestCounterConfig, SignupConfig, AuthenticationConfig, UserSessionConfig {
+export interface ExpressDidAuthConfig extends SignupConfig {
   requestSignupPath?: string
   signupPath?: string
   requestAuthPath?: string
   authPath?: string
   logoutPath?: string
   refreshTokenPath?: string
+  challengeExpirationTimeInSeconds?: number
+  challengeSecret: string
+  accessTokenExpirationTimeInSeconds?: number
+  authenticationBusinessLogic?: AuthenticationBusinessLogic
+  maxRequestsPerTimeSlot?: number
+  timeSlotInSeconds?: number
+  userSessionDurationInHours?: number
 }
 
 export interface DidResolverConfig {
@@ -55,11 +59,6 @@ export interface TokenValidationConfig extends DidResolverConfig {
 export interface TokenConfig extends TokenValidationConfig {
   serviceDid: string
   serviceSigner: Signer
-}
-
-export interface AuthenticationConfig extends TokenConfig {
-  accessTokenExpirationTimeInSeconds?: number
-  authenticationBusinessLogic?: AuthenticationBusinessLogic
 }
 
 export interface SignupConfig extends TokenConfig {
@@ -79,3 +78,7 @@ export interface SignupChallengeResponsePayload extends ChallengeResponsePayload
 export type AuthenticationBusinessLogic = (payload: ChallengeResponsePayload) => Promise<boolean>
 
 export type SignupBusinessLogic = (payload: SignupChallengeResponsePayload) => Promise<boolean>
+
+export interface AuthenticationConfig extends TokenConfig {
+  accessTokenExpirationTime?: number
+}

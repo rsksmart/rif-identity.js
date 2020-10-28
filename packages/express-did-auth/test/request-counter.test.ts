@@ -7,7 +7,7 @@ describe('RequestCounter', () => {
 
   describe('count', () => {
     test('should not allow to count more than the limit', () => {
-      const counter = new RequestCounter({ maxRequestsPerTimeSlot: 5, timeSlotInSeconds: 100 })
+      const counter = new RequestCounter({ maxRequestsPerTimeSlot: 5, timeSlot: 100 * 1000 })
 
       for (let i = 0; i < 5; i++) counter.count()
 
@@ -16,7 +16,7 @@ describe('RequestCounter', () => {
     })
 
     test('should allow to count more than the limit if the requests are divided in different timeslots', () => {
-      const counter = new RequestCounter({ maxRequestsPerTimeSlot: 5, timeSlotInSeconds: 100 })
+      const counter = new RequestCounter({ maxRequestsPerTimeSlot: 5, timeSlot: 100 * 1000 })
 
       for (let i = 0; i < 5; i++) counter.count()
 
@@ -30,7 +30,7 @@ describe('RequestCounter', () => {
     })
 
     test('should not allow to count more than the limit when reaching the second timeslot', () => {
-      const counter = new RequestCounter({ maxRequestsPerTimeSlot: 5, timeSlotInSeconds: 100 })
+      const counter = new RequestCounter({ maxRequestsPerTimeSlot: 5, timeSlot: 100 * 1000 })
 
       for (let i = 0; i < 5; i++) counter.count()
 

@@ -17,9 +17,9 @@ describe('authenticationFactory', () => {
 
   const mockBusinessLogicFactory = (result: boolean) => async () => result
   const challengeSecret = 'theSecret'
-  const challengeExpirationTimeInSeconds = 60
+  const challengeExpirationTime = 60000
 
-  const challengeVerifier = new ChallengeVerifier({ challengeSecret, challengeExpirationTimeInSeconds })
+  const challengeVerifier = new ChallengeVerifier({ challengeSecret, challengeExpirationTime })
 
   const sessionManagerFactory: SessionManagerFactory = (config?: UserSessionConfig) => new SessionManager(config || {})
   const requestCounterFactory: RequestCounterFactory = (config?: RequestCounterConfig) => new RequestCounter(config || {})

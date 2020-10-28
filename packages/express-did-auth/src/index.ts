@@ -15,6 +15,7 @@ import {
   requestSignupFactory, authenticationFactory, requestAuthFactory,
   refreshTokenFactory, expressMiddlewareFactory, logoutFactory
 } from './factories'
+import { adaptToAuthFactoryConfig, adaptToChallengeConfig, adaptToRequestCounterConfig, adaptToUserSessionConfig } from './config-adapters'
 
 export default function setupAppFactory (config: ExpressDidAuthConfig) {
   const { requestAuthPath, authPath, requestSignupPath, signupPath, refreshTokenPath, logoutPath } = config
@@ -24,13 +25,13 @@ export default function setupAppFactory (config: ExpressDidAuthConfig) {
     refreshTokens: { }
   }
 
-  const challengeVerifier = new ChallengeVerifierImplementation(config)
+  const challengeVerifier = new ChallengeVerifierImplementation(adaptToChallengeConfig(config))
 
-  const sessionManagerFactory: SessionManagerFactory = (metadata?: any) => new SessionManager(config, metadata)
-  const requestCounterFactory: RequestCounterFactory = () => new RequestCounter(config)
+  const sessionManagerFactory: SessionManagerFactory = (metadata?: any) => new SessionManager(adaptToUserSessionConfig(config), metadata)
+  const requestCounterFactory: RequestCounterFactory = () => new RequestCounter(adaptToRequestCounterConfig(config))
 
   const authHandler = (businessLogic: SignupBusinessLogic | AuthenticationBusinessLogic) => authenticationFactory(
-    challengeVerifier, state, sessionManagerFactory, requestCounterFactory, config, businessLogic
+    challengeVerifier, state, sessionManagerFactory, requestCounterFactory, adaptToAuthFactoryConfig(config), businessLogic
   )
 
   return function setupApp (app: Express) {

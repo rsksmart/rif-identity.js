@@ -43,8 +43,8 @@ describe('SessionManager', () => {
     })
 
     test('should do not allow to refresh an expired refresh token', () => {
-      const userSessionDurationInHours = 1
-      const manager = new SessionManager({ userSessionDurationInHours })
+      const userSessionDuration = 1 * 60 * 60 * 1000
+      const manager = new SessionManager({ userSessionDuration })
 
       const createTokenTimestamp = 1603300440000
       MockDate.set(createTokenTimestamp)
@@ -59,8 +59,8 @@ describe('SessionManager', () => {
     })
 
     test('should allow to create a new refresh token even if the old one has expired', () => {
-      const userSessionDurationInHours = 1
-      const manager = new SessionManager({ userSessionDurationInHours })
+      const userSessionDuration = 1 * 60 * 60 * 1000
+      const manager = new SessionManager({ userSessionDuration })
 
       const createTokenTimestamp = 1603300440000
       MockDate.set(createTokenTimestamp)

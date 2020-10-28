@@ -7,7 +7,7 @@ type Timestamp = number
 export type SessionManagerFactory = (metadata?: any) => SessionManager
 
 export interface UserSessionConfig {
-  userSessionDurationInHours?: number
+  userSessionDuration?: number
 }
 
 export interface SessionManager {
@@ -17,12 +17,12 @@ export interface SessionManager {
 }
 
 export default class implements SessionManager {
-  private sessionDurationInHours: number
+  private sessionDuration: number
   public refreshToken: string
   private expirationDate: Timestamp
 
-  constructor ({ userSessionDurationInHours }: UserSessionConfig, private metadata?: any) {
-    this.sessionDurationInHours = userSessionDurationInHours || USER_SESSION_DURATION
+  constructor ({ userSessionDuration }: UserSessionConfig, private metadata?: any) {
+    this.sessionDuration = userSessionDuration || USER_SESSION_DURATION
   }
 
   createRefreshToken (): string {
@@ -30,7 +30,7 @@ export default class implements SessionManager {
     if (this.refreshToken) this.refreshToken = undefined
 
     this.refreshToken = randomBytes(64).toString('hex')
-    this.expirationDate = Date.now() + this.sessionDurationInHours * 60 * 60 * 1000
+    this.expirationDate = Date.now() + this.sessionDuration
 
     return this.refreshToken
   }

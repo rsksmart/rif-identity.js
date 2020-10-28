@@ -7,7 +7,7 @@ export type RequestCounterFactory = () => RequestCounter
 
 export interface RequestCounterConfig {
   maxRequestsPerTimeSlot?: number
-  timeSlotInSeconds?: number
+  timeSlot?: number
 }
 
 export interface RequestCounter {
@@ -17,12 +17,12 @@ export interface RequestCounter {
 export default class implements RequestCounter {
   private accesses: Timestamp[]
   private maxRequests: number
-  private timeSlotInSeconds: number
+  private timeSlot: number
 
-  constructor ({ maxRequestsPerTimeSlot, timeSlotInSeconds }: RequestCounterConfig) {
+  constructor ({ maxRequestsPerTimeSlot, timeSlot }: RequestCounterConfig) {
     this.accesses = []
     this.maxRequests = maxRequestsPerTimeSlot || MAX_REQUESTS_PER_TIME_SLOT
-    this.timeSlotInSeconds = timeSlotInSeconds || REQUEST_COUNTER_TIME_SLOT
+    this.timeSlot = timeSlot || REQUEST_COUNTER_TIME_SLOT
   }
 
   count () {
@@ -30,7 +30,7 @@ export default class implements RequestCounter {
 
     if (!this.accesses) this.accesses = [now]
     else if (this.accesses.length < this.maxRequests) this.accesses.push(now)
-    else if (now - this.accesses[0] > (this.timeSlotInSeconds * 1000)) {
+    else if (now - this.accesses[0] > this.timeSlot) {
       this.accesses.shift()
       this.accesses.push(now)
     } else throw new Error(MAX_REQUESTS_REACHED)

@@ -7,9 +7,9 @@ import { INVALID_DID } from '../src/errors'
 describe('requestAuthFactory', () => {
   const did = 'did:ethr:rsk:testnet:0xd69ced736454347be68aead53fcc1678cb9a70ef'
   const challengeSecret = 'theSecret'
-  const challengeExpirationTimeInSeconds = 60
+  const challengeExpirationTime = 60000
 
-  const challengeVerifier = new ChallengeVerifier({ challengeSecret, challengeExpirationTimeInSeconds })
+  const challengeVerifier = new ChallengeVerifier({ challengeSecret, challengeExpirationTime })
 
   test('should respond with a 200 with the created challenge', () => {
     MockDate.set(modulo0Timestamp)

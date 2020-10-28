@@ -16,13 +16,13 @@ export function generateAccessToken (
 ): Promise<string> {
   const now = Math.floor(Date.now() / 1000) // must be in seconds
 
-  const { serviceUrl, serviceDid, accessTokenExpirationTimeInSeconds, serviceSigner: signer } = config
+  const { serviceUrl, serviceDid, accessTokenExpirationTime, serviceSigner: signer } = config
 
   const payload = {
     ...metadata,
     aud: serviceUrl,
     sub: subjectDid,
-    exp: `${now + (accessTokenExpirationTimeInSeconds || ACCESS_TOKEN_EXPIRATION)}`,
+    exp: `${now + Math.floor((accessTokenExpirationTime || ACCESS_TOKEN_EXPIRATION) / 1000)}`,
     nbf: `${now}`,
     iat: `${now}`
   }
