@@ -4,7 +4,7 @@ import { INVALID_HEADER, NO_ACCESS_TOKEN, UNHANDLED_ERROR } from '../errors'
 import { verifyReceivedJwt } from '../jwt-utils'
 import { AppState, TokenValidationConfig } from '../types'
 
-function extractAccessToken(req, useCookies: boolean) {
+function extractAccessToken (req, useCookies: boolean) {
   if (useCookies) return req.cookies[ACCESS_TOKEN_COOKIE_NAME]
 
   const header = req.headers[ACCESS_TOKEN_HEADER_NAME] || req.headers[ACCESS_TOKEN_HEADER_NAME.toLowerCase()]
