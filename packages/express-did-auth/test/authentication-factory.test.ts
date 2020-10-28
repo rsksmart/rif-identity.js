@@ -1,5 +1,5 @@
 import { authenticationFactory } from '../src/factories/authentication-factory'
-import ChallengeVerifier from '../src/classes/challenge-verifier'
+import { ChallengeVerifier } from '../src/classes/challenge-verifier'
 import {
   challengeResponseFactory, getMockedAppState, Identity, identityFactory, mockedResFactory,
   MockedResponse, modulo0Timestamp, otherSlotTimestamp
