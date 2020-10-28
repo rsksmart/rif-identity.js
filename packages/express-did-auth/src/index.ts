@@ -4,7 +4,7 @@ import cookieParser from 'cookie-parser'
 import csrf from 'csurf'
 import { ExpressDidAuthConfig, AppState, SignupBusinessLogic, AuthenticationBusinessLogic } from './types'
 import ChallengeVerifierImplementation from './classes/challenge-verifier'
-import RequestCounter, { RequestCounterFactory } from './classes/request-counter'
+import { RequestCounter, RequestCounterFactory } from './classes/request-counter'
 import { SessionManager, SessionManagerFactory } from './classes/session-manager'
 import { generateAccessToken, verifyReceivedJwt } from './jwt-utils'
 import {

@@ -1,5 +1,5 @@
 import { MAX_REQUESTS_REACHED } from '../src/errors'
-import RequestCounter from '../src/classes/request-counter'
+import { RequestCounter } from '../src/classes/request-counter'
 import MockDate from 'mockdate'
 
 describe('RequestCounter', () => {
