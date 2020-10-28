@@ -5,7 +5,7 @@ import csrf from 'csurf'
 import { ExpressDidAuthConfig, AppState, SignupBusinessLogic, AuthenticationBusinessLogic } from './types'
 import ChallengeVerifierImplementation from './classes/challenge-verifier'
 import RequestCounter, { RequestCounterFactory } from './classes/request-counter'
-import SessionManager, { SessionManagerFactory } from './classes/session-manager'
+import { SessionManager, SessionManagerFactory } from './classes/session-manager'
 import { generateAccessToken, verifyReceivedJwt } from './jwt-utils'
 import {
   REQUEST_SIGNUP_PATH, SIGNUP_PATH, REQUEST_AUTH_PATH,

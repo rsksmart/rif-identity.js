@@ -10,13 +10,7 @@ export interface UserSessionConfig {
   userSessionDuration?: number
 }
 
-export interface SessionManager {
-  createRefreshToken(): string
-  renewRefreshToken(oldToken: string): { refreshToken: string, metadata: any }
-  getCurrentRefreshToken(): string
-}
-
-export default class implements SessionManager {
+export class SessionManager {
   private sessionDuration: number
   public refreshToken: string
   private expirationDate: Timestamp

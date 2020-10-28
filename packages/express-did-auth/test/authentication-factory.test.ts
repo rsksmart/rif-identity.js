@@ -8,7 +8,7 @@ import MockDate from 'mockdate'
 import { INVALID_CHALLENGE, NO_RESPONSE, UNAUTHORIZED_USER } from '../src/errors'
 import { AppState, AuthenticationBusinessLogic, SignupBusinessLogic, TokenConfig } from '../src/types'
 import RequestCounter, { RequestCounterConfig, RequestCounterFactory } from '../src/classes/request-counter'
-import SessionManager, { SessionManagerFactory, UserSessionConfig } from '../src/classes/session-manager'
+import { SessionManager, SessionManagerFactory, UserSessionConfig } from '../src/classes/session-manager'
 
 describe('authenticationFactory', () => {
   let config: TokenConfig

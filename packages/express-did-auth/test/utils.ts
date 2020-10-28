@@ -3,7 +3,7 @@ import { mnemonicToSeed, seedToRSKHDKey, generateMnemonic } from '@rsksmart/rif-
 import { createJWT, Signer } from 'did-jwt'
 import { AppState, ChallengeResponsePayload, SelectiveDisclosureResponse } from '../src/types'
 import RequesCounter, { RequestCounterConfig } from '../src/classes/request-counter'
-import SessionManager, { UserSessionConfig } from '../src/classes/session-manager'
+import { SessionManager, UserSessionConfig } from '../src/classes/session-manager'
 
 export interface Identity {
   did: string

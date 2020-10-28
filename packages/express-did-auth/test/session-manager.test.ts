@@ -1,4 +1,4 @@
-import SessionManager from '../src/classes/session-manager'
+import { SessionManager } from '../src/classes/session-manager'
 import MockDate from 'mockdate'
 import { INVALID_OR_EXPIRED_SESSION, INVALID_REFRESH_TOKEN } from '../src/errors'
 
