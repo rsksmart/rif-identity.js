@@ -1,7 +1,9 @@
 import { rskDIDFromPrivateKey } from '@rsksmart/rif-id-ethr-did'
 import { mnemonicToSeed, seedToRSKHDKey, generateMnemonic } from '@rsksmart/rif-id-mnemonic'
 import { createJWT, Signer } from 'did-jwt'
-import { ChallengeResponsePayload, SelectiveDisclosureResponse } from '../src/types'
+import { AppState, ChallengeResponsePayload, SelectiveDisclosureResponse } from '../src/types'
+import RequesCounter, { RequestCounterConfig } from '../src/classes/request-counter'
+import SessionManager, { UserSessionConfig } from '../src/classes/session-manager'
 
 export interface Identity {
   did: string
@@ -60,4 +62,25 @@ export const challengeResponseFactory = async (
   }
 
   return createJWT(payload, { issuer: issuer.did, signer: issuer.signer }, { typ: 'JWT', alg: 'ES256K' })
+}
+
+export const getMockedAppState = (did?: string, counterConfig?: RequestCounterConfig, sessionConfig?: UserSessionConfig): { state: AppState, refreshToken: string} => {
+  let refreshToken: string
+  const state: AppState = {
+    sessions: { },
+    refreshTokens: { }
+  }
+
+  if (did) {
+    state.sessions[did] = {
+      requestCounter: new RequesCounter(counterConfig || {}),
+      sessionManager: new SessionManager(sessionConfig || {})
+    }
+
+    refreshToken = state.sessions[did].sessionManager.createRefreshToken()
+
+    state.refreshTokens[refreshToken] = did
+  }
+
+  return { state, refreshToken }
 }

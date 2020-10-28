@@ -1,24 +1,31 @@
 import { authenticationFactory } from '../src/factories/authentication-factory'
 import ChallengeVerifier from '../src/classes/challenge-verifier'
-import SessionManager from '../src/classes/session-manager'
 import {
-  challengeResponseFactory, Identity, identityFactory, mockedResFactory,
+  challengeResponseFactory, getMockedAppState, Identity, identityFactory, mockedResFactory,
   MockedResponse, modulo0Timestamp, otherSlotTimestamp
 } from './utils'
 import MockDate from 'mockdate'
 import { INVALID_CHALLENGE, NO_RESPONSE, UNAUTHORIZED_USER } from '../src/errors'
-import { TokenConfig } from '../src/types'
+import { AppState, AuthenticationBusinessLogic, SignupBusinessLogic, TokenConfig } from '../src/types'
+import RequestCounter, { RequestCounterConfig, RequestCounterFactory } from '../src/classes/request-counter'
+import SessionManager, { SessionManagerFactory, UserSessionConfig } from '../src/classes/session-manager'
 
 describe('authenticationFactory', () => {
+  let config: TokenConfig
+  let userIdentity: Identity
+  let state: AppState
+
   const mockBusinessLogicFactory = (result: boolean) => async () => result
   const challengeSecret = 'theSecret'
   const challengeExpirationTimeInSeconds = 60
 
   const challengeVerifier = new ChallengeVerifier({ challengeSecret, challengeExpirationTimeInSeconds })
-  const sessionManager = new SessionManager({})
 
-  let config: TokenConfig
-  let userIdentity: Identity
+  const sessionManagerFactory: SessionManagerFactory = (config?: UserSessionConfig) => new SessionManager(config || {})
+  const requestCounterFactory: RequestCounterFactory = (config?: RequestCounterConfig) => new RequestCounter(config || {})
+  const testAuthFactory = (state: AppState, logic?: SignupBusinessLogic | AuthenticationBusinessLogic) => authenticationFactory(
+    challengeVerifier, state, sessionManagerFactory, requestCounterFactory, config, logic
+  )
 
   beforeAll(async () => {
     const serviceIdentity = await identityFactory()
@@ -31,13 +38,17 @@ describe('authenticationFactory', () => {
     userIdentity = await identityFactory()
   })
 
+  beforeEach(() => {
+    ({ state } = getMockedAppState())
+  })
+
   afterEach(() => MockDate.reset())
 
   test('should respond with 401 if no response', async () => {
     const res = mockedResFactory(401, NO_RESPONSE)
     const req = { body: { } }
 
-    await authenticationFactory(challengeVerifier, sessionManager, config)(req, res)
+    await testAuthFactory(state)(req, res)
   })
 
   test('should respond with 401 if extra business logic that returns false ', async () => {
@@ -50,7 +61,7 @@ describe('authenticationFactory', () => {
     const res = mockedResFactory(401, UNAUTHORIZED_USER)
 
     const logic = mockBusinessLogicFactory(false)
-    await authenticationFactory(challengeVerifier, sessionManager, config, logic)(req, res)
+    await testAuthFactory(state, logic)(req, res)
   })
 
   test('should respond with 401 if extra business logic that returns false ', async () => {
@@ -64,7 +75,7 @@ describe('authenticationFactory', () => {
     const res = mockedResFactory(401, escape(errorMessage))
 
     const logic = () => { throw new Error(errorMessage) }
-    await authenticationFactory(challengeVerifier, sessionManager, config, logic)(req, res)
+    await testAuthFactory(state, logic)(req, res)
   })
 
   test('should respond with 401 if invalid challenge', async () => {
@@ -77,7 +88,7 @@ describe('authenticationFactory', () => {
     const res = mockedResFactory(401, INVALID_CHALLENGE)
 
     MockDate.set(otherSlotTimestamp)
-    await authenticationFactory(challengeVerifier, sessionManager, config)(req, res)
+    await testAuthFactory(state)(req, res)
   })
 
   describe('no cookies', () => {
@@ -101,12 +112,12 @@ describe('authenticationFactory', () => {
     })
 
     test('no extra business logic', async () => {
-      await authenticationFactory(challengeVerifier, sessionManager, config)(req, res)
+      await testAuthFactory(state)(req, res)
     })
 
     test('extra business logic that returns true', async () => {
       const logic = mockBusinessLogicFactory(true)
-      await authenticationFactory(challengeVerifier, sessionManager, config, logic)(req, res)
+      await testAuthFactory(state, logic)(req, res)
     })
   })
 })

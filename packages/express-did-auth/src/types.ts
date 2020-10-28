@@ -2,8 +2,28 @@ import { JWTPayload, Signer } from 'did-jwt'
 import { VerifiableCredential } from 'did-jwt-vc'
 import { CredentialRequestInput } from 'daf-selective-disclosure'
 import { ChallengeConfig } from './classes/challenge-verifier'
-import { RequestCounterConfig } from './classes/request-counter'
-import { UserSessionConfig } from './classes/session-manager'
+import { RequestCounter, RequestCounterConfig } from './classes/request-counter'
+import { SessionManager, UserSessionConfig } from './classes/session-manager'
+
+export type Timestamp = number
+
+export interface AppState {
+  sessions: DidSessionStateMapping
+  refreshTokens: RefreshTokenDidMapping
+}
+
+interface DidSessionStateMapping {
+  [did: string]: UserState
+}
+
+interface RefreshTokenDidMapping {
+  [refreshToken: string]: string
+}
+
+export interface UserState {
+  requestCounter: RequestCounter
+  sessionManager: SessionManager
+}
 
 export interface SelectiveDisclosureResponse {
   issuer: string

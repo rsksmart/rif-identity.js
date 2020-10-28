@@ -1,11 +1,9 @@
-import SessionManager from '../src/classes/session-manager'
 import { refreshTokenFactory } from '../src/factories/refresh-token-factory'
 import { INVALID_OR_EXPIRED_SESSION, NO_REFRESH_TOKEN } from '../src/errors'
-import { Identity, identityFactory, mockedResFactory, MockedResponse } from './utils'
+import { getMockedAppState, Identity, identityFactory, mockedResFactory, MockedResponse } from './utils'
 import { AuthenticationConfig } from '../src/types'
 
 describe('RefreshTokenFactory', () => {
-  const sessionManager = new SessionManager({})
   const serviceUrl = 'https://service.com'
 
   let accessTokenConfig: AuthenticationConfig
@@ -24,23 +22,23 @@ describe('RefreshTokenFactory', () => {
 
   test('should respond with 401 if no refresh token', async () => {
     const req = { body: { } }
-
     const res = mockedResFactory(401, NO_REFRESH_TOKEN)
+    const { state } = getMockedAppState()
 
-    await refreshTokenFactory(sessionManager, accessTokenConfig)(req, res)
+    await refreshTokenFactory(state, accessTokenConfig)(req, res)
   })
 
   test('should respond with 401 if invalid refresh token', async () => {
     const req = { body: { refreshToken: 'invalid' } }
-
     const res = mockedResFactory(401, INVALID_OR_EXPIRED_SESSION)
+    const { state } = getMockedAppState()
 
-    await refreshTokenFactory(sessionManager, accessTokenConfig)(req, res)
+    await refreshTokenFactory(state, accessTokenConfig)(req, res)
   })
 
   describe('no cookies', () => {
     test('should refresh if valid existing session', async () => {
-      const refreshToken = sessionManager.create(userIdentity.did)
+      const { state, refreshToken } = getMockedAppState(userIdentity.did)
 
       const req = { body: { refreshToken } }
       const expectedAssertion = (response: MockedResponse) => {
@@ -51,7 +49,7 @@ describe('RefreshTokenFactory', () => {
       }
       const res = mockedResFactory(200, undefined, expectedAssertion)
 
-      await refreshTokenFactory(sessionManager, accessTokenConfig)(req, res)
+      await refreshTokenFactory(state, accessTokenConfig)(req, res)
     })
   })
 })

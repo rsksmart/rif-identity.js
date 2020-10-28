@@ -2,17 +2,20 @@ import { ACCESS_TOKEN_COOKIE_NAME, COOKIES_ATTRIBUTES, REFRESH_TOKEN_COOKIE_NAME
 import { INVALID_CHALLENGE, NO_RESPONSE, UNAUTHORIZED_USER } from '../errors'
 import {
   AuthenticationBusinessLogic, SignupBusinessLogic, TokenConfig,
-  ChallengeResponsePayload, DidResolverConfig
+  ChallengeResponsePayload, DidResolverConfig, AppState
 } from '../types'
 import { generateAccessToken, verifyReceivedJwt } from '../jwt-utils'
 import { ChallengeVerifier } from '../classes/challenge-verifier'
-import { SessionManager } from '../classes/session-manager'
+import { SessionManagerFactory } from '../classes/session-manager'
+import { RequestCounterFactory } from '../classes/request-counter'
 
 interface AuthFactoryConfig extends TokenConfig, DidResolverConfig { }
 
 export function authenticationFactory (
   challengeVerifier: ChallengeVerifier,
-  sessionManager: SessionManager,
+  state: AppState,
+  sessionManagerFactory: SessionManagerFactory,
+  requestCounterFactory: RequestCounterFactory,
   config: AuthFactoryConfig,
   businessLogic?: AuthenticationBusinessLogic | SignupBusinessLogic
 ) {
@@ -34,10 +37,16 @@ export function authenticationFactory (
 
       if (!isValid) return res.status(401).send(UNAUTHORIZED_USER)
 
-      const userDid = payload.iss
+      const did = payload.iss
 
-      const accessToken = await generateAccessToken(userDid, config)
-      const refreshToken = sessionManager.create(userDid)
+      const requestCounter = requestCounterFactory()
+      const sessionManager = sessionManagerFactory()
+
+      const accessToken = await generateAccessToken(did, config)
+      const refreshToken = sessionManager.createRefreshToken()
+
+      state.sessions[did] = { requestCounter, sessionManager }
+      state.refreshTokens[refreshToken] = did
 
       if (!config.useCookies) return res.status(200).json({ accessToken, refreshToken })
 

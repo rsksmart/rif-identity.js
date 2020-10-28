@@ -1,7 +1,9 @@
 import { MAX_REQUESTS_PER_TIME_SLOT, REQUEST_COUNTER_TIME_SLOT } from '../defaults'
-import { INVALID_DID, MAX_REQUESTS_REACHED } from '../errors'
+import { MAX_REQUESTS_REACHED } from '../errors'
 
 type Timestamp = number
+
+export type RequestCounterFactory = () => RequestCounter
 
 export interface RequestCounterConfig {
   maxRequestsPerTimeSlot?: number
@@ -9,34 +11,28 @@ export interface RequestCounterConfig {
 }
 
 export interface RequestCounter {
-  count(did): void
-}
-
-export interface AccessesDictionary {
-  [did: string]: Timestamp[]
+  count(): void
 }
 
 export default class implements RequestCounter {
-  private accesses: AccessesDictionary
+  private accesses: Timestamp[]
   private maxRequests: number
   private timeSlotInSeconds: number
 
   constructor ({ maxRequestsPerTimeSlot, timeSlotInSeconds }: RequestCounterConfig) {
-    this.accesses = { }
+    this.accesses = []
     this.maxRequests = maxRequestsPerTimeSlot || MAX_REQUESTS_PER_TIME_SLOT
     this.timeSlotInSeconds = timeSlotInSeconds || REQUEST_COUNTER_TIME_SLOT
   }
 
-  count (did: string) {
-    if (!did) throw new Error(INVALID_DID)
-
+  count () {
     const now = Date.now()
 
-    if (!this.accesses[did]) this.accesses[did] = [now]
-    else if (this.accesses[did].length < this.maxRequests) this.accesses[did].push(now)
-    else if (now - this.accesses[did][0] > (this.timeSlotInSeconds * 1000)) {
-      this.accesses[did].shift()
-      this.accesses[did].push(now)
+    if (!this.accesses) this.accesses = [now]
+    else if (this.accesses.length < this.maxRequests) this.accesses.push(now)
+    else if (now - this.accesses[0] > (this.timeSlotInSeconds * 1000)) {
+      this.accesses.shift()
+      this.accesses.push(now)
     } else throw new Error(MAX_REQUESTS_REACHED)
   }
 }

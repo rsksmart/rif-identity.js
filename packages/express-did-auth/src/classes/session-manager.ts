@@ -1,88 +1,54 @@
 import { randomBytes } from 'crypto'
-import { INVALID_DID, INVALID_REFRESH_TOKEN } from '../errors'
+import { INVALID_OR_EXPIRED_SESSION, INVALID_REFRESH_TOKEN } from '../errors'
 import { USER_SESSION_DURATION } from '../defaults'
+
+type Timestamp = number
+
+export type SessionManagerFactory = (metadata?: any) => SessionManager
 
 export interface UserSessionConfig {
   userSessionDurationInHours?: number
 }
 
 export interface SessionManager {
-  create(did: string): string
-  renew(oldToken: string): { refreshToken: string, did: string, metadata: any }
-  delete(did: string): void
-}
-
-export interface UserSessionInfo {
-  did: string
-  expirationDate: number
-  metadata: any
-}
-
-export interface RefreshTokenSessionMapping {
-  [refreshToken: string]: UserSessionInfo
-}
-
-export interface DidRefreshTokenMapping {
-  [did: string]: string
+  createRefreshToken(): string
+  renewRefreshToken(oldToken: string): { refreshToken: string, metadata: any }
+  getCurrentRefreshToken(): string
 }
 
 export default class implements SessionManager {
   private sessionDurationInHours: number
-  private refreshTokenSessionMapping: RefreshTokenSessionMapping
-  private didRefreshTokenMapping: DidRefreshTokenMapping
+  public refreshToken: string
+  private expirationDate: Timestamp
 
-  constructor ({ userSessionDurationInHours }: UserSessionConfig) {
+  constructor ({ userSessionDurationInHours }: UserSessionConfig, private metadata?: any) {
     this.sessionDurationInHours = userSessionDurationInHours || USER_SESSION_DURATION
-    this.refreshTokenSessionMapping = {}
-    this.didRefreshTokenMapping = {}
   }
 
-  create (did: string, metadata?: any): string {
-    if (!did) throw new Error(INVALID_DID)
+  createRefreshToken (): string {
+    // invalidates prior token if exists
+    if (this.refreshToken) this.refreshToken = undefined
 
-    // invalidates prior token
-    const oldRefreshToken = this.didRefreshTokenMapping[did]
-    if (oldRefreshToken) delete this.refreshTokenSessionMapping[oldRefreshToken]
+    this.refreshToken = randomBytes(64).toString('hex')
+    this.expirationDate = Date.now() + this.sessionDurationInHours * 60 * 60 * 1000
 
-    const refreshToken = randomBytes(64).toString('hex')
-
-    this.refreshTokenSessionMapping[refreshToken] = {
-      did,
-      expirationDate: Date.now() + this.sessionDurationInHours * 60 * 60 * 1000,
-      metadata
-    }
-    this.didRefreshTokenMapping[did] = refreshToken
-
-    return refreshToken
+    return this.refreshToken
   }
 
-  renew (refreshToken: string): { refreshToken: string, did: string, metadata: any } {
-    if (!refreshToken) throw new Error(INVALID_REFRESH_TOKEN)
+  renewRefreshToken (oldToken: string): { refreshToken: string, metadata: any } {
+    if (!this.refreshToken || !oldToken || oldToken !== this.refreshToken) throw new Error(INVALID_REFRESH_TOKEN)
 
-    const userInfo = this.refreshTokenSessionMapping[refreshToken]
+    if (this.expirationDate < Date.now()) throw new Error(INVALID_OR_EXPIRED_SESSION)
 
-    if (userInfo) {
-      if (userInfo.expirationDate >= Date.now()) {
-        const { did, metadata } = userInfo
+    this.createRefreshToken()
 
-        delete this.refreshTokenSessionMapping[refreshToken]
-
-        const newToken = this.create(did, metadata)
-        this.didRefreshTokenMapping[did] = newToken
-
-        return { refreshToken: newToken, metadata, did }
-      } else delete this.refreshTokenSessionMapping[refreshToken]
+    return {
+      refreshToken: this.refreshToken,
+      metadata: this.metadata
     }
   }
 
-  delete (did: string) {
-    if (!did) throw new Error(INVALID_DID)
-
-    const token = this.didRefreshTokenMapping[did]
-
-    if (token) {
-      delete this.didRefreshTokenMapping[did]
-      delete this.refreshTokenSessionMapping[token]
-    }
+  getCurrentRefreshToken (): string {
+    return this.refreshToken
   }
 }

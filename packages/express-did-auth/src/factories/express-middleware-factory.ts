@@ -1,11 +1,10 @@
 import { JWTPayload } from 'did-jwt'
-import { RequestCounter } from '../classes/request-counter'
 import { ACCESS_TOKEN_COOKIE_NAME, ACCESS_TOKEN_HEADER_NAME, DID_AUTH_SCHEME } from '../constants'
 import { INVALID_HEADER, NO_ACCESS_TOKEN, UNHANDLED_ERROR } from '../errors'
 import { verifyReceivedJwt } from '../jwt-utils'
-import { TokenValidationConfig } from '../types'
+import { AppState, TokenValidationConfig } from '../types'
 
-export function expressMiddlewareFactory (requestCounter: RequestCounter, config: TokenValidationConfig) {
+export function expressMiddlewareFactory (state: AppState, config: TokenValidationConfig) {
   return async function (req, res, next) {
     try {
       let jwt: string
@@ -29,7 +28,7 @@ export function expressMiddlewareFactory (requestCounter: RequestCounter, config
       const payload = verified.payload as JWTPayload
       const did = payload.sub
 
-      requestCounter.count(did)
+      state.sessions[did].requestCounter.count()
 
       req.user = { did }
 
