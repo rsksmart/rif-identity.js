@@ -7,12 +7,7 @@ export interface ChallengeConfig {
   challengeSecret: string
 }
 
-export interface ChallengeVerifier {
-  get(did: string): string
-  verify(did: string, challenge: string): boolean
-}
-
-export default class implements ChallengeVerifier {
+export class ChallengeVerifier {
   private expirationTime: number
   private secret: string
 

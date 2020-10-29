@@ -3,9 +3,9 @@ import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import csrf from 'csurf'
 import { ExpressDidAuthConfig, AppState, SignupBusinessLogic, AuthenticationBusinessLogic } from './types'
-import ChallengeVerifierImplementation from './classes/challenge-verifier'
-import RequestCounter, { RequestCounterFactory } from './classes/request-counter'
-import SessionManager, { SessionManagerFactory } from './classes/session-manager'
+import { ChallengeVerifier } from './classes/challenge-verifier'
+import { RequestCounter, RequestCounterFactory } from './classes/request-counter'
+import { SessionManager, SessionManagerFactory } from './classes/session-manager'
 import { generateAccessToken, verifyReceivedJwt } from './jwt-utils'
 import {
   REQUEST_SIGNUP_PATH, SIGNUP_PATH, REQUEST_AUTH_PATH,
@@ -25,7 +25,7 @@ export default function setupAppFactory (config: ExpressDidAuthConfig) {
     refreshTokens: { }
   }
 
-  const challengeVerifier = new ChallengeVerifierImplementation(adaptToChallengeConfig(config))
+  const challengeVerifier = new ChallengeVerifier(adaptToChallengeConfig(config))
 
   const sessionManagerFactory: SessionManagerFactory = (metadata?: any) => new SessionManager(adaptToUserSessionConfig(config), metadata)
   const requestCounterFactory: RequestCounterFactory = () => new RequestCounter(adaptToRequestCounterConfig(config))

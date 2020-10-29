@@ -1,5 +1,5 @@
 import { requestSignupFactory } from '../src/factories/request-signup-factory'
-import ChallengeVerifier from '../src/classes/challenge-verifier'
+import { ChallengeVerifier } from '../src/classes/challenge-verifier'
 import { identityFactory, mockedResFactory, modulo0Timestamp } from './utils'
 import MockDate from 'mockdate'
 import { INVALID_DID } from '../src/errors'

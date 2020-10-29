@@ -4,23 +4,22 @@ import { INVALID_HEADER, NO_ACCESS_TOKEN, UNHANDLED_ERROR } from '../errors'
 import { verifyReceivedJwt } from '../jwt-utils'
 import { AppState, TokenValidationConfig } from '../types'
 
+function extractAccessToken (req, useCookies: boolean) {
+  if (useCookies) return req.cookies[ACCESS_TOKEN_COOKIE_NAME]
+
+  const header = req.headers[ACCESS_TOKEN_HEADER_NAME] || req.headers[ACCESS_TOKEN_HEADER_NAME.toLowerCase()]
+  if (!header) throw new Error(NO_ACCESS_TOKEN)
+
+  const [scheme, token] = header.split(' ')
+  if (scheme !== DID_AUTH_SCHEME) throw new Error(INVALID_HEADER)
+
+  return token
+}
+
 export function expressMiddlewareFactory (state: AppState, config: TokenValidationConfig) {
   return async function (req, res, next) {
     try {
-      let jwt: string
-      if (config.useCookies) {
-        jwt = req.cookies[ACCESS_TOKEN_COOKIE_NAME]
-      } else {
-        const header = req.headers[ACCESS_TOKEN_HEADER_NAME] || req.headers[ACCESS_TOKEN_HEADER_NAME.toLowerCase()]
-        if (!header) return res.status(401).send(NO_ACCESS_TOKEN)
-
-        const [scheme, token] = header.split(' ')
-        if (scheme !== DID_AUTH_SCHEME) {
-          return res.status(401).send(INVALID_HEADER)
-        }
-
-        jwt = token
-      }
+      const jwt = extractAccessToken(req, config.useCookies)
 
       if (!jwt) return res.status(401).send(NO_ACCESS_TOKEN)
 

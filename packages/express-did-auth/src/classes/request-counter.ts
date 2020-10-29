@@ -10,11 +10,7 @@ export interface RequestCounterConfig {
   timeSlot?: number
 }
 
-export interface RequestCounter {
-  count(): void
-}
-
-export default class implements RequestCounter {
+export class RequestCounter {
   private accesses: Timestamp[]
   private maxRequests: number
   private timeSlot: number

@@ -23,11 +23,10 @@ export function authenticationFactory (
 
       if (!response) return res.status(401).send(NO_RESPONSE)
 
-      const verified = await verifyReceivedJwt(response, config)
+      const { payload } = await verifyReceivedJwt(response, config)
+      const { iss, challenge } = payload as ChallengeResponsePayload
 
-      const payload = verified.payload as ChallengeResponsePayload
-
-      if (!challengeVerifier.verify(payload.iss!, payload.challenge)) {
+      if (!challengeVerifier.verify(iss!, challenge)) {
         return res.status(401).send(INVALID_CHALLENGE)
       }
 
@@ -35,16 +34,14 @@ export function authenticationFactory (
 
       if (!isValid) return res.status(401).send(UNAUTHORIZED_USER)
 
-      const did = payload.iss
-
       const requestCounter = requestCounterFactory()
       const sessionManager = sessionManagerFactory()
 
-      const accessToken = await generateAccessToken(did, config)
+      const accessToken = await generateAccessToken(iss, config)
       const refreshToken = sessionManager.createRefreshToken()
 
-      state.sessions[did] = { requestCounter, sessionManager }
-      state.refreshTokens[refreshToken] = did
+      state.sessions[iss] = { requestCounter, sessionManager }
+      state.refreshTokens[refreshToken] = iss
 
       if (!config.useCookies) return res.status(200).json({ accessToken, refreshToken })
 

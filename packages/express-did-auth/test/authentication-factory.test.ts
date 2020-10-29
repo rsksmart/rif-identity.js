@@ -1,5 +1,5 @@
 import { authenticationFactory } from '../src/factories/authentication-factory'
-import ChallengeVerifier from '../src/classes/challenge-verifier'
+import { ChallengeVerifier } from '../src/classes/challenge-verifier'
 import {
   challengeResponseFactory, getMockedAppState, Identity, identityFactory, mockedResFactory,
   MockedResponse, modulo0Timestamp, otherSlotTimestamp
@@ -7,8 +7,8 @@ import {
 import MockDate from 'mockdate'
 import { INVALID_CHALLENGE, NO_RESPONSE, UNAUTHORIZED_USER } from '../src/errors'
 import { AppState, AuthenticationBusinessLogic, SignupBusinessLogic, TokenConfig } from '../src/types'
-import RequestCounter, { RequestCounterConfig, RequestCounterFactory } from '../src/classes/request-counter'
-import SessionManager, { SessionManagerFactory, UserSessionConfig } from '../src/classes/session-manager'
+import { RequestCounter, RequestCounterConfig, RequestCounterFactory } from '../src/classes/request-counter'
+import { SessionManager, SessionManagerFactory, UserSessionConfig } from '../src/classes/session-manager'
 
 describe('authenticationFactory', () => {
   let config: TokenConfig

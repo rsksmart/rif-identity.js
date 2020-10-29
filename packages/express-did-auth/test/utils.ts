@@ -2,8 +2,8 @@ import { rskDIDFromPrivateKey } from '@rsksmart/rif-id-ethr-did'
 import { mnemonicToSeed, seedToRSKHDKey, generateMnemonic } from '@rsksmart/rif-id-mnemonic'
 import { createJWT, Signer } from 'did-jwt'
 import { AppState, ChallengeResponsePayload, SelectiveDisclosureResponse } from '../src/types'
-import RequesCounter, { RequestCounterConfig } from '../src/classes/request-counter'
-import SessionManager, { UserSessionConfig } from '../src/classes/session-manager'
+import { RequestCounter, RequestCounterConfig } from '../src/classes/request-counter'
+import { SessionManager, UserSessionConfig } from '../src/classes/session-manager'
 
 export interface Identity {
   did: string
@@ -73,7 +73,7 @@ export const getMockedAppState = (did?: string, counterConfig?: RequestCounterCo
 
   if (did) {
     state.sessions[did] = {
-      requestCounter: new RequesCounter(counterConfig || {}),
+      requestCounter: new RequestCounter(counterConfig || {}),
       sessionManager: new SessionManager(sessionConfig || {})
     }
 
