@@ -1,9 +1,20 @@
 <p align="middle">
-    <img src="https://www.rifos.org/assets/img/logo.svg" alt="logo" height="100" >
+  <img src="https://www.rifos.org/assets/img/logo.svg" alt="logo" height="100" >
 </p>
 <h3 align="middle"><code>express-did-auth</code></h3>
 <p align="middle">
     Express DID Auth
+</p>
+<p align="middle">
+  <a href="https://rsksmart.github.io/rif-identity-docs/ssi/specs/did-auth">
+    <img src="https://img.shields.io/badge/-specs-lightgrey" alt="specs" />
+  </a>
+  <a href="https://rsksmart.github.io/rif-identity-docs/ssi/libraries/express-did-auth">
+    <img src="https://img.shields.io/badge/-docs-brightgreen" alt="docs" />
+  </a>
+  <a href="https://badge.fury.io/js/%40rsksmart%2Fexpress-did-auth">
+    <img src="https://badge.fury.io/js/%40rsksmart%2Fexpress-did-auth.svg" alt="npm" />
+  </a>
 </p>
 
 ```
@@ -11,6 +22,13 @@ npm i @rsksmart/express-did-auth
 ```
 
 This module includes a plug and play authentication framework to be used in Express applications, it implements the DID Authentication protocol designed by RIF Identity.
+
+## Features
+
+- **Sign up** flow authenticating user's DID and Verifiable Credentials
+- **Sign in** flow authenticating user's DID
+- **Authenticate requests** using Express middleware
+- **Log out** flow
 
 ## Usage
 
@@ -21,7 +39,6 @@ This approach will add the following endpoints to your app:
 - POST `/auth`
 - POST `/refresh-token`
 - POST `/logout`
-
 
 ```typescript
 import express from 'express'
@@ -53,6 +70,10 @@ app.listen(port, () => logger.info(`My express API with did-auth running in ${po
 ```
 
 Check out more configuration options and usage details in our [RSK Developers Portal](https://developers.rsk.co/rif/identity/).
+
+## Open work
+
+- Formalize and implement Selective Disclosure request standard schema
 
 ## Test
 
