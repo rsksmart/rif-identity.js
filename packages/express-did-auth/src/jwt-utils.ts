@@ -7,7 +7,7 @@ import {
 } from './constants'
 import { ACCESS_TOKEN_EXPIRATION } from './defaults'
 import { EXPIRED_ACCESS_TOKEN, INVALID_ACCESS_TOKEN } from './errors'
-import { AuthenticationConfig, TokenValidationConfig } from './types'
+import { AuthenticationConfig, DidResolverConfig, TokenValidationConfig } from './types'
 
 export function generateAccessToken (
   subjectDid: string,
@@ -30,7 +30,7 @@ export function generateAccessToken (
   return createJWT(payload, { issuer: serviceDid, signer }, { typ: 'JWT', alg: 'ES256K' })
 }
 
-export function getDidResolver (config: TokenValidationConfig) {
+export function getDidResolver (config: DidResolverConfig) {
   const registry = config.registry || REGISTRY_ADDRESS
 
   const networks = config.rpcUrl ? [

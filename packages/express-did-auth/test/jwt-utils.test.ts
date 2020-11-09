@@ -12,7 +12,7 @@ describe('JWT Utils', () => {
   let config: AuthenticationConfig
 
   const serviceUrl = 'https://service.com'
-  const resolver = getDidResolver({ serviceUrl })
+  const resolver = getDidResolver({})
 
   beforeAll(async () => {
     issuerIdentity = await identityFactory()
