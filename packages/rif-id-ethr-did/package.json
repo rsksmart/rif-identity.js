@@ -34,7 +34,7 @@
     "rskjs-util": "^1.0.3"
   },
   "devDependencies": {
-    "ganache-cli": "^6.10.0-beta.2",
+    "ganache-cli": "^6.12.0",
     "web3": "^1.2.9"
   }
 }
