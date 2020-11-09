@@ -2,7 +2,7 @@ import { JWTPayload } from 'did-jwt'
 import { ACCESS_TOKEN_COOKIE_NAME, ACCESS_TOKEN_HEADER_NAME, DID_AUTH_SCHEME } from '../constants'
 import { CORRUPTED_ACCESS_TOKEN, INVALID_HEADER, NO_ACCESS_TOKEN, UNHANDLED_ERROR } from '../errors'
 import { verifyReceivedJwt } from '../jwt-utils'
-import { AppState, TokenConfig } from '../types'
+import { AppState, TokenValidationConfig } from '../types'
 
 function extractAccessToken (req, useCookies: boolean) {
   if (useCookies) return req.cookies[ACCESS_TOKEN_COOKIE_NAME]
@@ -16,7 +16,7 @@ function extractAccessToken (req, useCookies: boolean) {
   return token
 }
 
-export function expressMiddlewareFactory (state: AppState, config: TokenConfig) {
+export function expressMiddlewareFactory (state: AppState, config: TokenValidationConfig) {
   return async function (req, res, next) {
     try {
       const jwt = extractAccessToken(req, config.useCookies)
