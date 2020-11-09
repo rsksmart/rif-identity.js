@@ -11,6 +11,7 @@ describe('Express app tests', () => {
   let refreshToken: string
   let oldRefreshToken: string
   let challenge: string
+  let serviceDid: string
 
   const challengeSecret = 'theSecret'
   const serviceUrl = 'https://service.com'
@@ -23,7 +24,7 @@ describe('Express app tests', () => {
     userDid = userIdentity.did
     const serviceIdentity = await identityFactory()
     const serviceSigner = serviceIdentity.signer
-    const serviceDid = serviceIdentity.did
+    serviceDid = serviceIdentity.did
 
     setupApp({ challengeSecret, serviceUrl, serviceDid, serviceSigner })(app)
   })
@@ -36,7 +37,7 @@ describe('Express app tests', () => {
   })
 
   test('2. POST /signup', async () => {
-    const challengeResponse = await challengeResponseFactory(challenge, userIdentity, serviceUrl)
+    const challengeResponse = await challengeResponseFactory(challenge, userIdentity, serviceDid, serviceUrl)
     const response = await agent.post('/signup').send({ response: challengeResponse }).expect(200)
 
     accessToken = response.body.accessToken
@@ -57,7 +58,7 @@ describe('Express app tests', () => {
   })
 
   test('4. POST /auth', async () => {
-    const challengeResponse = await challengeResponseFactory(challenge, userIdentity, serviceUrl)
+    const challengeResponse = await challengeResponseFactory(challenge, userIdentity, serviceDid, serviceUrl)
     const response = await agent.post('/auth').send({ response: challengeResponse }).expect(200)
 
     accessToken = response.body.accessToken

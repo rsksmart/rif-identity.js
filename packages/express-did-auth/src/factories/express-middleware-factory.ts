@@ -1,8 +1,8 @@
 import { JWTPayload } from 'did-jwt'
 import { ACCESS_TOKEN_COOKIE_NAME, ACCESS_TOKEN_HEADER_NAME, DID_AUTH_SCHEME } from '../constants'
-import { INVALID_HEADER, NO_ACCESS_TOKEN, UNHANDLED_ERROR } from '../errors'
+import { CORRUPTED_ACCESS_TOKEN, INVALID_HEADER, NO_ACCESS_TOKEN, UNHANDLED_ERROR } from '../errors'
 import { verifyReceivedJwt } from '../jwt-utils'
-import { AppState, TokenValidationConfig } from '../types'
+import { AppState, TokenConfig } from '../types'
 
 function extractAccessToken (req, useCookies: boolean) {
   if (useCookies) return req.cookies[ACCESS_TOKEN_COOKIE_NAME]
@@ -16,7 +16,7 @@ function extractAccessToken (req, useCookies: boolean) {
   return token
 }
 
-export function expressMiddlewareFactory (state: AppState, config: TokenValidationConfig) {
+export function expressMiddlewareFactory (state: AppState, config: TokenConfig) {
   return async function (req, res, next) {
     try {
       const jwt = extractAccessToken(req, config.useCookies)
@@ -24,6 +24,8 @@ export function expressMiddlewareFactory (state: AppState, config: TokenValidati
       if (!jwt) return res.status(401).send(NO_ACCESS_TOKEN)
 
       const verified = await verifyReceivedJwt(jwt, config)
+      if (verified.issuer !== config.serviceDid) return res.status(401).send(CORRUPTED_ACCESS_TOKEN)
+
       const payload = verified.payload as JWTPayload
       const did = payload.sub
 
