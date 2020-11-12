@@ -1,5 +1,5 @@
 import { ACCESS_TOKEN_COOKIE_NAME, COOKIES_ATTRIBUTES, REFRESH_TOKEN_COOKIE_NAME } from '../constants'
-import { INVALID_CHALLENGE, NO_RESPONSE, UNAUTHORIZED_USER } from '../errors'
+import { CORRUPTED_CHALLENGE, INVALID_CHALLENGE, NO_RESPONSE, UNAUTHORIZED_USER } from '../errors'
 import {
   AuthenticationBusinessLogic, SignupBusinessLogic,
   ChallengeResponsePayload, AppState, AuthenticationConfig
@@ -24,7 +24,9 @@ export function authenticationFactory (
       if (!response) return res.status(401).send(NO_RESPONSE)
 
       const { payload } = await verifyReceivedJwt(response, config)
-      const { iss, challenge } = payload as ChallengeResponsePayload
+      const { iss, challenge, sub } = payload as ChallengeResponsePayload
+
+      if (sub !== config.serviceDid) return res.status(401).send(CORRUPTED_CHALLENGE)
 
       if (!challengeVerifier.verify(iss!, challenge)) {
         return res.status(401).send(INVALID_CHALLENGE)

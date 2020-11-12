@@ -25,7 +25,7 @@ describe('Express app tests', () => {
     const requestAuthResponse = await request(app).get(`/request-auth/${userDid}`).expect(200)
     const challenge = requestAuthResponse.body.challenge
 
-    const challengeResponse = await challengeResponseFactory(challenge, userIdentity, serviceUrl)
+    const challengeResponse = await challengeResponseFactory(challenge, userIdentity, serviceDid, serviceUrl)
     const authResponse = await request(app).post('/auth').send({ response: challengeResponse }).expect(200)
 
     accessToken = authResponse.body.accessToken

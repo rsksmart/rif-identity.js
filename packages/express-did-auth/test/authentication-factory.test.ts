@@ -5,7 +5,7 @@ import {
   MockedResponse, modulo0Timestamp, otherSlotTimestamp
 } from './utils'
 import MockDate from 'mockdate'
-import { INVALID_CHALLENGE, NO_RESPONSE, UNAUTHORIZED_USER } from '../src/errors'
+import { CORRUPTED_CHALLENGE, INVALID_CHALLENGE, NO_RESPONSE, UNAUTHORIZED_USER } from '../src/errors'
 import { AppState, AuthenticationBusinessLogic, SignupBusinessLogic, TokenConfig } from '../src/types'
 import { RequestCounter, RequestCounterConfig, RequestCounterFactory } from '../src/classes/request-counter'
 import { SessionManager, SessionManagerFactory, UserSessionConfig } from '../src/classes/session-manager'
@@ -51,11 +51,26 @@ describe('authenticationFactory', () => {
     await testAuthFactory(state)(req, res)
   })
 
-  test('should respond with 401 if extra business logic that returns false ', async () => {
+  test('should respond with 401 if the subject of the challenge response is not the service did', async () => {
     MockDate.set(modulo0Timestamp)
 
     const challenge = challengeVerifier.get(userIdentity.did)
-    const challengeResponseJwt = await challengeResponseFactory(challenge, userIdentity, config.serviceUrl)
+    const anotherIdentity = await identityFactory()
+
+    const challengeResponseJwt = await challengeResponseFactory(challenge, userIdentity, anotherIdentity.did, config.serviceUrl)
+
+    const req = { body: { response: challengeResponseJwt } }
+    const res = mockedResFactory(401, CORRUPTED_CHALLENGE)
+
+    const logic = mockBusinessLogicFactory(false)
+    await testAuthFactory(state, logic)(req, res)
+  })
+
+  test('should respond with 401 if extra business logic that returns false', async () => {
+    MockDate.set(modulo0Timestamp)
+
+    const challenge = challengeVerifier.get(userIdentity.did)
+    const challengeResponseJwt = await challengeResponseFactory(challenge, userIdentity, config.serviceDid, config.serviceUrl)
 
     const req = { body: { response: challengeResponseJwt } }
     const res = mockedResFactory(401, UNAUTHORIZED_USER)
@@ -64,11 +79,11 @@ describe('authenticationFactory', () => {
     await testAuthFactory(state, logic)(req, res)
   })
 
-  test('should respond with 401 if extra business logic that returns false ', async () => {
+  test('should respond with 401 if extra business logic that throws an error', async () => {
     MockDate.set(modulo0Timestamp)
 
     const challenge = challengeVerifier.get(userIdentity.did)
-    const challengeResponseJwt = await challengeResponseFactory(challenge, userIdentity, config.serviceUrl)
+    const challengeResponseJwt = await challengeResponseFactory(challenge, userIdentity, config.serviceDid, config.serviceUrl)
 
     const errorMessage = 'This is an error'
     const req = { body: { response: challengeResponseJwt } }
@@ -82,7 +97,7 @@ describe('authenticationFactory', () => {
     MockDate.set(modulo0Timestamp)
 
     const challenge = challengeVerifier.get(userIdentity.did)
-    const challengeResponseJwt = await challengeResponseFactory(challenge, userIdentity, config.serviceUrl)
+    const challengeResponseJwt = await challengeResponseFactory(challenge, userIdentity, config.serviceDid, config.serviceUrl)
 
     const req = { body: { response: challengeResponseJwt } }
     const res = mockedResFactory(401, INVALID_CHALLENGE)
@@ -98,7 +113,7 @@ describe('authenticationFactory', () => {
       MockDate.set(modulo0Timestamp)
 
       const challenge = challengeVerifier.get(userIdentity.did)
-      const challengeResponseJwt = await challengeResponseFactory(challenge, userIdentity, config.serviceUrl)
+      const challengeResponseJwt = await challengeResponseFactory(challenge, userIdentity, config.serviceDid, config.serviceUrl)
 
       req = { body: { response: challengeResponseJwt } }
 

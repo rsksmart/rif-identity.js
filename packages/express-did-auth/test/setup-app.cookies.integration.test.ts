@@ -13,6 +13,7 @@ describe.skip('Express app tests (using cookies)', () => {
   let refreshTokenCookie: string
   let oldRefreshTokenCookie: string
   let challenge: string
+  let serviceDid: string
 
   const cookieApp = express()
   const cookieAgent = request.agent(cookieApp)
@@ -24,7 +25,7 @@ describe.skip('Express app tests (using cookies)', () => {
     userDid = userIdentity.did
     const serviceIdentity = await identityFactory()
     const serviceSigner = serviceIdentity.signer
-    const serviceDid = serviceIdentity.did
+    serviceDid = serviceIdentity.did
 
     setupApp({ challengeSecret, serviceUrl, serviceDid, serviceSigner, useCookies: true })(cookieApp)
   })
@@ -37,7 +38,7 @@ describe.skip('Express app tests (using cookies)', () => {
   })
 
   it('2. POST /signup', async () => {
-    const challengeResponse = await challengeResponseFactory(challenge, userIdentity, serviceUrl)
+    const challengeResponse = await challengeResponseFactory(challenge, userIdentity, serviceDid, serviceUrl)
     const { header, body } = await cookieAgent.post('/signup').send({ response: challengeResponse }).expect(200)
 
     expect(body).toMatchObject({})
@@ -54,7 +55,7 @@ describe.skip('Express app tests (using cookies)', () => {
   })
 
   it('4. POST /auth', async () => {
-    const challengeResponse = await challengeResponseFactory(challenge, userIdentity, serviceUrl)
+    const challengeResponse = await challengeResponseFactory(challenge, userIdentity, serviceDid, serviceUrl)
     const { header, body } = await cookieAgent.post('/auth').send({ response: challengeResponse }).expect(200)
 
     expect(body).toMatchObject({})

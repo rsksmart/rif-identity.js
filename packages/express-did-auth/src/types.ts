@@ -54,10 +54,10 @@ export interface DidResolverConfig {
 export interface TokenValidationConfig extends DidResolverConfig {
   serviceUrl: string
   useCookies?: boolean
+  serviceDid: string
 }
 
 export interface TokenConfig extends TokenValidationConfig {
-  serviceDid: string
   serviceSigner: Signer
 }
 

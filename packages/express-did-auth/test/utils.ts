@@ -47,6 +47,7 @@ export const identityFactory = async (): Promise<Identity> => {
 export const challengeResponseFactory = async (
   challenge: string,
   issuer: Identity,
+  serviceDid: string,
   serviceUrl: string,
   sdr?: SelectiveDisclosureResponse
 ): Promise<string> => {
@@ -58,6 +59,7 @@ export const challengeResponseFactory = async (
     exp: now + 120, // 2 mins validity
     nbf: now,
     iat: now,
+    sub: serviceDid,
     sdr
   }
 
