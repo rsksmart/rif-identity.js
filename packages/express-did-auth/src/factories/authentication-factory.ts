@@ -1,11 +1,11 @@
 import { ecrecover, fromRpcSig, hashPersonalMessage, pubToAddress } from 'ethereumjs-util'
 import { ACCESS_TOKEN_COOKIE_NAME, COOKIES_ATTRIBUTES, REFRESH_TOKEN_COOKIE_NAME } from '../constants'
-import { CORRUPTED_CHALLENGE, INVALID_CHALLENGE, NO_RESPONSE, UNAUTHORIZED_USER } from '../errors'
+import { CORRUPTED_CHALLENGE, /* INVALID_CHALLENGE, */ NO_RESPONSE, UNAUTHORIZED_USER } from '../errors'
 import {
   AuthenticationBusinessLogic, SignupBusinessLogic,
-  ChallengeResponsePayload, AppState, AuthenticationConfig
+  /* ChallengeResponsePayload, */ AppState, AuthenticationConfig
 } from '../types'
-import { generateAccessToken, verifyReceivedJwt } from '../jwt-utils'
+import { generateAccessToken/*, verifyReceivedJwt */ } from '../jwt-utils'
 import { ChallengeVerifier } from '../classes/challenge-verifier'
 import { SessionManagerFactory } from '../classes/session-manager'
 import { RequestCounterFactory } from '../classes/request-counter'
@@ -43,14 +43,14 @@ export function authenticationFactory (
 
       if (address !== did.split(':').pop().toLowerCase()) return res.status(401).send(CORRUPTED_CHALLENGE)
 
-      //const { payload } = await verifyReceivedJwt(response, config)
-      //const { iss, challenge, sub } = payload as ChallengeResponsePayload
+      // const { payload } = await verifyReceivedJwt(response, config)
+      // const { iss, challenge, sub } = payload as ChallengeResponsePayload
 
-      //if (sub !== config.serviceDid) return res.status(401).send(CORRUPTED_CHALLENGE)
+      // if (sub !== config.serviceDid) return res.status(401).send(CORRUPTED_CHALLENGE)
 
-      //if (!challengeVerifier.verify(iss!, challenge)) {
+      // if (!challengeVerifier.verify(iss!, challenge)) {
       //  return res.status(401).send(INVALID_CHALLENGE)
-      //}
+      // }
 
       const isValid = businessLogic ? await businessLogic(null) : true
 
