@@ -1,6 +1,7 @@
 import { rskDIDFromPrivateKey } from '@rsksmart/rif-id-ethr-did'
 import { mnemonicToSeed, seedToRSKHDKey, generateMnemonic } from '@rsksmart/rif-id-mnemonic'
 import { createJWT, Signer } from 'did-jwt'
+import { toRpcSig, ecsign, hashPersonalMessage } from 'ethereumjs-util'
 import { AppState, ChallengeResponsePayload, SelectiveDisclosureResponse } from '../src/types'
 import { RequestCounter, RequestCounterConfig } from '../src/classes/request-counter'
 import { SessionManager, UserSessionConfig } from '../src/classes/session-manager'
@@ -44,6 +45,15 @@ export const identityFactory = async (): Promise<Identity> => {
   return rskDIDFromPrivateKey()(privateKey)
 }
 
+export const identityFactory2 = async (): Promise<{ identity: Identity, privateKey: string }> => {
+  const mnemonic = generateMnemonic(12)
+  const seed = await mnemonicToSeed(mnemonic)
+  const hdKey = seedToRSKHDKey(seed)
+
+  const privateKey = hdKey.derive(0).privateKey.toString('hex')
+  return { identity: await rskDIDFromPrivateKey()(privateKey), privateKey }
+}
+
 export const challengeResponseFactory = async (
   challenge: string,
   issuer: Identity,
@@ -64,6 +74,24 @@ export const challengeResponseFactory = async (
   }
 
   return createJWT(payload, { issuer: issuer.did, signer: issuer.signer }, { typ: 'JWT', alg: 'ES256K' })
+}
+
+export const challengeResponseFactory2 = async (
+  challenge: string,
+  issuer: Identity,
+  issuerPrivateKey: string,
+  serviceUrl: string,
+  sdr?: SelectiveDisclosureResponse
+): Promise<{ did: string, sig: string }> => {
+  const message = `Login to ${serviceUrl}\nVerification code: ${challenge}`
+  const messageDigest = hashPersonalMessage(Buffer.from(message))
+
+  const ecdsaSignature = ecsign(
+    messageDigest,
+    Buffer.from(issuerPrivateKey, 'hex')
+  )
+
+  return { did: issuer.did, sig: toRpcSig(ecdsaSignature.v, ecdsaSignature.r, ecdsaSignature.s) }
 }
 
 export const getMockedAppState = (did?: string, counterConfig?: RequestCounterConfig, sessionConfig?: UserSessionConfig): { state: AppState, refreshToken: string} => {

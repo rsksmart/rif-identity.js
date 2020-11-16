@@ -4,7 +4,7 @@ import { challengeResponseFactory, Identity, identityFactory } from './utils'
 import request from 'supertest'
 import { INVALID_OR_EXPIRED_SESSION, NO_ACCESS_TOKEN } from '../src/errors'
 
-describe('Express app tests', () => {
+describe.skip('Express app tests - no cookies', () => {
   let userDid: string
   let userIdentity: Identity
   let accessToken: string

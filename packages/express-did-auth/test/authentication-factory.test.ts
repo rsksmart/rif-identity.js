@@ -1,7 +1,7 @@
 import { authenticationFactory } from '../src/factories/authentication-factory'
 import { ChallengeVerifier } from '../src/classes/challenge-verifier'
 import {
-  challengeResponseFactory, getMockedAppState, Identity, identityFactory, mockedResFactory,
+  challengeResponseFactory, challengeResponseFactory2, identityFactory2, getMockedAppState, Identity, identityFactory, mockedResFactory,
   MockedResponse, modulo0Timestamp, otherSlotTimestamp
 } from './utils'
 import MockDate from 'mockdate'
@@ -112,10 +112,12 @@ describe('authenticationFactory', () => {
     beforeEach(async () => {
       MockDate.set(modulo0Timestamp)
 
-      const challenge = challengeVerifier.get(userIdentity.did)
-      const challengeResponseJwt = await challengeResponseFactory(challenge, userIdentity, config.serviceDid, config.serviceUrl)
+      const identity2 = await identityFactory2()
+      userIdentity = identity2.identity
 
-      req = { body: { response: challengeResponseJwt } }
+      const challenge = challengeVerifier.get(userIdentity.did)
+      const response = await challengeResponseFactory2(challenge, userIdentity, identity2.privateKey, config.serviceUrl)
+      req = { body: { response } }
 
       const expectedAssertion = (response: MockedResponse) => {
         // eslint-disable-next-line dot-notation
@@ -126,7 +128,7 @@ describe('authenticationFactory', () => {
       res = mockedResFactory(200, undefined, expectedAssertion)
     })
 
-    test('no extra business logic', async () => {
+    test.only('no extra business logic', async () => {
       await testAuthFactory(state)(req, res)
     })
 
