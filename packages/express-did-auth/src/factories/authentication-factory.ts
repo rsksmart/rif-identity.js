@@ -1,6 +1,6 @@
 import { ecrecover, fromRpcSig, hashPersonalMessage, pubToAddress } from 'ethereumjs-util'
 import { ACCESS_TOKEN_COOKIE_NAME, COOKIES_ATTRIBUTES, REFRESH_TOKEN_COOKIE_NAME } from '../constants'
-import { CORRUPTED_CHALLENGE, /* INVALID_CHALLENGE, */ NO_RESPONSE, UNAUTHORIZED_USER } from '../errors'
+import { INVALID_CHALLENGE_RESPONSE, NO_RESPONSE, UNAUTHORIZED_USER } from '../errors'
 import {
   AuthenticationBusinessLogic, SignupBusinessLogic,
   /* ChallengeResponsePayload, */ AppState, AuthenticationConfig
@@ -38,10 +38,7 @@ export function authenticationFactory (
         ecdsaSignature.s
       )).toString('hex')
 
-      console.log(address)
-      console.log(did)
-
-      if (address !== did.split(':').pop().toLowerCase()) return res.status(401).send(CORRUPTED_CHALLENGE)
+      if (address !== did.split(':').pop().toLowerCase()) return res.status(401).send(INVALID_CHALLENGE_RESPONSE)
 
       // const { payload } = await verifyReceivedJwt(response, config)
       // const { iss, challenge, sub } = payload as ChallengeResponsePayload

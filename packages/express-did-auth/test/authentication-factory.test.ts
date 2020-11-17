@@ -1,11 +1,11 @@
 import { authenticationFactory } from '../src/factories/authentication-factory'
 import { ChallengeVerifier } from '../src/classes/challenge-verifier'
 import {
-  challengeResponseFactory, challengeResponseFactory2, identityFactory2, getMockedAppState, Identity, identityFactory, mockedResFactory,
+  challengeResponseFactory2, identityFactory2, getMockedAppState, Identity, identityFactory, mockedResFactory,
   MockedResponse, modulo0Timestamp, otherSlotTimestamp
 } from './utils'
 import MockDate from 'mockdate'
-import { CORRUPTED_CHALLENGE, INVALID_CHALLENGE, NO_RESPONSE, UNAUTHORIZED_USER } from '../src/errors'
+import { INVALID_CHALLENGE_RESPONSE, NO_RESPONSE, UNAUTHORIZED_USER } from '../src/errors'
 import { AppState, AuthenticationBusinessLogic, SignupBusinessLogic, TokenConfig } from '../src/types'
 import { RequestCounter, RequestCounterConfig, RequestCounterFactory } from '../src/classes/request-counter'
 import { SessionManager, SessionManagerFactory, UserSessionConfig } from '../src/classes/session-manager'
@@ -13,6 +13,7 @@ import { SessionManager, SessionManagerFactory, UserSessionConfig } from '../src
 describe('authenticationFactory', () => {
   let config: TokenConfig
   let userIdentity: Identity
+  let userPrivateKey: string
   let state: AppState
 
   const mockBusinessLogicFactory = (result: boolean) => async () => result
@@ -35,7 +36,9 @@ describe('authenticationFactory', () => {
       serviceUrl: 'https://the.service.com'
     }
 
-    userIdentity = await identityFactory()
+    const { identity, privateKey } = identityFactory2()
+    userIdentity = identity
+    userPrivateKey = privateKey
   })
 
   beforeEach(() => {
@@ -51,26 +54,69 @@ describe('authenticationFactory', () => {
     await testAuthFactory(state)(req, res)
   })
 
-  test('should respond with 401 if the subject of the challenge response is not the service did', async () => {
+  test('should respond with 401 if the subject of the challenge response is not the service url', async () => {
     MockDate.set(modulo0Timestamp)
 
     const challenge = challengeVerifier.get(userIdentity.did)
-    const anotherIdentity = await identityFactory()
 
-    const challengeResponseJwt = await challengeResponseFactory(challenge, userIdentity, anotherIdentity.did, config.serviceUrl)
+    const challengeResponseJwt = challengeResponseFactory2(challenge, userIdentity, userPrivateKey, 'https://taringa.net')
 
     const req = { body: { response: challengeResponseJwt } }
-    const res = mockedResFactory(401, CORRUPTED_CHALLENGE)
+    const res = mockedResFactory(401, INVALID_CHALLENGE_RESPONSE)
 
     const logic = mockBusinessLogicFactory(false)
     await testAuthFactory(state, logic)(req, res)
+  })
+
+  test('should respond with 401 if the subject of the signer is not the given did', async () => {
+    MockDate.set(modulo0Timestamp)
+
+    const challenge = challengeVerifier.get(userIdentity.did)
+    const anotherIdentity = await identityFactory2()
+
+    const challengeResponseJwt = challengeResponseFactory2(challenge, anotherIdentity.identity, anotherIdentity.privateKey, 'https://taringa.net')
+
+    const req = { body: { response: challengeResponseJwt } }
+    const res = mockedResFactory(401, INVALID_CHALLENGE_RESPONSE)
+
+    const logic = mockBusinessLogicFactory(false)
+    await testAuthFactory(state, logic)(req, res)
+  })
+
+  test('should respond with 401 if the subject of the signer is not the specified did', async () => {
+    MockDate.set(modulo0Timestamp)
+
+    const challenge = challengeVerifier.get(userIdentity.did)
+    const anotherIdentity = await identityFactory2()
+
+    const challengeResponseJwt = challengeResponseFactory2(challenge, anotherIdentity.identity, anotherIdentity.privateKey, 'https://taringa.net')
+    challengeResponseJwt.did = userIdentity.did
+
+    const req = { body: { response: challengeResponseJwt } }
+    const res = mockedResFactory(401, INVALID_CHALLENGE_RESPONSE)
+
+    const logic = mockBusinessLogicFactory(false)
+    await testAuthFactory(state, logic)(req, res)
+  })
+
+  test('should respond with 401 if invalid challenge', async () => {
+    MockDate.set(modulo0Timestamp)
+
+    const challenge = challengeVerifier.get(userIdentity.did)
+    const challengeResponseJwt = challengeResponseFactory2('a challenge', userIdentity, userPrivateKey, config.serviceUrl)
+
+    const req = { body: { response: challengeResponseJwt } }
+    const res = mockedResFactory(401, INVALID_CHALLENGE_RESPONSE)
+
+    MockDate.set(otherSlotTimestamp)
+    await testAuthFactory(state)(req, res)
   })
 
   test('should respond with 401 if extra business logic that returns false', async () => {
     MockDate.set(modulo0Timestamp)
 
     const challenge = challengeVerifier.get(userIdentity.did)
-    const challengeResponseJwt = await challengeResponseFactory(challenge, userIdentity, config.serviceDid, config.serviceUrl)
+    const challengeResponseJwt = challengeResponseFactory2(challenge, userIdentity, userPrivateKey, config.serviceUrl)
 
     const req = { body: { response: challengeResponseJwt } }
     const res = mockedResFactory(401, UNAUTHORIZED_USER)
@@ -83,7 +129,7 @@ describe('authenticationFactory', () => {
     MockDate.set(modulo0Timestamp)
 
     const challenge = challengeVerifier.get(userIdentity.did)
-    const challengeResponseJwt = await challengeResponseFactory(challenge, userIdentity, config.serviceDid, config.serviceUrl)
+    const challengeResponseJwt = challengeResponseFactory2(challenge, userIdentity, userPrivateKey, config.serviceUrl)
 
     const errorMessage = 'This is an error'
     const req = { body: { response: challengeResponseJwt } }
@@ -93,30 +139,14 @@ describe('authenticationFactory', () => {
     await testAuthFactory(state, logic)(req, res)
   })
 
-  test('should respond with 401 if invalid challenge', async () => {
-    MockDate.set(modulo0Timestamp)
-
-    const challenge = challengeVerifier.get(userIdentity.did)
-    const challengeResponseJwt = await challengeResponseFactory(challenge, userIdentity, config.serviceDid, config.serviceUrl)
-
-    const req = { body: { response: challengeResponseJwt } }
-    const res = mockedResFactory(401, INVALID_CHALLENGE)
-
-    MockDate.set(otherSlotTimestamp)
-    await testAuthFactory(state)(req, res)
-  })
-
   describe('no cookies', () => {
     let req, res
 
     beforeEach(async () => {
       MockDate.set(modulo0Timestamp)
 
-      const identity2 = await identityFactory2()
-      userIdentity = identity2.identity
-
       const challenge = challengeVerifier.get(userIdentity.did)
-      const response = await challengeResponseFactory2(challenge, userIdentity, identity2.privateKey, config.serviceUrl)
+      const response = await challengeResponseFactory2(challenge, userIdentity, userPrivateKey, config.serviceUrl)
       req = { body: { response } }
 
       const expectedAssertion = (response: MockedResponse) => {
@@ -128,7 +158,7 @@ describe('authenticationFactory', () => {
       res = mockedResFactory(200, undefined, expectedAssertion)
     })
 
-    test.only('no extra business logic', async () => {
+    test('no extra business logic', async () => {
       await testAuthFactory(state)(req, res)
     })
 

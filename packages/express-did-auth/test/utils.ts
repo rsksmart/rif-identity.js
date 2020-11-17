@@ -1,5 +1,5 @@
 import { rskDIDFromPrivateKey } from '@rsksmart/rif-id-ethr-did'
-import { mnemonicToSeed, seedToRSKHDKey, generateMnemonic } from '@rsksmart/rif-id-mnemonic'
+import { mnemonicToSeed, mnemonicToSeedSync, seedToRSKHDKey, generateMnemonic } from '@rsksmart/rif-id-mnemonic'
 import { createJWT, Signer } from 'did-jwt'
 import { toRpcSig, ecsign, hashPersonalMessage } from 'ethereumjs-util'
 import { AppState, ChallengeResponsePayload, SelectiveDisclosureResponse } from '../src/types'
@@ -45,13 +45,13 @@ export const identityFactory = async (): Promise<Identity> => {
   return rskDIDFromPrivateKey()(privateKey)
 }
 
-export const identityFactory2 = async (): Promise<{ identity: Identity, privateKey: string }> => {
+export const identityFactory2 = (): { identity: Identity, privateKey: string } => {
   const mnemonic = generateMnemonic(12)
-  const seed = await mnemonicToSeed(mnemonic)
+  const seed = mnemonicToSeedSync(mnemonic)
   const hdKey = seedToRSKHDKey(seed)
 
   const privateKey = hdKey.derive(0).privateKey.toString('hex')
-  return { identity: await rskDIDFromPrivateKey()(privateKey), privateKey }
+  return { identity: rskDIDFromPrivateKey()(privateKey), privateKey }
 }
 
 export const challengeResponseFactory = async (
@@ -76,13 +76,15 @@ export const challengeResponseFactory = async (
   return createJWT(payload, { issuer: issuer.did, signer: issuer.signer }, { typ: 'JWT', alg: 'ES256K' })
 }
 
-export const challengeResponseFactory2 = async (
+export type ChallengeResponse = { did: string, sig: string }
+
+export const challengeResponseFactory2 = (
   challenge: string,
   issuer: Identity,
   issuerPrivateKey: string,
   serviceUrl: string,
   sdr?: SelectiveDisclosureResponse
-): Promise<{ did: string, sig: string }> => {
+): ChallengeResponse => {
   const message = `Login to ${serviceUrl}\nVerification code: ${challenge}`
   const messageDigest = hashPersonalMessage(Buffer.from(message))
 
