@@ -1,7 +1,7 @@
 import { authenticationFactory } from '../src/factories/authentication-factory'
 import { ChallengeVerifier } from '../src/classes/challenge-verifier'
 import {
-  challengeResponseFactory2, identityFactory2, getMockedAppState, Identity, identityFactory, mockedResFactory,
+  identityFactory, challengeResponseFactory, getMockedAppState, Identity, mockedResFactory,
   MockedResponse, modulo0Timestamp, otherSlotTimestamp
 } from './utils'
 import MockDate from 'mockdate'
@@ -29,14 +29,14 @@ describe('authenticationFactory', () => {
   )
 
   beforeAll(async () => {
-    const serviceIdentity = await identityFactory()
+    const serviceIdentity = await identityFactory().identity
     config = {
       serviceDid: serviceIdentity.did,
       serviceSigner: serviceIdentity.signer,
       serviceUrl: 'https://the.service.com'
     }
 
-    const { identity, privateKey } = identityFactory2()
+    const { identity, privateKey } = identityFactory()
     userIdentity = identity
     userPrivateKey = privateKey
   })
@@ -59,7 +59,7 @@ describe('authenticationFactory', () => {
 
     const challenge = challengeVerifier.get(userIdentity.did)
 
-    const challengeResponseJwt = challengeResponseFactory2(challenge, userIdentity, userPrivateKey, 'https://taringa.net')
+    const challengeResponseJwt = challengeResponseFactory(challenge, userIdentity, userPrivateKey, 'https://taringa.net')
 
     const req = { body: { response: challengeResponseJwt } }
     const res = mockedResFactory(401, INVALID_CHALLENGE_RESPONSE)
@@ -72,9 +72,9 @@ describe('authenticationFactory', () => {
     MockDate.set(modulo0Timestamp)
 
     const challenge = challengeVerifier.get(userIdentity.did)
-    const anotherIdentity = await identityFactory2()
+    const anotherIdentity = await identityFactory()
 
-    const challengeResponseJwt = challengeResponseFactory2(challenge, anotherIdentity.identity, anotherIdentity.privateKey, 'https://taringa.net')
+    const challengeResponseJwt = challengeResponseFactory(challenge, anotherIdentity.identity, anotherIdentity.privateKey, 'https://taringa.net')
 
     const req = { body: { response: challengeResponseJwt } }
     const res = mockedResFactory(401, INVALID_CHALLENGE_RESPONSE)
@@ -87,9 +87,9 @@ describe('authenticationFactory', () => {
     MockDate.set(modulo0Timestamp)
 
     const challenge = challengeVerifier.get(userIdentity.did)
-    const anotherIdentity = await identityFactory2()
+    const anotherIdentity = await identityFactory()
 
-    const challengeResponseJwt = challengeResponseFactory2(challenge, anotherIdentity.identity, anotherIdentity.privateKey, 'https://taringa.net')
+    const challengeResponseJwt = challengeResponseFactory(challenge, anotherIdentity.identity, anotherIdentity.privateKey, 'https://taringa.net')
     challengeResponseJwt.did = userIdentity.did
 
     const req = { body: { response: challengeResponseJwt } }
@@ -103,7 +103,7 @@ describe('authenticationFactory', () => {
     MockDate.set(modulo0Timestamp)
 
     const challenge = challengeVerifier.get(userIdentity.did)
-    const challengeResponseJwt = challengeResponseFactory2('a challenge', userIdentity, userPrivateKey, config.serviceUrl)
+    const challengeResponseJwt = challengeResponseFactory('a challenge', userIdentity, userPrivateKey, config.serviceUrl)
 
     const req = { body: { response: challengeResponseJwt } }
     const res = mockedResFactory(401, INVALID_CHALLENGE_RESPONSE)
@@ -116,7 +116,7 @@ describe('authenticationFactory', () => {
     MockDate.set(modulo0Timestamp)
 
     const challenge = challengeVerifier.get(userIdentity.did)
-    const challengeResponseJwt = challengeResponseFactory2(challenge, userIdentity, userPrivateKey, config.serviceUrl)
+    const challengeResponseJwt = challengeResponseFactory(challenge, userIdentity, userPrivateKey, config.serviceUrl)
 
     const req = { body: { response: challengeResponseJwt } }
     const res = mockedResFactory(401, UNAUTHORIZED_USER)
@@ -129,7 +129,7 @@ describe('authenticationFactory', () => {
     MockDate.set(modulo0Timestamp)
 
     const challenge = challengeVerifier.get(userIdentity.did)
-    const challengeResponseJwt = challengeResponseFactory2(challenge, userIdentity, userPrivateKey, config.serviceUrl)
+    const challengeResponseJwt = challengeResponseFactory(challenge, userIdentity, userPrivateKey, config.serviceUrl)
 
     const errorMessage = 'This is an error'
     const req = { body: { response: challengeResponseJwt } }
@@ -146,7 +146,7 @@ describe('authenticationFactory', () => {
       MockDate.set(modulo0Timestamp)
 
       const challenge = challengeVerifier.get(userIdentity.did)
-      const response = await challengeResponseFactory2(challenge, userIdentity, userPrivateKey, config.serviceUrl)
+      const response = await challengeResponseFactory(challenge, userIdentity, userPrivateKey, config.serviceUrl)
       req = { body: { response } }
 
       const expectedAssertion = (response: MockedResponse) => {

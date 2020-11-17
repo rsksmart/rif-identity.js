@@ -1,6 +1,6 @@
 import express from 'express'
 import setupApp from '../src'
-import { challengeResponseFactory2, identityFactory2, ChallengeResponse } from './utils'
+import { challengeResponseFactory, identityFactory, ChallengeResponse } from './utils'
 import request from 'supertest'
 import { INVALID_OR_EXPIRED_SESSION, NO_ACCESS_TOKEN } from '../src/errors'
 
@@ -20,11 +20,11 @@ describe('Express app tests - no cookies', () => {
     let oldRefreshToken: string
     let challenge: string
 
-    const { identity, privateKey } = identityFactory2()
+    const { identity, privateKey } = identityFactory()
     const userIdentity = identity
     const userDid = userIdentity.did
 
-    const serviceIdentity = identityFactory2().identity
+    const serviceIdentity = identityFactory().identity
     const serviceSigner = serviceIdentity.signer
     const serviceDid = serviceIdentity.did
 
@@ -37,7 +37,7 @@ describe('Express app tests - no cookies', () => {
     expect(challenge).toBeTruthy()
 
     // 2. POST /signup
-    challengeResponse = challengeResponseFactory2(challenge, userIdentity, privateKey, serviceUrl)
+    challengeResponse = challengeResponseFactory(challenge, userIdentity, privateKey, serviceUrl)
     response = await agent.post('/signup').send({ response: challengeResponse }).expect(200)
 
     accessToken = response.body.accessToken
@@ -56,7 +56,7 @@ describe('Express app tests - no cookies', () => {
     expect(challenge).toBeTruthy()
 
     // 4. POST /auth
-    challengeResponse = challengeResponseFactory2(challenge, userIdentity, privateKey, serviceUrl)
+    challengeResponse = challengeResponseFactory(challenge, userIdentity, privateKey, serviceUrl)
     response = await agent.post('/auth').send({ response: challengeResponse }).expect(200)
 
     accessToken = response.body.accessToken

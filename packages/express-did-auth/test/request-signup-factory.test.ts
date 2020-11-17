@@ -19,7 +19,7 @@ describe('requestSignupFactory', () => {
   const serviceUrl = 'https://the.service.com'
 
   beforeAll(async () => {
-    const serviceIdentity = await identityFactory()
+    const serviceIdentity = await identityFactory().identity
     serviceDid = serviceIdentity.did
     serviceSigner = serviceIdentity.signer
   })

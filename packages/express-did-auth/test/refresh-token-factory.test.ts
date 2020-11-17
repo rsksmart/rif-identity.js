@@ -10,14 +10,14 @@ describe('RefreshTokenFactory', () => {
   let userIdentity: Identity
 
   beforeAll(async () => {
-    const serviceIdentity = await identityFactory()
+    const serviceIdentity = await identityFactory().identity
     accessTokenConfig = {
       serviceDid: serviceIdentity.did,
       serviceSigner: serviceIdentity.signer,
       serviceUrl
     }
 
-    userIdentity = await identityFactory()
+    userIdentity = await identityFactory().identity
   })
 
   test('should respond with 401 if no refresh token', async () => {

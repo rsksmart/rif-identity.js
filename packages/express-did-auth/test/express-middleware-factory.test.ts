@@ -12,14 +12,14 @@ describe('ExpressMiddlewareFactory', () => {
   let userIdentity: Identity
 
   beforeAll(async () => {
-    const serviceIdentity = await identityFactory()
+    const serviceIdentity = await identityFactory().identity
     config = {
       serviceDid: serviceIdentity.did,
       serviceSigner: serviceIdentity.signer,
       serviceUrl
     }
 
-    userIdentity = await identityFactory()
+    userIdentity = await identityFactory().identity
   })
 
   test('should respond with 401 if empty header', async () => {
@@ -52,7 +52,7 @@ describe('ExpressMiddlewareFactory', () => {
     })
 
     test('should respond with 401 if the issuer of the access token is not the service did', async () => {
-      const anotherIdentity = await identityFactory()
+      const anotherIdentity = await identityFactory().identity
       const anotherConfig = {
         serviceDid: anotherIdentity.did,
         serviceSigner: anotherIdentity.signer,

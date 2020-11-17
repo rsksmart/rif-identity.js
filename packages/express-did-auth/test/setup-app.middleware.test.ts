@@ -1,6 +1,6 @@
 import express from 'express'
 import setupApp from '../src'
-import { challengeResponseFactory2, identityFactory, identityFactory2 } from './utils'
+import { challengeResponseFactory, identityFactory } from './utils'
 import request from 'supertest'
 
 describe('Express app tests', () => {
@@ -13,12 +13,12 @@ describe('Express app tests', () => {
   const app = express()
 
   beforeAll(async () => {
-    const { identity, privateKey } = identityFactory2()
+    const { identity, privateKey } = identityFactory()
     const userIdentity = identity
     const userPrivateKey = privateKey
     const userDid = userIdentity.did
 
-    const serviceIdentity = await identityFactory()
+    const serviceIdentity = await identityFactory().identity
     const serviceSigner = serviceIdentity.signer
     const serviceDid = serviceIdentity.did
 
@@ -28,7 +28,7 @@ describe('Express app tests', () => {
     const requestAuthResponse = await request(app).get(`/request-auth/${userDid}`).expect(200)
     const challenge = requestAuthResponse.body.challenge
 
-    const challengeResponse = challengeResponseFactory2(challenge, userIdentity, userPrivateKey, serviceUrl)
+    const challengeResponse = challengeResponseFactory(challenge, userIdentity, userPrivateKey, serviceUrl)
     const authResponse = await request(app).post('/auth').send({ response: challengeResponse }).expect(200)
 
     accessToken = authResponse.body.accessToken
