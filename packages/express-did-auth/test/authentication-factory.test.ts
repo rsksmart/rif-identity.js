@@ -54,7 +54,7 @@ describe('authenticationFactory', () => {
     await testAuthFactory(state)(req, res)
   })
 
-  test('should respond with 401 if the subject of the challenge response is not the service url', async () => {
+  test('should respond with 401 if the signed message contains another service url', async () => {
     MockDate.set(modulo0Timestamp)
 
     const challenge = challengeVerifier.get(userIdentity.did)
