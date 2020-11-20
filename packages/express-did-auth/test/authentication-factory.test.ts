@@ -83,7 +83,7 @@ describe('authenticationFactory', () => {
     await testAuthFactory(state, logic)(req, res)
   })
 
-  test('should respond with 401 if the subject of the signer is not the specified did', async () => {
+  test('should respond with 401 if the signer of the message is not the specified did', async () => {
     MockDate.set(modulo0Timestamp)
 
     const challenge = challengeVerifier.get(userIdentity.did)
@@ -146,7 +146,7 @@ describe('authenticationFactory', () => {
       MockDate.set(modulo0Timestamp)
 
       const challenge = challengeVerifier.get(userIdentity.did)
-      const response = await challengeResponseFactory(challenge, userIdentity, userPrivateKey, config.serviceUrl)
+      const response = challengeResponseFactory(challenge, userIdentity, userPrivateKey, config.serviceUrl)
       req = { body: { response } }
 
       const expectedAssertion = (response: MockedResponse) => {
