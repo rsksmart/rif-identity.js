@@ -74,7 +74,7 @@ describe('authenticationFactory', () => {
     const challenge = challengeVerifier.get(userIdentity.did)
     const anotherIdentity = await identityFactory()
 
-    const challengeResponseJwt = challengeResponseFactory(challenge, anotherIdentity.identity, anotherIdentity.privateKey, 'https://taringa.net')
+    const challengeResponseJwt = challengeResponseFactory(challenge, anotherIdentity.identity, anotherIdentity.privateKey, config.serviceUrl)
 
     const req = { body: { response: challengeResponseJwt } }
     const res = mockedResFactory(401, INVALID_CHALLENGE_RESPONSE)
