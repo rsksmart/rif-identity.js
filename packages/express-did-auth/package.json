@@ -22,9 +22,9 @@
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/rsksamrt/rif-identity.js/issues"
+    "url": "https://github.com/rsksmart/rif-identity.js/issues"
   },
-  "homepage": "https://github.com/rsksamrt/rif-identity.js#readme",
+  "homepage": "https://github.com/rsksmart/rif-identity.js#readme",
   "dependencies": {
     "@types/body-parser": "^1.19.0",
     "@types/cookie-parser": "^1.4.2",
