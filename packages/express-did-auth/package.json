@@ -1,10 +1,12 @@
 {
   "name": "@rsksmart/express-did-auth",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Authentication with Verifiable Credentials for Express.js",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "files": ["lib/"],
+  "files": [
+    "lib/"
+  ],
   "scripts": {
     "build": "tsc"
   },
@@ -20,9 +22,9 @@
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/rsksamrt/rif-identity.js/issues"
+    "url": "https://github.com/rsksmart/rif-identity.js/issues"
   },
-  "homepage": "https://github.com/rsksamrt/rif-identity.js#readme",
+  "homepage": "https://github.com/rsksmart/rif-identity.js#readme",
   "dependencies": {
     "@types/body-parser": "^1.19.0",
     "@types/cookie-parser": "^1.4.2",
@@ -35,6 +37,7 @@
     "did-jwt": "^4.6.2",
     "did-jwt-vc": "^1.0.6",
     "did-resolver": "^2.1.1",
+    "ethereumjs-util": "^7.0.7",
     "ethr-did-resolver": "^3.0.0",
     "express": "^4.17.1",
     "js-sha3": "^0.8.0"

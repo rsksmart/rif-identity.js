@@ -1,7 +1,8 @@
 import { rskDIDFromPrivateKey } from '@rsksmart/rif-id-ethr-did'
-import { mnemonicToSeed, seedToRSKHDKey, generateMnemonic } from '@rsksmart/rif-id-mnemonic'
-import { createJWT, Signer } from 'did-jwt'
-import { AppState, ChallengeResponsePayload, SelectiveDisclosureResponse } from '../src/types'
+import { mnemonicToSeedSync, seedToRSKHDKey, generateMnemonic } from '@rsksmart/rif-id-mnemonic'
+import { Signer } from 'did-jwt'
+import { toRpcSig, ecsign, hashPersonalMessage } from 'ethereumjs-util'
+import { AppState, SelectiveDisclosureResponse } from '../src/types'
 import { RequestCounter, RequestCounterConfig } from '../src/classes/request-counter'
 import { SessionManager, UserSessionConfig } from '../src/classes/session-manager'
 
@@ -35,33 +36,33 @@ export const mockedResFactory = (expectedStatusCode: 200 | 401 | 500, expectedRe
   }
 }
 
-export const identityFactory = async (): Promise<Identity> => {
+export const identityFactory = (): { identity: Identity, privateKey: string } => {
   const mnemonic = generateMnemonic(12)
-  const seed = await mnemonicToSeed(mnemonic)
+  const seed = mnemonicToSeedSync(mnemonic)
   const hdKey = seedToRSKHDKey(seed)
 
   const privateKey = hdKey.derive(0).privateKey.toString('hex')
-  return rskDIDFromPrivateKey()(privateKey)
+  return { identity: rskDIDFromPrivateKey()(privateKey), privateKey }
 }
 
-export const challengeResponseFactory = async (
+export type ChallengeResponse = { did: string, sig: string }
+
+export const challengeResponseFactory = (
   challenge: string,
   issuer: Identity,
+  issuerPrivateKey: string,
   serviceUrl: string,
   sdr?: SelectiveDisclosureResponse
-): Promise<string> => {
-  const now = Math.floor(Date.now() / 1000)
+): ChallengeResponse => {
+  let message = `Login to ${serviceUrl}\nVerification code: ${challenge}`
+  const messageDigest = hashPersonalMessage(Buffer.from(message))
 
-  const payload: ChallengeResponsePayload = {
-    challenge,
-    aud: serviceUrl,
-    exp: now + 120, // 2 mins validity
-    nbf: now,
-    iat: now,
-    sdr
-  }
+  const ecdsaSignature = ecsign(
+    messageDigest,
+    Buffer.from(issuerPrivateKey, 'hex')
+  )
 
-  return createJWT(payload, { issuer: issuer.did, signer: issuer.signer }, { typ: 'JWT', alg: 'ES256K' })
+  return { did: issuer.did, sig: toRpcSig(ecdsaSignature.v, ecdsaSignature.r, ecdsaSignature.s) }
 }
 
 export const getMockedAppState = (did?: string, counterConfig?: RequestCounterConfig, sessionConfig?: UserSessionConfig): { state: AppState, refreshToken: string} => {

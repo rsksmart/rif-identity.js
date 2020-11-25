@@ -1,10 +1,8 @@
+import { ecrecover, fromRpcSig, hashPersonalMessage, pubToAddress } from 'ethereumjs-util'
 import { ACCESS_TOKEN_COOKIE_NAME, COOKIES_ATTRIBUTES, REFRESH_TOKEN_COOKIE_NAME } from '../constants'
-import { INVALID_CHALLENGE, NO_RESPONSE, UNAUTHORIZED_USER } from '../errors'
-import {
-  AuthenticationBusinessLogic, SignupBusinessLogic,
-  ChallengeResponsePayload, AppState, AuthenticationConfig
-} from '../types'
-import { generateAccessToken, verifyReceivedJwt } from '../jwt-utils'
+import { INVALID_CHALLENGE_RESPONSE, NO_RESPONSE, UNAUTHORIZED_USER } from '../errors'
+import { AuthenticationBusinessLogic, SignupBusinessLogic, AppState, AuthenticationConfig } from '../types'
+import { generateAccessToken } from '../jwt-utils'
 import { ChallengeVerifier } from '../classes/challenge-verifier'
 import { SessionManagerFactory } from '../classes/session-manager'
 import { RequestCounterFactory } from '../classes/request-counter'
@@ -23,25 +21,34 @@ export function authenticationFactory (
 
       if (!response) return res.status(401).send(NO_RESPONSE)
 
-      const { payload } = await verifyReceivedJwt(response, config)
-      const { iss, challenge } = payload as ChallengeResponsePayload
+      const { sig, did } = response
 
-      if (!challengeVerifier.verify(iss!, challenge)) {
-        return res.status(401).send(INVALID_CHALLENGE)
-      }
+      const expectedMessage = `Login to ${config.serviceUrl}\nVerification code: ${challengeVerifier.get(did)}`
 
-      const isValid = businessLogic ? await businessLogic(payload) : true
+      const messageDigest = hashPersonalMessage(Buffer.from(expectedMessage))
+      const ecdsaSignature = fromRpcSig(sig)
+
+      const address = '0x' + pubToAddress(ecrecover(
+        messageDigest,
+        ecdsaSignature.v,
+        ecdsaSignature.r,
+        ecdsaSignature.s
+      )).toString('hex')
+
+      if (address !== did.split(':').pop().toLowerCase()) return res.status(401).send(INVALID_CHALLENGE_RESPONSE)
+
+      const isValid = businessLogic ? await businessLogic(null) : true
 
       if (!isValid) return res.status(401).send(UNAUTHORIZED_USER)
 
       const requestCounter = requestCounterFactory()
       const sessionManager = sessionManagerFactory()
 
-      const accessToken = await generateAccessToken(iss, config)
+      const accessToken = await generateAccessToken(did, config)
       const refreshToken = sessionManager.createRefreshToken()
 
-      state.sessions[iss] = { requestCounter, sessionManager }
-      state.refreshTokens[refreshToken] = iss
+      state.sessions[did] = { requestCounter, sessionManager }
+      state.refreshTokens[refreshToken] = did
 
       if (!config.useCookies) return res.status(200).json({ accessToken, refreshToken })
 
