@@ -13,9 +13,12 @@ describe('Express app tests', () => {
   const app = express()
 
   beforeAll(async () => {
-    const userIdentity = await identityFactory()
+    const { identity, privateKey } = identityFactory()
+    const userIdentity = identity
+    const userPrivateKey = privateKey
     const userDid = userIdentity.did
-    const serviceIdentity = await identityFactory()
+
+    const serviceIdentity = await identityFactory().identity
     const serviceSigner = serviceIdentity.signer
     const serviceDid = serviceIdentity.did
 
@@ -25,7 +28,7 @@ describe('Express app tests', () => {
     const requestAuthResponse = await request(app).get(`/request-auth/${userDid}`).expect(200)
     const challenge = requestAuthResponse.body.challenge
 
-    const challengeResponse = await challengeResponseFactory(challenge, userIdentity, serviceDid, serviceUrl)
+    const challengeResponse = challengeResponseFactory(challenge, userIdentity, userPrivateKey, serviceUrl)
     const authResponse = await request(app).post('/auth').send({ response: challengeResponse }).expect(200)
 
     accessToken = authResponse.body.accessToken

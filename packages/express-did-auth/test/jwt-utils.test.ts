@@ -15,8 +15,8 @@ describe('JWT Utils', () => {
   const resolver = getDidResolver({})
 
   beforeAll(async () => {
-    issuerIdentity = await identityFactory()
-    subjectIdentity = await identityFactory()
+    issuerIdentity = await identityFactory().identity
+    subjectIdentity = await identityFactory().identity
 
     config = {
       serviceSigner: issuerIdentity.signer,
