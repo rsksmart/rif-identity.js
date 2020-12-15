@@ -1,5 +1,4 @@
 import { JWTPayload, Signer } from 'did-jwt'
-import { VerifiableCredential } from 'did-jwt-vc'
 import { CredentialRequestInput } from 'daf-selective-disclosure'
 import { RequestCounter } from './classes/request-counter'
 import { SessionManager } from './classes/session-manager'
@@ -22,11 +21,13 @@ export interface UserState {
   sessionManager: SessionManager
 }
 
+interface SelectiveDisclosureResponseEntry {
+  [key: string]: string
+}
+
 export interface SelectiveDisclosureResponse {
-  issuer: string
-  subject: string
-  claims?: CredentialRequestInput[]
-  credentials: VerifiableCredential[]
+  claims: SelectiveDisclosureResponseEntry
+  credentials: SelectiveDisclosureResponseEntry
 }
 
 export interface ExpressDidAuthConfig extends SignupConfig {
@@ -71,8 +72,9 @@ export interface ChallengeResponsePayload extends JWTPayload {
   challenge: string
 }
 
-export interface SignupChallengeResponsePayload extends ChallengeResponsePayload {
-  sdr?: SelectiveDisclosureResponse
+export interface SignupChallengeResponsePayload {
+  did: string
+  sd?: SelectiveDisclosureResponse
 }
 
 export type AuthenticationBusinessLogic = (payload: ChallengeResponsePayload) => Promise<boolean>
