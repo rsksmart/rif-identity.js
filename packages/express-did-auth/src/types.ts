@@ -22,11 +22,13 @@ export interface UserState {
   sessionManager: SessionManager
 }
 
+interface SelectiveDisclosureResponseEntry {
+  [key: string]: string
+}
+
 export interface SelectiveDisclosureResponse {
-  issuer: string
-  subject: string
-  claims?: CredentialRequestInput[]
-  credentials: VerifiableCredential[]
+  claims: SelectiveDisclosureResponseEntry
+  credentials: SelectiveDisclosureResponseEntry
 }
 
 export interface ExpressDidAuthConfig extends SignupConfig {
@@ -71,8 +73,9 @@ export interface ChallengeResponsePayload extends JWTPayload {
   challenge: string
 }
 
-export interface SignupChallengeResponsePayload extends ChallengeResponsePayload {
-  sdr?: SelectiveDisclosureResponse
+export interface SignupChallengeResponsePayload {
+  did: string
+  sd?: SelectiveDisclosureResponse
 }
 
 export type AuthenticationBusinessLogic = (payload: ChallengeResponsePayload) => Promise<boolean>

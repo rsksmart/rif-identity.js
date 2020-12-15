@@ -37,7 +37,7 @@ export function authenticationFactory (
 
       if (address !== did.split(':').pop().toLowerCase()) return res.status(401).send(INVALID_CHALLENGE_RESPONSE)
 
-      const isValid = businessLogic ? await businessLogic(null) : true
+      const isValid = businessLogic ? await businessLogic(response) : true
 
       if (!isValid) return res.status(401).send(UNAUTHORIZED_USER)
 
