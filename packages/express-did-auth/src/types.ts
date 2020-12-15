@@ -1,5 +1,4 @@
 import { JWTPayload, Signer } from 'did-jwt'
-import { VerifiableCredential } from 'did-jwt-vc'
 import { CredentialRequestInput } from 'daf-selective-disclosure'
 import { RequestCounter } from './classes/request-counter'
 import { SessionManager } from './classes/session-manager'
