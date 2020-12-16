@@ -6,10 +6,10 @@
     Express DID Auth
 </p>
 <p align="middle">
-  <a href="https://rsksmart.github.io/rif-identity-docs/ssi/specs/did-auth">
+  <a href="https://developers.rsk.co/rif/identity/specs/did-auth/">
     <img src="https://img.shields.io/badge/-specs-lightgrey" alt="specs" />
   </a>
-  <a href="https://rsksmart.github.io/rif-identity-docs/ssi/libraries/express-did-auth">
+  <a href="https://developers.rsk.co/rif/identity/rlogin/implementation/express-did-auth/">
     <img src="https://img.shields.io/badge/-docs-brightgreen" alt="docs" />
   </a>
   <a href="https://badge.fury.io/js/%40rsksmart%2Fexpress-did-auth">

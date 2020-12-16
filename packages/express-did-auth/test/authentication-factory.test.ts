@@ -6,7 +6,7 @@ import {
 } from './utils'
 import MockDate from 'mockdate'
 import { INVALID_CHALLENGE_RESPONSE, NO_RESPONSE, UNAUTHORIZED_USER } from '../src/errors'
-import { AppState, AuthenticationBusinessLogic, SignupBusinessLogic, TokenConfig } from '../src/types'
+import { AppState, AuthenticationBusinessLogic, SelectiveDisclosureResponse, SignupBusinessLogic, SignupChallengeResponsePayload, TokenConfig } from '../src/types'
 import { RequestCounter, RequestCounterConfig, RequestCounterFactory } from '../src/classes/request-counter'
 import { SessionManager, SessionManagerFactory, UserSessionConfig } from '../src/classes/session-manager'
 
@@ -136,6 +136,31 @@ describe('authenticationFactory', () => {
     const res = mockedResFactory(401, escape(errorMessage))
 
     const logic = () => { throw new Error(errorMessage) }
+    await testAuthFactory(state, logic)(req, res)
+  })
+
+  test('should execute business logic with selective disclosure', async () => {
+    MockDate.set(modulo0Timestamp)
+
+    const challenge = challengeVerifier.get(userIdentity.did)
+    const sd: SelectiveDisclosureResponse = {
+      credentials: {
+        'Email': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NksifQ.eyJ2YyI6eyJAY29udGV4dCI6WyJodHRwczovL3d3dy53My5vcmcvMjAxOC9jcmVkZW50aWFscy92MSJdLCJ0eXBlIjpbIlZlcmlmaWFibGVDcmVkZW50aWFsIiwiRW1haWwiXSwiY3JlZGVudGlhbFNjaGVtYSI6eyJpZCI6ImRpZDpldGhyOnJzazoweDhhMzJkYTYyNGRkOWZhZDhiZjRmMzJkOTQ1NmYzNzRiNjBkOWFkMjg7aWQ9MWViMmFmNmItMGRlZS02MDkwLWNiNTUtMGVkMDkzZjliMDI2O3ZlcnNpb249MS4wIiwidHlwZSI6Ikpzb25TY2hlbWFWYWxpZGF0b3IyMDE4In0sImNyZWRlbnRpYWxTdWJqZWN0Ijp7ImVtYWlsQWRkcmVzcyI6ImlsYW5AaW92cHVicy5vcmcifX0sInN1YiI6ImRpZDpldGhyOnJzazp0ZXN0bmV0OjB4OTQ1YjU5ZDVhODZlMmM3ZDUxZjk2MWY0OTg3ZThiMGNhZDRhNGY1NyIsImlzcyI6ImRpZDpldGhyOnJzazoweDcwMDljZGNiZTQxZGQ2MmRkN2U2Y2NmZDhiNzY4OTMyMDdmYmJhNjgifQ.BFd13fjWVGRFYjRDqLuFhtr3xR2kz6CowKOxtWu06m8h_LVcTDTn0A-2VUQo9AsSBjXt7VSRkNeitRrv6lOq3Q'
+      },
+      claims: {
+        'Name': 'John Lennon'
+      }
+    }
+    const challengeResponseJwt = challengeResponseFactory(challenge, userIdentity, userPrivateKey, config.serviceUrl, sd)
+
+    const req = { body: { response: challengeResponseJwt } }
+    const res = mockedResFactory(200, undefined)
+
+    const logic = (receivedSd: SignupChallengeResponsePayload) => {
+      expect(receivedSd.sd).toEqual(sd);
+      return Promise.resolve(true)
+    }
+
     await testAuthFactory(state, logic)(req, res)
   })
 

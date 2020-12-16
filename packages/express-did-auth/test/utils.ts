@@ -45,14 +45,14 @@ export const identityFactory = (): { identity: Identity, privateKey: string } =>
   return { identity: rskDIDFromPrivateKey()(privateKey), privateKey }
 }
 
-export type ChallengeResponse = { did: string, sig: string }
+export type ChallengeResponse = { did: string, sig: string, sd?: SelectiveDisclosureResponse }
 
 export const challengeResponseFactory = (
   challenge: string,
   issuer: Identity,
   issuerPrivateKey: string,
   serviceUrl: string,
-  sdr?: SelectiveDisclosureResponse
+  sd?: SelectiveDisclosureResponse
 ): ChallengeResponse => {
   let message = `Login to ${serviceUrl}\nVerification code: ${challenge}`
   const messageDigest = hashPersonalMessage(Buffer.from(message))
@@ -62,7 +62,7 @@ export const challengeResponseFactory = (
     Buffer.from(issuerPrivateKey, 'hex')
   )
 
-  return { did: issuer.did, sig: toRpcSig(ecdsaSignature.v, ecdsaSignature.r, ecdsaSignature.s) }
+  return { did: issuer.did, sig: toRpcSig(ecdsaSignature.v, ecdsaSignature.r, ecdsaSignature.s), sd }
 }
 
 export const getMockedAppState = (did?: string, counterConfig?: RequestCounterConfig, sessionConfig?: UserSessionConfig): { state: AppState, refreshToken: string} => {
