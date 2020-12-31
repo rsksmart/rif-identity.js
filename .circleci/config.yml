@@ -1,6 +1,7 @@
 version: 2.1
 orbs:
   node: circleci/node@1.1.6
+  codecov: codecov/codecov@1.0.2
 jobs:
   build-test-lint:
     working_directory: ~/tmp
@@ -21,6 +22,8 @@ jobs:
                 command: npm run test:ci
                 environment:
                   JEST_JUNIT_OUTPUT_DIR: ./reports/
+            - codecov/upload:
+                file: ./reports/coverage-final.json
             - store_test_results:
                 path: ./reports/
             - store_artifacts:
