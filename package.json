@@ -1,6 +1,7 @@
 {
   "name": "root",
   "private": true,
+  "license": "MIT",
   "scripts": {
     "setup": "npm run bootstrap && npm run link",
     "build": "npx lerna run build",
