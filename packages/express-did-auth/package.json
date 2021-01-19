@@ -20,7 +20,7 @@
     "identity"
   ],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/rsksmart/rif-identity.js/issues"
   },
