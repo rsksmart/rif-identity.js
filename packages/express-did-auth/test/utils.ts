@@ -52,9 +52,10 @@ export const challengeResponseFactory = (
   issuer: Identity,
   issuerPrivateKey: string,
   serviceUrl: string,
+  loginHeaderMessage?: string,
   sd?: SelectiveDisclosureResponse
 ): ChallengeResponse => {
-  let message = `Login to ${serviceUrl}\nVerification code: ${challenge}`
+  const message = `${loginHeaderMessage}\nURL: ${serviceUrl}\nVerification code: ${challenge}`
   const messageDigest = hashPersonalMessage(Buffer.from(message))
 
   const ecdsaSignature = ecsign(

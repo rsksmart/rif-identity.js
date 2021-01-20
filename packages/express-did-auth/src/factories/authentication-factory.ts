@@ -23,7 +23,7 @@ export function authenticationFactory (
 
       const { sig, did } = response
 
-      const expectedMessage = `Login to ${config.serviceUrl}\nVerification code: ${challengeVerifier.get(did)}`
+      const expectedMessage = `${config.loginMessageHeader}\nURL: ${config.serviceUrl}\nVerification code: ${challengeVerifier.get(did)}`
 
       const messageDigest = hashPersonalMessage(Buffer.from(expectedMessage))
       const ecdsaSignature = fromRpcSig(sig)
