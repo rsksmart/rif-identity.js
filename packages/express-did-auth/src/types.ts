@@ -40,6 +40,7 @@ export interface ExpressDidAuthConfig extends SignupConfig {
   challengeExpirationTimeInSeconds?: number
   challengeSecret: string
   accessTokenExpirationTimeInSeconds?: number
+  loginMessageHeader?: string
   authenticationBusinessLogic?: AuthenticationBusinessLogic
   maxRequestsPerTimeSlot?: number
   timeSlotInSeconds?: number
@@ -83,4 +84,5 @@ export type SignupBusinessLogic = (payload: SignupChallengeResponsePayload) => P
 
 export interface AuthenticationConfig extends TokenConfig {
   accessTokenExpirationTime?: number
+  loginMessageHeader?: string
 }
