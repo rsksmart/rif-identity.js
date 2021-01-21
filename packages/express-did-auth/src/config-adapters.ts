@@ -19,7 +19,8 @@ export const adaptToAuthFactoryConfig = (config: ExpressDidAuthConfig): Authenti
     rpcUrl,
     networkName,
     registry,
-    accessTokenExpirationTimeInSeconds
+    accessTokenExpirationTimeInSeconds,
+    loginMessageHeader
   } = config
   const accessTokenExpirationTime = accessTokenExpirationTimeInSeconds && accessTokenExpirationTimeInSeconds * 1000
 
@@ -31,7 +32,8 @@ export const adaptToAuthFactoryConfig = (config: ExpressDidAuthConfig): Authenti
     serviceUrl,
     rpcUrl,
     networkName,
-    registry
+    registry,
+    loginMessageHeader
   }
 }
 
