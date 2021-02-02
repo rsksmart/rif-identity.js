@@ -40,17 +40,12 @@ describe('Express app tests - cookies', () => {
     challenge = response.body.challenge
     expect(challenge).toBeTruthy()
 
-    // get the csrf secret from the cookies to be sent in every request. We do it in order to simulate the browser behaviour.
-    // This secret does not change during the session
-    const secret: string = removeExtraCookieAttributes(response.headers['set-cookie'][0])
-
     // get the csrf token to be sent as a custom header of the request
     const csrfToken = response.headers[CSRF_TOKEN_HEADER_NAME]
 
     // 2. POST /signup
     challengeResponse = challengeResponseFactory(challenge, userIdentity, privateKey, serviceUrl)
     response = await agent.post('/signup')
-      .set('Cookie', secret)
       .set(CSRF_TOKEN_HEADER_NAME, csrfToken)
       .send({ response: challengeResponse })
       .expect(200)
@@ -72,7 +67,6 @@ describe('Express app tests - cookies', () => {
     // 4. POST /auth
     challengeResponse = challengeResponseFactory(challenge, userIdentity, privateKey, serviceUrl)
     response = await agent.post('/auth')
-      .set('Cookie', secret)
       .set(CSRF_TOKEN_HEADER_NAME, csrfToken)
       .send({ response: challengeResponse })
       .expect(200)
@@ -91,7 +85,7 @@ describe('Express app tests - cookies', () => {
     MockDate.set(Date.now() + 5000)
 
     response = await agent.post('/refresh-token')
-      .set('Cookie', `${secret}; ${removeExtraCookieAttributes(tokens[0])}; ${removeExtraCookieAttributes(tokens[1])}`)
+      .set('Cookie', `${removeExtraCookieAttributes(tokens[0])}; ${removeExtraCookieAttributes(tokens[1])}`)
       .set(CSRF_TOKEN_HEADER_NAME, csrfToken)
       .expect(200)
 
@@ -113,7 +107,7 @@ describe('Express app tests - cookies', () => {
 
     // 5b. POST /refresh-token with old one should fail
     response = await agent.post('/refresh-token')
-      .set('Cookie', `${secret}; ${removeExtraCookieAttributes(oldTokens[0])}; ${removeExtraCookieAttributes(oldTokens[1])}`)
+      .set('Cookie', `${removeExtraCookieAttributes(oldTokens[0])}; ${removeExtraCookieAttributes(oldTokens[1])}`)
       .set(CSRF_TOKEN_HEADER_NAME, csrfToken)
       .expect(401)
 
@@ -121,7 +115,6 @@ describe('Express app tests - cookies', () => {
 
     // 6. POST /logout with no access token should fail
     response = await agent.post('/logout')
-      .set('Cookie', secret)
       .set(CSRF_TOKEN_HEADER_NAME, csrfToken)
       .expect(401)
 
@@ -129,7 +122,7 @@ describe('Express app tests - cookies', () => {
 
     // 6b. POST /logout with proper access token
     response = await agent.post('/logout')
-      .set('Cookie', `${secret}; ${removeExtraCookieAttributes(tokens[0])}; ${removeExtraCookieAttributes(tokens[1])}`)
+      .set('Cookie', `${removeExtraCookieAttributes(tokens[0])}; ${removeExtraCookieAttributes(tokens[1])}`)
       .set(CSRF_TOKEN_HEADER_NAME, csrfToken)
       .expect(200)
 
@@ -139,7 +132,7 @@ describe('Express app tests - cookies', () => {
 
     // 7. POST /refresh-token with logged out session one should fail
     response = await agent.post('/refresh-token')
-      .set('Cookie', `${secret}; ${removeExtraCookieAttributes(tokens[0])}; ${removeExtraCookieAttributes(tokens[1])}`)
+      .set('Cookie', `${removeExtraCookieAttributes(tokens[0])}; ${removeExtraCookieAttributes(tokens[1])}`)
       .set(CSRF_TOKEN_HEADER_NAME, csrfToken)
       .expect(401)
 

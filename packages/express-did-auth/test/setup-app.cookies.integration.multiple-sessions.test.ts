@@ -38,17 +38,12 @@ describe('Express app tests - cookies with multiple sessions', () => {
     challenge = response.body.challenge
     expect(challenge).toBeTruthy()
 
-    // get the csrf secret from the cookies to be sent in every request. We do it in order to simulate the browser behaviour.
-    // This secret does not change during the session
-    const secret: string = removeExtraCookieAttributes(response.headers['set-cookie'][0])
-
     // get the csrf token to be sent as a custom header of the request
     const csrfToken = response.headers[CSRF_TOKEN_HEADER_NAME]
 
     // 2. POST /auth with userDid 2
     challengeResponse = challengeResponseFactory(challenge, id1.identity, id1.privateKey, serviceUrl)
     response = await agent.post('/auth')
-      .set('Cookie', secret)
       .set(CSRF_TOKEN_HEADER_NAME, csrfToken)
       .send({ response: challengeResponse })
       .expect(200)
@@ -86,7 +81,7 @@ describe('Express app tests - cookies with multiple sessions', () => {
 
     // 5. POST /logout with userDid1 but AT from userDid2 should fail
     response = await agent.post('/logout')
-      .set('Cookie', `${secret}; ${removeExtraCookieAttributes(tokensDid2[0])}; ${removeExtraCookieAttributes(tokensDid2[1])}`)
+      .set('Cookie', `${removeExtraCookieAttributes(tokensDid2[0])}; ${removeExtraCookieAttributes(tokensDid2[1])}`)
       .set(LOGGED_DID_COOKIE_NAME, userDid1)
       .set(CSRF_TOKEN_HEADER_NAME, csrfToken)
       .expect(401)
@@ -95,7 +90,7 @@ describe('Express app tests - cookies with multiple sessions', () => {
 
     // 5b. POST /logout with userDid1 should work
     response = await agent.post('/logout')
-      .set('Cookie', `${secret}; ${removeExtraCookieAttributes(tokensDid1[0])}; ${removeExtraCookieAttributes(tokensDid1[1])}`)
+      .set('Cookie', `${removeExtraCookieAttributes(tokensDid1[0])}; ${removeExtraCookieAttributes(tokensDid1[1])}`)
       .set(LOGGED_DID_COOKIE_NAME, userDid1)
       .set(CSRF_TOKEN_HEADER_NAME, csrfToken)
       .expect(200)
@@ -107,7 +102,7 @@ describe('Express app tests - cookies with multiple sessions', () => {
 
     // 6. POST refresh-token with logged out userDid1 should fail
     response = await agent.post('/refresh-token')
-      .set('Cookie', `${secret}; ${removeExtraCookieAttributes(tokensDid1[0])}; ${removeExtraCookieAttributes(tokensDid1[1])}`)
+      .set('Cookie', `${removeExtraCookieAttributes(tokensDid1[0])}; ${removeExtraCookieAttributes(tokensDid1[1])}`)
       .set(LOGGED_DID_COOKIE_NAME, userDid1)
       .set(CSRF_TOKEN_HEADER_NAME, csrfToken)
       .expect(401)
@@ -116,7 +111,7 @@ describe('Express app tests - cookies with multiple sessions', () => {
 
     // 6. POST refresh-token with userDid2 should work
     response = await agent.post('/refresh-token')
-      .set('Cookie', `${secret}; ${removeExtraCookieAttributes(tokensDid2[0])}; ${removeExtraCookieAttributes(tokensDid2[1])}`)
+      .set('Cookie', `${removeExtraCookieAttributes(tokensDid2[0])}; ${removeExtraCookieAttributes(tokensDid2[1])}`)
       .set(LOGGED_DID_COOKIE_NAME, userDid2)
       .set(CSRF_TOKEN_HEADER_NAME, csrfToken)
       .expect(200)
