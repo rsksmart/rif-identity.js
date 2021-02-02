@@ -40,7 +40,7 @@ export default function setupAppFactory (config: ExpressDidAuthConfig) {
 
     if (config.useCookies) {
       app.use(cookieParser())
-      app.use(csrf({ cookie: true }))
+      app.use(csrf({ cookie: { httpOnly: true } }))
       app.use((req, res, next) => {
         res.header(CSRF_TOKEN_HEADER_NAME, req.csrfToken())
         next()
@@ -59,7 +59,7 @@ export default function setupAppFactory (config: ExpressDidAuthConfig) {
 
     app.post(refreshTokenPath || REFRESH_TOKEN_PATH, refreshTokenFactory(state, config))
 
-    app.post(logoutPath || LOGOUT_PATH, authMiddleware, logoutFactory(state))
+    app.post(logoutPath || LOGOUT_PATH, authMiddleware, logoutFactory(state, config))
 
     return authMiddleware
   }

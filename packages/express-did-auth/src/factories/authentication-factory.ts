@@ -22,10 +22,11 @@ export function authenticationFactory (
       if (!response) return res.status(401).send(NO_RESPONSE)
 
       const { sig, did } = response
+      const { loginMessageHeader, allowMultipleSessions, useCookies, serviceUrl } = config
 
-      const expectedMessage = config.loginMessageHeader
-        ? `${config.loginMessageHeader}\nURL: ${config.serviceUrl}\nVerification code: ${challengeVerifier.get(did)}`
-        : `URL: ${config.serviceUrl}\nVerification code: ${challengeVerifier.get(did)}`
+      const expectedMessage = loginMessageHeader
+        ? `${loginMessageHeader}\nURL: ${serviceUrl}\nVerification code: ${challengeVerifier.get(did)}`
+        : `URL: ${serviceUrl}\nVerification code: ${challengeVerifier.get(did)}`
 
       const messageDigest = hashPersonalMessage(Buffer.from(expectedMessage))
       const ecdsaSignature = fromRpcSig(sig)
@@ -52,15 +53,13 @@ export function authenticationFactory (
       state.sessions[did] = { requestCounter, sessionManager }
       state.refreshTokens[refreshToken] = did
 
-      if (!config.useCookies) return res.status(200).json({ accessToken, refreshToken })
+      if (!useCookies) return res.status(200).json({ accessToken, refreshToken })
 
-      if (config.allowMultipleSessions) {
-        res.cookie(`${ACCESS_TOKEN_COOKIE_NAME}-${did}`, accessToken, COOKIES_ATTRIBUTES)
-        res.cookie(`${REFRESH_TOKEN_COOKIE_NAME}-${did}`, refreshToken, COOKIES_ATTRIBUTES)
-      } else {
-        res.cookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, COOKIES_ATTRIBUTES)
-        res.cookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken, COOKIES_ATTRIBUTES)
-      }
+      const accessTokenCookieName = allowMultipleSessions ? `${ACCESS_TOKEN_COOKIE_NAME}-${did}` : ACCESS_TOKEN_COOKIE_NAME
+      const refreshCookieName = allowMultipleSessions ? `${REFRESH_TOKEN_COOKIE_NAME}-${did}` : REFRESH_TOKEN_COOKIE_NAME
+
+      res.cookie(accessTokenCookieName, accessToken, COOKIES_ATTRIBUTES)
+      res.cookie(refreshCookieName, refreshToken, COOKIES_ATTRIBUTES)
 
       return res.status(200).send()
     } catch (err) {

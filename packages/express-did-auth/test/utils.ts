@@ -32,7 +32,8 @@ export const mockedResFactory = (expectedStatusCode: 200 | 401 | 500, expectedRe
     status: function (statusCode: number) {
       expect(statusCode).toEqual(expectedStatusCode)
       return this
-    }
+    },
+    cookie: jest.fn()
   }
 }
 

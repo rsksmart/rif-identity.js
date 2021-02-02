@@ -3,11 +3,12 @@ import setupApp from '../src'
 import { challengeResponseFactory, identityFactory, ChallengeResponse } from './utils'
 import request from 'supertest'
 import { INVALID_OR_EXPIRED_SESSION, NO_ACCESS_TOKEN } from '../src/errors'
-import { CSRF_TOKEN_HEADER_NAME } from '../src/constants'
+import { ACCESS_TOKEN_COOKIE_NAME, CSRF_TOKEN_HEADER_NAME, REFRESH_TOKEN_COOKIE_NAME } from '../src/constants'
 import MockDate from 'mockdate'
 
 // eslint-disable dot-notation
 
+// for testing purposes, the cookie should be sent without attributes
 const removeExtraCookieAttributes = (cookie: string) => cookie.substr(0, cookie.indexOf('; Path=/'))
 
 describe('Express app tests - cookies', () => {
@@ -21,7 +22,6 @@ describe('Express app tests - cookies', () => {
     let challengeResponse: ChallengeResponse
     let response: any
     let challenge: string
-    let csrfToken: string
     let tokens: string[]
 
     const { identity, privateKey } = identityFactory()
@@ -42,10 +42,10 @@ describe('Express app tests - cookies', () => {
 
     // get the csrf secret from the cookies to be sent in every request. We do it in order to simulate the browser behaviour.
     // This secret does not change during the session
-    const secret: string = response.headers['set-cookie'][0]
+    const secret: string = removeExtraCookieAttributes(response.headers['set-cookie'][0])
 
-    // get the csrf token to be sent as a custom header of the request, this changes in every request.
-    csrfToken = response.headers[CSRF_TOKEN_HEADER_NAME] // TODO: IS SUPPOSE THIS TOKEN SHOULD CHANGE ON EVERY REQUEST, BUT IT IS WORKING IF I DO NOT CHANGE IT
+    // get the csrf token to be sent as a custom header of the request
+    const csrfToken = response.headers[CSRF_TOKEN_HEADER_NAME]
 
     // 2. POST /signup
     challengeResponse = challengeResponseFactory(challenge, userIdentity, privateKey, serviceUrl)
@@ -57,16 +57,14 @@ describe('Express app tests - cookies', () => {
 
     tokens = response.headers['set-cookie']
     expect(tokens).toHaveLength(2)
-    expect(tokens[0]).toContain('authorization')
-    expect(tokens[1]).toContain('refresh-token')
+    expect(tokens[0]).toContain(ACCESS_TOKEN_COOKIE_NAME)
+    expect(tokens[1]).toContain(REFRESH_TOKEN_COOKIE_NAME)
 
     // no tokens in the body
     expect(response.body).toEqual({})
 
     // 3. GET /request-auth
     response = await agent.get(`/request-auth/${userDid}`).expect(200)
-
-    // csrfToken = response.headers[CSRF_TOKEN_HEADER_NAME]
 
     challenge = response.body.challenge
     expect(challenge).toBeTruthy()
@@ -81,8 +79,8 @@ describe('Express app tests - cookies', () => {
 
     tokens = response.headers['set-cookie']
     expect(tokens).toHaveLength(2)
-    expect(tokens[0]).toContain('authorization')
-    expect(tokens[1]).toContain('refresh-token')
+    expect(tokens[0]).toContain(ACCESS_TOKEN_COOKIE_NAME)
+    expect(tokens[1]).toContain(REFRESH_TOKEN_COOKIE_NAME)
 
     // no tokens in the body
     expect(response.body).toEqual({})
@@ -102,8 +100,8 @@ describe('Express app tests - cookies', () => {
 
     tokens = response.headers['set-cookie']
     expect(tokens).toHaveLength(2)
-    expect(tokens[0]).toContain('authorization')
-    expect(tokens[1]).toContain('refresh-token')
+    expect(tokens[0]).toContain(ACCESS_TOKEN_COOKIE_NAME)
+    expect(tokens[1]).toContain(REFRESH_TOKEN_COOKIE_NAME)
 
     // no tokens in the body
     expect(response.body).toEqual({})
@@ -134,6 +132,10 @@ describe('Express app tests - cookies', () => {
       .set('Cookie', `${secret}; ${removeExtraCookieAttributes(tokens[0])}; ${removeExtraCookieAttributes(tokens[1])}`)
       .set(CSRF_TOKEN_HEADER_NAME, csrfToken)
       .expect(200)
+
+    const expiredCookies = response.headers['set-cookie']
+    expect(expiredCookies[0]).toContain(`${ACCESS_TOKEN_COOKIE_NAME}=;`)
+    expect(expiredCookies[1]).toContain(`${REFRESH_TOKEN_COOKIE_NAME}=;`)
 
     // 7. POST /refresh-token with logged out session one should fail
     response = await agent.post('/refresh-token')

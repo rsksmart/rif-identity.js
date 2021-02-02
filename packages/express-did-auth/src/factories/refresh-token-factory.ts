@@ -35,13 +35,11 @@ export function refreshTokenFactory (state: AppState, accessTokenConfig: Authent
 
       if (!useCookies) return res.status(200).json({ accessToken, refreshToken })
 
-      if (allowMultipleSessions) {
-        res.cookie(`${ACCESS_TOKEN_COOKIE_NAME}-${did}`, accessToken, COOKIES_ATTRIBUTES)
-        res.cookie(`${REFRESH_TOKEN_COOKIE_NAME}-${did}`, refreshToken, COOKIES_ATTRIBUTES)
-      } else {
-        res.cookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, COOKIES_ATTRIBUTES)
-        res.cookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken, COOKIES_ATTRIBUTES)
-      }
+      const accessTokenCookieName = allowMultipleSessions ? `${ACCESS_TOKEN_COOKIE_NAME}-${did}` : ACCESS_TOKEN_COOKIE_NAME
+      const refreshCookieName = allowMultipleSessions ? `${REFRESH_TOKEN_COOKIE_NAME}-${did}` : REFRESH_TOKEN_COOKIE_NAME
+
+      res.cookie(accessTokenCookieName, accessToken, COOKIES_ATTRIBUTES)
+      res.cookie(refreshCookieName, refreshToken, COOKIES_ATTRIBUTES)
 
       return res.status(200).send()
     } catch (err) {
