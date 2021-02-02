@@ -54,8 +54,13 @@ export function authenticationFactory (
 
       if (!config.useCookies) return res.status(200).json({ accessToken, refreshToken })
 
-      res.cookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, COOKIES_ATTRIBUTES)
-      res.cookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken, COOKIES_ATTRIBUTES)
+      if (config.allowMultipleSessions) {
+        res.cookie(`${ACCESS_TOKEN_COOKIE_NAME}-${did}`, accessToken, COOKIES_ATTRIBUTES)
+        res.cookie(`${REFRESH_TOKEN_COOKIE_NAME}-${did}`, refreshToken, COOKIES_ATTRIBUTES)
+      } else {
+        res.cookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, COOKIES_ATTRIBUTES)
+        res.cookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken, COOKIES_ATTRIBUTES)
+      }
 
       return res.status(200).send()
     } catch (err) {

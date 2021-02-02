@@ -16,6 +16,7 @@ import {
   refreshTokenFactory, expressMiddlewareFactory, logoutFactory
 } from './factories'
 import { adaptToAuthFactoryConfig, adaptToChallengeConfig, adaptToRequestCounterConfig, adaptToUserSessionConfig } from './config-adapters'
+import { CSRF_TOKEN_HEADER_NAME } from './constants'
 
 export default function setupAppFactory (config: ExpressDidAuthConfig) {
   const { requestAuthPath, authPath, requestSignupPath, signupPath, refreshTokenPath, logoutPath } = config
@@ -40,6 +41,10 @@ export default function setupAppFactory (config: ExpressDidAuthConfig) {
     if (config.useCookies) {
       app.use(cookieParser())
       app.use(csrf({ cookie: true }))
+      app.use((req, res, next) => {
+        res.header(CSRF_TOKEN_HEADER_NAME, req.csrfToken())
+        next()
+      })
     }
 
     const authMiddleware = expressMiddlewareFactory(state, config)

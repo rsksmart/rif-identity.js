@@ -13,6 +13,7 @@ export const adaptToChallengeConfig = (config: ExpressDidAuthConfig): ChallengeC
 export const adaptToAuthFactoryConfig = (config: ExpressDidAuthConfig): AuthenticationConfig => {
   const {
     useCookies,
+    allowMultipleSessions,
     serviceDid,
     serviceSigner,
     serviceUrl,
@@ -27,6 +28,7 @@ export const adaptToAuthFactoryConfig = (config: ExpressDidAuthConfig): Authenti
   return {
     accessTokenExpirationTime,
     useCookies,
+    allowMultipleSessions,
     serviceDid,
     serviceSigner,
     serviceUrl,

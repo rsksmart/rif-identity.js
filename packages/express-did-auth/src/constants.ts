@@ -1,6 +1,8 @@
 export const ACCESS_TOKEN_COOKIE_NAME = 'authorization'
 export const REFRESH_TOKEN_COOKIE_NAME = 'refresh-token'
+export const LOGGED_DID_COOKIE_NAME = 'x-logged-did'
 export const ACCESS_TOKEN_HEADER_NAME = 'Authorization'
+export const CSRF_TOKEN_HEADER_NAME = 'x-csrf-token'
 
 export const COOKIES_ATTRIBUTES = { httpOnly: true, sameSite: 'Strict', secure: true }
 export const DID_AUTH_SCHEME = 'DIDAuth'
