@@ -41,7 +41,7 @@ describe('Express app tests - cookies with multiple sessions', () => {
     // get the csrf token to be sent as a custom header of the request
     const csrfToken = response.headers[CSRF_TOKEN_HEADER_NAME]
 
-    // 2. POST /auth with userDid 2
+    // 2. POST /auth with userDid 1
     challengeResponse = challengeResponseFactory(challenge, id1.identity, id1.privateKey, serviceUrl)
     response = await agent.post('/auth')
       .set(CSRF_TOKEN_HEADER_NAME, csrfToken)
