@@ -2,7 +2,7 @@ import express from 'express'
 import setupApp from '../src'
 import { challengeResponseFactory, identityFactory, ChallengeResponse } from './utils'
 import request from 'supertest'
-import { INVALID_OR_EXPIRED_SESSION, NO_ACCESS_TOKEN } from '../src/errors'
+import { INVALID_OR_EXPIRED_SESSION, NO_ACCESS_TOKEN, NO_REFRESH_TOKEN } from '../src/errors'
 import { ACCESS_TOKEN_COOKIE_NAME, CSRF_TOKEN_HEADER_NAME, REFRESH_TOKEN_COOKIE_NAME, LOGGED_DID_COOKIE_NAME } from '../src/constants'
 import MockDate from 'mockdate'
 
@@ -76,8 +76,6 @@ describe('Express app tests - cookies', () => {
     expect(tokens[0]).toContain(`${ACCESS_TOKEN_COOKIE_NAME}-${userDid}`)
     expect(tokens[1]).toContain(`${REFRESH_TOKEN_COOKIE_NAME}-${userDid}`)
 
-    console.log(tokens)
-
     // no tokens in the body
     expect(response.body).toEqual({})
 
@@ -144,5 +142,13 @@ describe('Express app tests - cookies', () => {
       .expect(401)
 
     expect(response.text).toEqual(INVALID_OR_EXPIRED_SESSION)
+
+    // 8. with the csrf header, but without the cookie
+    response = await agent.post('/refresh-token')
+      .set(CSRF_TOKEN_HEADER_NAME, csrfToken)
+      .set(LOGGED_DID_COOKIE_NAME, userDid)
+      .expect(401)
+
+    expect(response.text).toEqual(NO_REFRESH_TOKEN)
   })
 })
