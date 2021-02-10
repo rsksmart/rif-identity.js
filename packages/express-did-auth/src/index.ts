@@ -40,7 +40,7 @@ export default function setupAppFactory (config: ExpressDidAuthConfig) {
 
     if (config.useCookies) {
       app.use(cookieParser())
-      app.use(csrf({ cookie: { httpOnly: true } }))
+      app.use(csrf({ cookie: { httpOnly: false, secure: true } }))
       app.use((req, res, next) => {
         res.header(CSRF_TOKEN_HEADER_NAME, req.csrfToken())
         next()
