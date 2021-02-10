@@ -8,11 +8,11 @@ export function logoutFactory (state: AppState, config: TokenValidationConfig) {
     delete state.refreshTokens[refreshToken]
     delete state.sessions[req.user.did]
 
-    const { useCookies, allowMultipleSessions } = config
+    const { useCookies } = config
 
     if (useCookies) {
-      const accessTokenCookieName = allowMultipleSessions ? `${ACCESS_TOKEN_COOKIE_NAME}-${req.user.did}` : ACCESS_TOKEN_COOKIE_NAME
-      const refreshCookieName = allowMultipleSessions ? `${REFRESH_TOKEN_COOKIE_NAME}-${req.user.did}` : REFRESH_TOKEN_COOKIE_NAME
+      const accessTokenCookieName = `${ACCESS_TOKEN_COOKIE_NAME}-${req.user.did}`
+      const refreshCookieName = `${REFRESH_TOKEN_COOKIE_NAME}-${req.user.did}`
 
       const expires = new Date(Date.now() + 1000)
       res.cookie(accessTokenCookieName, '', { ...COOKIES_ATTRIBUTES, expires })

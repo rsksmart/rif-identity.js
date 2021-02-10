@@ -22,7 +22,7 @@ export function authenticationFactory (
       if (!response) return res.status(401).send(NO_RESPONSE)
 
       const { sig, did } = response
-      const { loginMessageHeader, allowMultipleSessions, useCookies, serviceUrl } = config
+      const { loginMessageHeader, useCookies, serviceUrl } = config
 
       const expectedMessage = loginMessageHeader
         ? `${loginMessageHeader}\nURL: ${serviceUrl}\nVerification code: ${challengeVerifier.get(did)}`
@@ -55,8 +55,8 @@ export function authenticationFactory (
 
       if (!useCookies) return res.status(200).json({ accessToken, refreshToken })
 
-      const accessTokenCookieName = allowMultipleSessions ? `${ACCESS_TOKEN_COOKIE_NAME}-${did}` : ACCESS_TOKEN_COOKIE_NAME
-      const refreshCookieName = allowMultipleSessions ? `${REFRESH_TOKEN_COOKIE_NAME}-${did}` : REFRESH_TOKEN_COOKIE_NAME
+      const accessTokenCookieName = `${ACCESS_TOKEN_COOKIE_NAME}-${did}`
+      const refreshCookieName = `${REFRESH_TOKEN_COOKIE_NAME}-${did}`
 
       res.cookie(accessTokenCookieName, accessToken, COOKIES_ATTRIBUTES)
       res.cookie(refreshCookieName, refreshToken, COOKIES_ATTRIBUTES)

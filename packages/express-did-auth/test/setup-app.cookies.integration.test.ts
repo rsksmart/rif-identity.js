@@ -3,7 +3,7 @@ import setupApp from '../src'
 import { challengeResponseFactory, identityFactory, ChallengeResponse } from './utils'
 import request from 'supertest'
 import { INVALID_OR_EXPIRED_SESSION, NO_ACCESS_TOKEN } from '../src/errors'
-import { ACCESS_TOKEN_COOKIE_NAME, CSRF_TOKEN_HEADER_NAME, REFRESH_TOKEN_COOKIE_NAME } from '../src/constants'
+import { ACCESS_TOKEN_COOKIE_NAME, CSRF_TOKEN_HEADER_NAME, REFRESH_TOKEN_COOKIE_NAME, LOGGED_DID_COOKIE_NAME } from '../src/constants'
 import MockDate from 'mockdate'
 
 // eslint-disable dot-notation
@@ -52,8 +52,8 @@ describe('Express app tests - cookies', () => {
 
     tokens = response.headers['set-cookie']
     expect(tokens).toHaveLength(2)
-    expect(tokens[0]).toContain(ACCESS_TOKEN_COOKIE_NAME)
-    expect(tokens[1]).toContain(REFRESH_TOKEN_COOKIE_NAME)
+    expect(tokens[0]).toContain(`${ACCESS_TOKEN_COOKIE_NAME}-${userDid}`)
+    expect(tokens[1]).toContain(`${REFRESH_TOKEN_COOKIE_NAME}-${userDid}`)
 
     // no tokens in the body
     expect(response.body).toEqual({})
@@ -73,8 +73,8 @@ describe('Express app tests - cookies', () => {
 
     tokens = response.headers['set-cookie']
     expect(tokens).toHaveLength(2)
-    expect(tokens[0]).toContain(ACCESS_TOKEN_COOKIE_NAME)
-    expect(tokens[1]).toContain(REFRESH_TOKEN_COOKIE_NAME)
+    expect(tokens[0]).toContain(`${ACCESS_TOKEN_COOKIE_NAME}-${userDid}`)
+    expect(tokens[1]).toContain(`${REFRESH_TOKEN_COOKIE_NAME}-${userDid}`)
 
     // no tokens in the body
     expect(response.body).toEqual({})
@@ -87,6 +87,7 @@ describe('Express app tests - cookies', () => {
     response = await agent.post('/refresh-token')
       .set('Cookie', `${removeExtraCookieAttributes(tokens[0])}; ${removeExtraCookieAttributes(tokens[1])}`)
       .set(CSRF_TOKEN_HEADER_NAME, csrfToken)
+      .set(LOGGED_DID_COOKIE_NAME, userDid)
       .expect(200)
 
     // save old tokens to compare then
@@ -94,8 +95,8 @@ describe('Express app tests - cookies', () => {
 
     tokens = response.headers['set-cookie']
     expect(tokens).toHaveLength(2)
-    expect(tokens[0]).toContain(ACCESS_TOKEN_COOKIE_NAME)
-    expect(tokens[1]).toContain(REFRESH_TOKEN_COOKIE_NAME)
+    expect(tokens[0]).toContain(`${ACCESS_TOKEN_COOKIE_NAME}-${userDid}`)
+    expect(tokens[1]).toContain(`${REFRESH_TOKEN_COOKIE_NAME}-${userDid}`)
 
     // no tokens in the body
     expect(response.body).toEqual({})
@@ -109,6 +110,7 @@ describe('Express app tests - cookies', () => {
     response = await agent.post('/refresh-token')
       .set('Cookie', `${removeExtraCookieAttributes(oldTokens[0])}; ${removeExtraCookieAttributes(oldTokens[1])}`)
       .set(CSRF_TOKEN_HEADER_NAME, csrfToken)
+      .set(LOGGED_DID_COOKIE_NAME, userDid)
       .expect(401)
 
     expect(response.text).toEqual(INVALID_OR_EXPIRED_SESSION)
@@ -116,6 +118,7 @@ describe('Express app tests - cookies', () => {
     // 6. POST /logout with no access token should fail
     response = await agent.post('/logout')
       .set(CSRF_TOKEN_HEADER_NAME, csrfToken)
+      .set(LOGGED_DID_COOKIE_NAME, userDid)
       .expect(401)
 
     expect(response.text).toEqual(NO_ACCESS_TOKEN)
@@ -124,16 +127,18 @@ describe('Express app tests - cookies', () => {
     response = await agent.post('/logout')
       .set('Cookie', `${removeExtraCookieAttributes(tokens[0])}; ${removeExtraCookieAttributes(tokens[1])}`)
       .set(CSRF_TOKEN_HEADER_NAME, csrfToken)
+      .set(LOGGED_DID_COOKIE_NAME, userDid)
       .expect(200)
 
     const expiredCookies = response.headers['set-cookie']
-    expect(expiredCookies[0]).toContain(`${ACCESS_TOKEN_COOKIE_NAME}=;`)
-    expect(expiredCookies[1]).toContain(`${REFRESH_TOKEN_COOKIE_NAME}=;`)
+    expect(expiredCookies[0]).toContain(`${ACCESS_TOKEN_COOKIE_NAME}-${userDid}=;`)
+    expect(expiredCookies[1]).toContain(`${REFRESH_TOKEN_COOKIE_NAME}-${userDid}=;`)
 
     // 7. POST /refresh-token with logged out session one should fail
     response = await agent.post('/refresh-token')
       .set('Cookie', `${removeExtraCookieAttributes(tokens[0])}; ${removeExtraCookieAttributes(tokens[1])}`)
       .set(CSRF_TOKEN_HEADER_NAME, csrfToken)
+      .set(LOGGED_DID_COOKIE_NAME, userDid)
       .expect(401)
 
     expect(response.text).toEqual(INVALID_OR_EXPIRED_SESSION)

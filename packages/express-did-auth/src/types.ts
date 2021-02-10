@@ -56,7 +56,6 @@ export interface DidResolverConfig {
 export interface TokenValidationConfig extends DidResolverConfig {
   serviceUrl: string
   useCookies?: boolean
-  allowMultipleSessions?: boolean
   serviceDid: string
 }
 

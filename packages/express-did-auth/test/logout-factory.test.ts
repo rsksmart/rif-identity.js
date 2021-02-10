@@ -56,7 +56,7 @@ describe('logoutFactory', () => {
     expect(state.sessions[did]).toBeTruthy()
     expect(state.refreshTokens[refreshToken]).toBeTruthy()
 
-    logoutFactory(state, { ...fakeConfig, allowMultipleSessions: true, useCookies: true })(req, res)
+    logoutFactory(state, { ...fakeConfig, useCookies: true })(req, res)
 
     expect(state.sessions[did]).toBeFalsy()
     expect(state.refreshTokens[refreshToken]).toBeFalsy()

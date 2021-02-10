@@ -3,10 +3,8 @@ import { INVALID_OR_EXPIRED_SESSION, NO_REFRESH_TOKEN } from '../errors'
 import { generateAccessToken } from '../jwt-utils'
 import { AppState, AuthenticationConfig } from '../types'
 
-function extractRefreshToken (req, useCookies: boolean, allowMultipleSessions: boolean) {
+function extractRefreshToken (req, useCookies: boolean) {
   if (!useCookies) return req.body.refreshToken
-
-  if (!allowMultipleSessions) return req.cookies[REFRESH_TOKEN_COOKIE_NAME]
 
   const did = req.headers[LOGGED_DID_COOKIE_NAME]
   return req.cookies[`${REFRESH_TOKEN_COOKIE_NAME}-${did}`]
@@ -15,8 +13,8 @@ function extractRefreshToken (req, useCookies: boolean, allowMultipleSessions: b
 export function refreshTokenFactory (state: AppState, accessTokenConfig: AuthenticationConfig) {
   return async function (req, res) {
     try {
-      const { useCookies, allowMultipleSessions } = accessTokenConfig
-      const oldRefreshToken = extractRefreshToken(req, useCookies, allowMultipleSessions)
+      const { useCookies } = accessTokenConfig
+      const oldRefreshToken = extractRefreshToken(req, useCookies)
 
       if (!oldRefreshToken) return res.status(401).send(NO_REFRESH_TOKEN)
 
@@ -35,8 +33,8 @@ export function refreshTokenFactory (state: AppState, accessTokenConfig: Authent
 
       if (!useCookies) return res.status(200).json({ accessToken, refreshToken })
 
-      const accessTokenCookieName = allowMultipleSessions ? `${ACCESS_TOKEN_COOKIE_NAME}-${did}` : ACCESS_TOKEN_COOKIE_NAME
-      const refreshCookieName = allowMultipleSessions ? `${REFRESH_TOKEN_COOKIE_NAME}-${did}` : REFRESH_TOKEN_COOKIE_NAME
+      const accessTokenCookieName = `${ACCESS_TOKEN_COOKIE_NAME}-${did}`
+      const refreshCookieName = `${REFRESH_TOKEN_COOKIE_NAME}-${did}`
 
       res.cookie(accessTokenCookieName, accessToken, COOKIES_ATTRIBUTES)
       res.cookie(refreshCookieName, refreshToken, COOKIES_ATTRIBUTES)

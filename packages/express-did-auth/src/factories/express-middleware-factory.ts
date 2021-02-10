@@ -5,10 +5,8 @@ import { CORRUPTED_ACCESS_TOKEN, INVALID_HEADER, NO_ACCESS_TOKEN, UNHANDLED_ERRO
 import { verifyReceivedJwt } from '../jwt-utils'
 import { AppState, TokenValidationConfig } from '../types'
 
-function extractAccessToken (req: Request, useCookies: boolean, allowMultipleSessions: boolean) {
+function extractAccessToken (req: Request, useCookies: boolean) {
   if (useCookies) {
-    if (!allowMultipleSessions) return req.cookies[ACCESS_TOKEN_COOKIE_NAME]
-
     const did = req.headers[LOGGED_DID_COOKIE_NAME]
     return req.cookies[`${ACCESS_TOKEN_COOKIE_NAME}-${did}`]
   }
@@ -25,7 +23,7 @@ function extractAccessToken (req: Request, useCookies: boolean, allowMultipleSes
 export function expressMiddlewareFactory (state: AppState, config: TokenValidationConfig) {
   return async function (req, res, next) {
     try {
-      const jwt = extractAccessToken(req, config.useCookies, config.allowMultipleSessions)
+      const jwt = extractAccessToken(req, config.useCookies)
 
       if (!jwt) return res.status(401).send(NO_ACCESS_TOKEN)
 
