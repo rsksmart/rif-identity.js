@@ -76,6 +76,8 @@ describe('Express app tests - cookies', () => {
     expect(tokens[0]).toContain(`${ACCESS_TOKEN_COOKIE_NAME}-${userDid}`)
     expect(tokens[1]).toContain(`${REFRESH_TOKEN_COOKIE_NAME}-${userDid}`)
 
+    console.log(tokens)
+
     // no tokens in the body
     expect(response.body).toEqual({})
 

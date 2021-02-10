@@ -1,7 +1,8 @@
-import { REFRESH_TOKEN_COOKIE_NAME, ACCESS_TOKEN_COOKIE_NAME, COOKIES_ATTRIBUTES, LOGGED_DID_COOKIE_NAME } from '../constants'
+import { REFRESH_TOKEN_COOKIE_NAME, LOGGED_DID_COOKIE_NAME } from '../constants'
 import { INVALID_OR_EXPIRED_SESSION, NO_REFRESH_TOKEN } from '../errors'
 import { generateAccessToken } from '../jwt-utils'
 import { AppState, AuthenticationConfig } from '../types'
+import { setCookies } from './cookies'
 
 function extractRefreshToken (req, useCookies: boolean) {
   if (!useCookies) return req.body.refreshToken
@@ -33,11 +34,7 @@ export function refreshTokenFactory (state: AppState, accessTokenConfig: Authent
 
       if (!useCookies) return res.status(200).json({ accessToken, refreshToken })
 
-      const accessTokenCookieName = `${ACCESS_TOKEN_COOKIE_NAME}-${did}`
-      const refreshCookieName = `${REFRESH_TOKEN_COOKIE_NAME}-${did}`
-
-      res.cookie(accessTokenCookieName, accessToken, COOKIES_ATTRIBUTES)
-      res.cookie(refreshCookieName, refreshToken, COOKIES_ATTRIBUTES)
+      setCookies(res, did, accessToken, refreshToken)
 
       return res.status(200).send()
     } catch (err) {
