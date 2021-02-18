@@ -17,6 +17,7 @@ import {
 } from './factories'
 import { adaptToAuthFactoryConfig, adaptToChallengeConfig, adaptToRequestCounterConfig, adaptToUserSessionConfig } from './config-adapters'
 import { CSRF_TOKEN_HEADER_NAME } from './constants'
+import { CSRF_ERROR_MESSAGE } from './errors'
 
 export default function setupAppFactory (config: ExpressDidAuthConfig) {
   const { requestAuthPath, authPath, requestSignupPath, signupPath, refreshTokenPath, logoutPath } = config
@@ -40,10 +41,18 @@ export default function setupAppFactory (config: ExpressDidAuthConfig) {
 
     if (config.useCookies) {
       app.use(cookieParser())
-      app.use(csrf({ cookie: { httpOnly: false, secure: true } }))
+      app.use(csrf({ cookie: true }))
+
       app.use((req, res, next) => {
-        res.header(CSRF_TOKEN_HEADER_NAME, req.csrfToken())
+        res.cookie(CSRF_TOKEN_HEADER_NAME, req.csrfToken())
         next()
+      })
+
+      app.use(function (err, req, res, next) {
+        if (err.code !== 'EBADCSRFTOKEN') return next(err)
+        // handle CSRF token errors here
+        res.status(403)
+        res.send(CSRF_ERROR_MESSAGE)
       })
     }
 
