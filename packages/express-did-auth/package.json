@@ -33,7 +33,7 @@
     "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.5",
     "csurf": "^1.11.0",
-    "daf-selective-disclosure": "^6.3.0",
+    "daf-selective-disclosure": "6.3.0",
     "did-jwt": "^4.6.2",
     "did-jwt-vc": "^1.0.6",
     "did-resolver": "^2.1.1",

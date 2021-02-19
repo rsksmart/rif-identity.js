@@ -1,11 +1,11 @@
 import { ecrecover, fromRpcSig, hashPersonalMessage, pubToAddress } from 'ethereumjs-util'
-import { ACCESS_TOKEN_COOKIE_NAME, COOKIES_ATTRIBUTES, REFRESH_TOKEN_COOKIE_NAME } from '../constants'
 import { INVALID_CHALLENGE_RESPONSE, NO_RESPONSE, UNAUTHORIZED_USER } from '../errors'
 import { AuthenticationBusinessLogic, SignupBusinessLogic, AppState, AuthenticationConfig } from '../types'
 import { generateAccessToken } from '../jwt-utils'
 import { ChallengeVerifier } from '../classes/challenge-verifier'
 import { SessionManagerFactory } from '../classes/session-manager'
 import { RequestCounterFactory } from '../classes/request-counter'
+import { setCookies } from './cookies'
 
 export function authenticationFactory (
   challengeVerifier: ChallengeVerifier,
@@ -22,7 +22,7 @@ export function authenticationFactory (
       if (!response) return res.status(401).send(NO_RESPONSE)
 
       const { sig, did } = response
-      const { loginMessageHeader, allowMultipleSessions, useCookies, serviceUrl } = config
+      const { loginMessageHeader, useCookies, serviceUrl } = config
 
       const expectedMessage = loginMessageHeader
         ? `${loginMessageHeader}\nURL: ${serviceUrl}\nVerification code: ${challengeVerifier.get(did)}`
@@ -55,11 +55,7 @@ export function authenticationFactory (
 
       if (!useCookies) return res.status(200).json({ accessToken, refreshToken })
 
-      const accessTokenCookieName = allowMultipleSessions ? `${ACCESS_TOKEN_COOKIE_NAME}-${did}` : ACCESS_TOKEN_COOKIE_NAME
-      const refreshCookieName = allowMultipleSessions ? `${REFRESH_TOKEN_COOKIE_NAME}-${did}` : REFRESH_TOKEN_COOKIE_NAME
-
-      res.cookie(accessTokenCookieName, accessToken, COOKIES_ATTRIBUTES)
-      res.cookie(refreshCookieName, refreshToken, COOKIES_ATTRIBUTES)
+      setCookies(res, did, accessToken, refreshToken)
 
       return res.status(200).send()
     } catch (err) {

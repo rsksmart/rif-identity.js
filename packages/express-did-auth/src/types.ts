@@ -45,6 +45,7 @@ export interface ExpressDidAuthConfig extends SignupConfig {
   maxRequestsPerTimeSlot?: number
   timeSlotInSeconds?: number
   userSessionDurationInHours?: number
+  noCsrfSecure?: boolean
 }
 
 export interface DidResolverConfig {
@@ -56,7 +57,6 @@ export interface DidResolverConfig {
 export interface TokenValidationConfig extends DidResolverConfig {
   serviceUrl: string
   useCookies?: boolean
-  allowMultipleSessions?: boolean
   serviceDid: string
 }
 
