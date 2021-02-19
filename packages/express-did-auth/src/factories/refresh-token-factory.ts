@@ -1,12 +1,21 @@
-import { REFRESH_TOKEN_COOKIE_NAME, ACCESS_TOKEN_COOKIE_NAME, COOKIES_ATTRIBUTES } from '../constants'
+import { REFRESH_TOKEN_COOKIE_NAME, LOGGED_DID_COOKIE_NAME } from '../constants'
 import { INVALID_OR_EXPIRED_SESSION, NO_REFRESH_TOKEN } from '../errors'
 import { generateAccessToken } from '../jwt-utils'
 import { AppState, AuthenticationConfig } from '../types'
+import { setCookies } from './cookies'
+
+function extractRefreshToken (req, useCookies: boolean) {
+  if (!useCookies) return req.body.refreshToken
+
+  const did = req.headers[LOGGED_DID_COOKIE_NAME]
+  return req.cookies[`${REFRESH_TOKEN_COOKIE_NAME}-${did}`]
+}
 
 export function refreshTokenFactory (state: AppState, accessTokenConfig: AuthenticationConfig) {
   return async function (req, res) {
     try {
-      const oldRefreshToken = accessTokenConfig.useCookies ? req.cookies[REFRESH_TOKEN_COOKIE_NAME] : req.body.refreshToken
+      const { useCookies } = accessTokenConfig
+      const oldRefreshToken = extractRefreshToken(req, useCookies)
 
       if (!oldRefreshToken) return res.status(401).send(NO_REFRESH_TOKEN)
 
@@ -23,10 +32,9 @@ export function refreshTokenFactory (state: AppState, accessTokenConfig: Authent
       state.refreshTokens[refreshToken] = did // adds new refresh token to the state
       const accessToken = await generateAccessToken(did, accessTokenConfig, metadata)
 
-      if (!accessTokenConfig.useCookies) return res.status(200).json({ accessToken, refreshToken })
+      if (!useCookies) return res.status(200).json({ accessToken, refreshToken })
 
-      res.cookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, COOKIES_ATTRIBUTES)
-      res.cookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken, COOKIES_ATTRIBUTES)
+      setCookies(res, did, accessToken, refreshToken)
 
       return res.status(200).send()
     } catch (err) {

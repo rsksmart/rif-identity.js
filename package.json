@@ -44,6 +44,5 @@
     "sqlite3": "^5.0.0",
     "ts-jest": "^26.1.0",
     "typescript": "^3.9.5"
-  },
-  "dependencies": {}
+  }
 }
