@@ -27,7 +27,7 @@ describe('Express app tests - cookies with multiple sessions', () => {
     const serviceSigner = serviceIdentity.signer
     const serviceDid = serviceIdentity.did
 
-    setupApp({ challengeSecret, serviceUrl, serviceDid, serviceSigner, useCookies: true })(app)
+    setupApp({ challengeSecret, serviceUrl, serviceDid, serviceSigner, useCookies: true, noCsrfSecure: true })(app)
 
     const id1 = identityFactory()
     const userDid1 = id1.identity.did

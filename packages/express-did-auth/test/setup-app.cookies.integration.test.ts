@@ -33,7 +33,7 @@ describe('Express app tests - cookies', () => {
     const serviceSigner = serviceIdentity.signer
     const serviceDid = serviceIdentity.did
 
-    setupApp({ challengeSecret, serviceUrl, serviceDid, serviceSigner, useCookies: true })(app)
+    setupApp({ challengeSecret, serviceUrl, serviceDid, serviceSigner, useCookies: true, noCsrfSecure: true })(app)
 
     const testAuthenticationResponse = testAuthenticationResponseForUser(userDid)
 
