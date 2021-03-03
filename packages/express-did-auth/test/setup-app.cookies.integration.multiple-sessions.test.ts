@@ -90,8 +90,8 @@ describe('Express app tests - cookies with multiple sessions', () => {
 
     // should set empty cookies
     const expiredCookies = response.headers['set-cookie']
-    expect(expiredCookies[1]).toContain(`${ACCESS_TOKEN_COOKIE_NAME}-${userDid1}=;`)
-    expect(expiredCookies[2]).toContain(`${REFRESH_TOKEN_COOKIE_NAME}-${userDid1}=;`)
+    expect(expiredCookies[0]).toContain(`${ACCESS_TOKEN_COOKIE_NAME}-${userDid1}=;`)
+    expect(expiredCookies[1]).toContain(`${REFRESH_TOKEN_COOKIE_NAME}-${userDid1}=;`)
 
     csrfToken = getCSRFTokenFromResponse(response)
 
