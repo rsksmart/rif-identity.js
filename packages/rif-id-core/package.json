@@ -17,7 +17,7 @@
     "identity"
   ],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/rsksamrt/rif-identity.js/issues"
   },
@@ -29,7 +29,7 @@
     "daf-did-comm": "^6.3.0",
     "daf-selective-disclosure": "^6.3.0",
     "daf-w3c": "^6.3.0",
-    "axios": "^0.20.0"
+    "axios": "^0.21.1"
   },
   "devDependencies": {
     "@rsksmart/ethr-did-utils": "^1.0.1",

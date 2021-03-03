@@ -15,6 +15,9 @@
     <a href="https://lgtm.com/projects/g/rsksmart/rif-identity.js/context:javascript">
       <img src="https://img.shields.io/lgtm/grade/javascript/github/rsksmart/rif-identity.js">
     </a>
+    <a href="https://codecov.io/gh/rsksmart/rif-identity.js">
+      <img src="https://codecov.io/gh/rsksmart/rif-identity.js/branch/develop/graph/badge.svg?token=72T5TQ34HT"/>
+    </a>
 </p>
 
 ## Development

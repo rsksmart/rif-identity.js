@@ -16,9 +16,11 @@ import {
   refreshTokenFactory, expressMiddlewareFactory, logoutFactory
 } from './factories'
 import { adaptToAuthFactoryConfig, adaptToChallengeConfig, adaptToRequestCounterConfig, adaptToUserSessionConfig } from './config-adapters'
+import { CSRF_TOKEN_HEADER_NAME } from './constants'
+import { CSRF_ERROR_MESSAGE } from './errors'
 
 export default function setupAppFactory (config: ExpressDidAuthConfig) {
-  const { requestAuthPath, authPath, requestSignupPath, signupPath, refreshTokenPath, logoutPath } = config
+  const { requestAuthPath, authPath, requestSignupPath, signupPath, refreshTokenPath, logoutPath, noCsrfSecure } = config
 
   const state: AppState = {
     sessions: { },
@@ -39,7 +41,19 @@ export default function setupAppFactory (config: ExpressDidAuthConfig) {
 
     if (config.useCookies) {
       app.use(cookieParser())
-      app.use(csrf({ cookie: true }))
+      app.use(csrf({ cookie: { httpOnly: true, secure: !noCsrfSecure } }))
+
+      app.use((req, res, next) => {
+        res.cookie(CSRF_TOKEN_HEADER_NAME, req.csrfToken())
+        next()
+      })
+
+      app.use(function (err, req, res, next) {
+        if (err.code !== 'EBADCSRFTOKEN') return next(err)
+        // handle CSRF token errors here
+        res.status(403)
+        res.send(CSRF_ERROR_MESSAGE)
+      })
     }
 
     const authMiddleware = expressMiddlewareFactory(state, config)
@@ -54,7 +68,7 @@ export default function setupAppFactory (config: ExpressDidAuthConfig) {
 
     app.post(refreshTokenPath || REFRESH_TOKEN_PATH, refreshTokenFactory(state, config))
 
-    app.post(logoutPath || LOGOUT_PATH, authMiddleware, logoutFactory(state))
+    app.post(logoutPath || LOGOUT_PATH, authMiddleware, logoutFactory(state, config))
 
     return authMiddleware
   }

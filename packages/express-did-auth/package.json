@@ -1,6 +1,6 @@
 {
   "name": "@rsksmart/express-did-auth",
-  "version": "0.1.2",
+  "version": "0.1.5",
   "description": "Authentication with Verifiable Credentials for Express.js",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -20,7 +20,7 @@
     "identity"
   ],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/rsksmart/rif-identity.js/issues"
   },
@@ -33,7 +33,7 @@
     "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.5",
     "csurf": "^1.11.0",
-    "daf-selective-disclosure": "^6.3.0",
+    "daf-selective-disclosure": "6.3.0",
     "did-jwt": "^4.6.2",
     "did-jwt-vc": "^1.0.6",
     "did-resolver": "^2.1.1",

@@ -5,7 +5,6 @@ import request from 'supertest'
 import { INVALID_OR_EXPIRED_SESSION, NO_ACCESS_TOKEN } from '../src/errors'
 
 describe('Express app tests - no cookies', () => {
-
   const challengeSecret = 'theSecret'
   const serviceUrl = 'https://service.com'
 
@@ -17,7 +16,6 @@ describe('Express app tests - no cookies', () => {
     let refreshToken: string
     let challengeResponse: ChallengeResponse
     let response: any
-    let oldRefreshToken: string
     let challenge: string
 
     const { identity, privateKey } = identityFactory()
@@ -71,7 +69,7 @@ describe('Express app tests - no cookies', () => {
     accessToken = response.body.accessToken
     expect(accessToken).toBeTruthy()
 
-    oldRefreshToken = refreshToken
+    const oldRefreshToken = refreshToken
     refreshToken = response.body.refreshToken
     expect(refreshToken).toBeTruthy()
 
