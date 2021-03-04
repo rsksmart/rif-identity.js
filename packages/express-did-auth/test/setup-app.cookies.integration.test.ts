@@ -93,8 +93,8 @@ describe('Express app tests - cookies', () => {
 
     // new tokens must be different
     expect(tokens).not.toEqual(oldTokens)
-    expect(tokens[1]).not.toEqual(oldTokens[1])
-    expect(tokens[2]).not.toEqual(oldTokens[2])
+    expect(tokens[0]).not.toEqual(oldTokens[1])
+    expect(tokens[1]).not.toEqual(oldTokens[2])
 
     // 5b. POST /refresh-token with old one should fail
     response = await agent.post('/refresh-token')
@@ -131,8 +131,8 @@ describe('Express app tests - cookies', () => {
       .expect(200)
 
     const expiredCookies = response.headers['set-cookie']
-    expect(expiredCookies[1]).toContain(`${ACCESS_TOKEN_COOKIE_NAME}-${userDid}=;`)
-    expect(expiredCookies[2]).toContain(`${REFRESH_TOKEN_COOKIE_NAME}-${userDid}=;`)
+    expect(expiredCookies[0]).toContain(`${ACCESS_TOKEN_COOKIE_NAME}-${userDid}=;`)
+    expect(expiredCookies[1]).toContain(`${REFRESH_TOKEN_COOKIE_NAME}-${userDid}=;`)
 
     // 7. POST /refresh-token with logged out session one should fail
     response = await agent.post('/refresh-token')

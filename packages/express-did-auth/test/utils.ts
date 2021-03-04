@@ -101,9 +101,9 @@ export function testAuthenticationResponseForUser(userDid: string) {
   return function (response: any) {
     // tokens in set-cookie header
     const tokens = response.headers['set-cookie']
-    expect(tokens).toHaveLength(3)
-    expect(tokens[1]).toContain(`${ACCESS_TOKEN_COOKIE_NAME}-${userDid}`)
-    expect(tokens[2]).toContain(`${REFRESH_TOKEN_COOKIE_NAME}-${userDid}`)
+    expect(tokens).toHaveLength(2)
+    expect(tokens[0]).toContain(`${ACCESS_TOKEN_COOKIE_NAME}-${userDid}`)
+    expect(tokens[1]).toContain(`${REFRESH_TOKEN_COOKIE_NAME}-${userDid}`)
 
     // no tokens in the body
     expect(response.body).toEqual({})
@@ -117,15 +117,9 @@ const removeExtraCookieAttributes = (cookie: string) => cookie.substr(0, cookie.
 
 // gets csrf token from set-cookie header
 export function getCSRFTokenFromResponse(response: any) {
-  let csrfToken = removeExtraCookieAttributes(
-    response.header['set-cookie'].find(h => h.indexOf(CSRF_TOKEN_HEADER_NAME) > -1)
-  )
-
-  csrfToken = csrfToken.substr(CSRF_TOKEN_HEADER_NAME.length + 1, csrfToken.length)
-
-  return csrfToken
+  return response.header['x-csrf-token']
 }
 
 export function getAccessTokenHeader(tokens: string[]) {
-  return `${removeExtraCookieAttributes(tokens[1])}; ${removeExtraCookieAttributes(tokens[2])}`
+  return `${removeExtraCookieAttributes(tokens[0])}; ${removeExtraCookieAttributes(tokens[1])}`
 }
