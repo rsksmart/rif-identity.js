@@ -42,6 +42,6 @@
     "daf-resolver": "^6.0.0",
     "daf-w3c": "^6.3.0",
     "express": "^4.17.1",
-    "typeorm": "0.2.24"
+    "typeorm": "0.2.25"
   }
 }
