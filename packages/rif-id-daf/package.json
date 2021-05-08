@@ -30,7 +30,7 @@
     "daf-core": "^6.3.0",
     "daf-ethr-did": "^6.1.2",
     "debug": "^4.2.0",
-    "typeorm": "0.2.24",
+    "typeorm": "0.2.25",
     "uuid": "^3.3.3"
   },
   "devDependencies": {
