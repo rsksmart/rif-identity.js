@@ -5,5 +5,5 @@ export const generateMnemonic = createMnemonicGenerator(randomBytes as RNG)
 
 export { mnemonicToSeed, mnemonicToSeedSync } from 'bip39'
 
-export { BIP32Interface } from 'bip32'
+export { BIP32Interface, fromSeed } from 'bip32'
 export { seedToRSKHDKey } from './bip44'
