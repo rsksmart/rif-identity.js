@@ -47,7 +47,7 @@ To setup a DAF agent using RIF identity provider implementation:
 import { Connection } from 'typeorm'
 import { KeyStore, IdentityStore, Agent } from 'daf-core'
 import { SecretBox, KeyManagementSystem } from 'daf-libsodium' // change for daf-react-native-libsodioum for React Native support
-import { Entities, MnemonicStore, RIFIdKeyManagementSystem, RIFIdentityProvider } from '@rsksamrt/rid-id-daf'
+import { Entities, MnemonicStore, RIFIdKeyManagementSystem, RIFIdentityProvider } from '@rsksmart/rid-id-daf'
 
 const dbConnection = createConnection({
   type: 'sqlite',

@@ -1,4 +1,4 @@
-import { generateMnemonic, mnemonicToSeed, mnemonicToSeedSync, seedToRSKHDKey } from '../src'
+import { generateMnemonic, mnemonicToSeed, mnemonicToSeedSync, seedToRSKHDKey, fromSeed } from '../src'
 
 describe('usage', () => {
   it('generate', () => {
@@ -22,5 +22,9 @@ describe('usage', () => {
     const privateKey = hdKey.derive(0).privateKey?.toString('hex')
 
     expect(privateKey).toBe('8bd8deb1117c695e50d7511066c547576b774aef393aa0ee3a042ef55b2717e6')
+  })
+
+  it('exports fromSeed', () => {
+    expect(fromSeed).toBeDefined()
   })
 })
