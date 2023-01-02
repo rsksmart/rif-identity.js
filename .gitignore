@@ -13,4 +13,4 @@ junit.xml
 *.sqlite
 
 # logs
-*.log
+*.log.git/
