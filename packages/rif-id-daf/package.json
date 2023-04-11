@@ -27,13 +27,13 @@
     "@rsksmart/rif-id-mnemonic": "0.1.0",
     "axios": "^0.21.1",
     "cross-fetch": "^3.0.6",
-    "daf-core": "^6.3.0",
-    "daf-ethr-did": "^6.1.2",
+    "daf-core": "^7.0.0",
+    "daf-ethr-did": "^7.0.0",
     "debug": "^4.2.0",
-    "typeorm": "0.2.24",
+    "typeorm": "0.3.14",
     "uuid": "^3.3.3"
   },
   "devDependencies": {
-    "daf-libsodium": "^6.1.2"
+    "daf-libsodium": "^7.0.0"
   }
 }
